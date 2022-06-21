@@ -1,0 +1,6 @@
+aml.egg-info/
+**/__pycache__/
+nohup/*
+**/.DS_Store
+.venv/*
+.vscode/*
