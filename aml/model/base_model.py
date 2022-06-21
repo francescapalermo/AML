@@ -29,396 +29,395 @@ logging.getLogger("pytorch_lightning").setLevel(logging.WARNING)
 
 
 # functions used in pytorch only training and pytorch lightning training
+class TrainingHelper:
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+    def _prepare_fit_data(self, 
+                            X:np.array=None, 
+                            y:np.array=None,
+                            train_loader:torch.utils.data.DataLoader=None,
+                            X_val:typing.Union[np.array, None]=None,
+                            y_val:typing.Union[np.array, None]=None,
+                            val_loader:torch.utils.data.DataLoader=None,
+                            ):
+        '''
+        This is used to prepare the fit model. Please either use 
+        the ```train_loader``` or ```X``` and ```y```.
+        This corresponds to using either a torch DataLoader
+        or a numpy array as the training data.
 
-def _prepare_fit_data(self, 
-                        X:np.array=None, 
-                        y:np.array=None,
-                        train_loader:torch.utils.data.DataLoader=None,
-                        X_val:typing.Union[np.array, None]=None,
-                        y_val:typing.Union[np.array, None]=None,
-                        val_loader:torch.utils.data.DataLoader=None,
-                        ):
-    '''
-    This is used to prepare the fit model. Please either use 
-    the ```train_loader``` or ```X``` and ```y```.
-    This corresponds to using either a torch DataLoader
-    or a numpy array as the training data.
+        Arguments
+        ---------
 
-    Arguments
-    ---------
+        - ```X```: ```numpy.array``` or ```None```, optional:
+            The input array to fit the model on.
+            Defaults to ```None```.
 
-    - ```X```: ```numpy.array``` or ```None```, optional:
-        The input array to fit the model on.
-        Defaults to ```None```.
+        - ```y```: ```numpy.array``` or ```None```, optional:
+            The target array to fit the model on.
+            Defaults to ```None```.
 
-    - ```y```: ```numpy.array``` or ```None```, optional:
-        The target array to fit the model on.
-        Defaults to ```None```.
+        - ```train_loader```: ```torch.utils.data.DataLoader``` or ```None```, optional:
+            The training data, which contains the input and the targets.
+            Defaults to ```None```.
 
-    - ```train_loader```: ```torch.utils.data.DataLoader``` or ```None```, optional:
-        The training data, which contains the input and the targets.
-        Defaults to ```None```.
+        - ```X_val```: ```numpy.array``` or ```None```, optional:
+            The validation input to calculate validation 
+            loss on when training the model.
+            Defaults to ```None```
 
-    - ```X_val```: ```numpy.array``` or ```None```, optional:
-        The validation input to calculate validation 
-        loss on when training the model.
-        Defaults to ```None```
+        - ```X_val```: ```numpy.array``` or ```None```, optional:
+            The validation target to calculate validation 
+            loss on when training the model.
+            Defaults to ```None```
 
-    - ```X_val```: ```numpy.array``` or ```None```, optional:
-        The validation target to calculate validation 
-        loss on when training the model.
-        Defaults to ```None```
+        - ```val_loader```: ```torch.utils.data.DataLoader``` or ```None```, optional:
+            The validation data, which contains the input and the targets.
+            Defaults to ```None```.
 
-    - ```val_loader```: ```torch.utils.data.DataLoader``` or ```None```, optional:
-        The validation data, which contains the input and the targets.
-        Defaults to ```None```.
+        Returns
+        --------
 
-    Returns
-    --------
+        - ```self```:
+            The ```self``` that is passed as an argument.
 
-    - ```self```:
-        The ```self``` that is passed as an argument.
+        - ```train_loader```: ```torch.utils.data.DataLoader``` : 
+            The train data loader.
+        
+        - ```val_loader```: ```torch.utils.data.DataLoader``` : 
+            The validation data loader.
 
-    - ```train_loader```: ```torch.utils.data.DataLoader``` : 
-        The train data loader.
-    
-    - ```val_loader```: ```torch.utils.data.DataLoader``` : 
-        The validation data loader.
+        '''
+        assert ((train_loader is None) ^ (X is None)), 'Please either use train_loader OR X and y'
+        assert ~((not val_loader is None) and (not X_val is None)), 'Please either use val_loader OR X_val and y_val'
 
-    '''
-    assert ((train_loader is None) ^ (X is None)), 'Please either use train_loader OR X and y'
-    assert ~((not val_loader is None) and (not X_val is None)), 'Please either use val_loader OR X_val and y_val'
+        val_too = False if ((X_val is None) and (val_loader is None)) else True
 
-    val_too = False if ((X_val is None) and (val_loader is None)) else True
+        device_now = ('cuda' if torch.cuda.is_available() else 'cpu') if self.device == 'auto' else self.device
+        self.to(device_now)
 
-    device_now = ('cuda' if torch.cuda.is_available() else 'cpu') if self.device == 'auto' else self.device
-    self.to(device_now)
-
-    if train_loader is None:
-        if type(X) == np.ndarray:
-            X = torch.from_numpy(X)
-        if type(y) == np.ndarray:
-            y = torch.from_numpy(y)
-        train_dataset = MyData(X, y)
-        train_loader = torch.utils.data.DataLoader(train_dataset, 
-                                                    batch_size=self.batch_size, 
-                                                    shuffle=self.shuffle,
-                                                    **self.dl_kwargs)
-    if val_too:
-        if val_loader is None:
-            if type(X_val) == np.ndarray:
-                X_val = torch.from_numpy(X_val)
-            if type(y_val) == np.ndarray:
-                y_val = torch.from_numpy(y_val)
-            val_dataset = MyData(X_val, y_val)
-            val_loader = torch.utils.data.DataLoader(val_dataset, 
-                                                        batch_size=self.batch_size, 
-                                                        shuffle=False,
-                                                        **self.dl_kwargs)
-    else:
-        val_loader = None
-
-    return train_loader, val_loader
-
-
-
-
-def _prepare_predict_data(self,
-                X:np.array=None,
-                y:np.array=None,
-                test_loader:torch.utils.data.DataLoader=None, 
-                ):
-    '''
-    Method for building the prediction data.
-    
-    Arguments
-    ---------
-    
-    - ```X```: ```numpy.array``` or ```None```, optional:
-        The input array to test the model on.
-        Defaults to ```None```.
-
-    - ```y```: ```numpy.array``` or ```None```, optional:
-        The target array to test the model on. If set to ```None```,
-        then ```targets_too``` will automatically be set to ```False```.
-        Defaults to ```None```.
-    
-    - ```test_loader```: ```torch.utils.data.DataLoader``` or ```None```, optional: 
-        A data loader containing the test data.
-        Defaults to ```None```.
-    
-    
-    Returns
-    --------
-
-    - ```self```:
-        The ```self``` that is passed as an argument.
-
-    - ```test_loader```: ```torch.utils.data.DataLoader``` : 
-        The test data loader.
-    
-    
-    '''
-
-    assert ((test_loader is None) ^ (X is None)), 'Please either use train_loader OR X and y'
-
-    self.return_numpy = False
-
-    if test_loader is None:
-        if y is None:
+        if train_loader is None:
             if type(X) == np.ndarray:
                 X = torch.from_numpy(X)
-                self.return_numpy = True
-            test_dataset = MyData(X)
-        else:
             if type(y) == np.ndarray:
                 y = torch.from_numpy(y)
-            test_dataset = MyData(X, y)
+            train_dataset = MyData(X, y)
+            train_loader = torch.utils.data.DataLoader(train_dataset, 
+                                                        batch_size=self.batch_size, 
+                                                        shuffle=self.shuffle,
+                                                        **self.dl_kwargs)
+        if val_too:
+            if val_loader is None:
+                if type(X_val) == np.ndarray:
+                    X_val = torch.from_numpy(X_val)
+                if type(y_val) == np.ndarray:
+                    y_val = torch.from_numpy(y_val)
+                val_dataset = MyData(X_val, y_val)
+                val_loader = torch.utils.data.DataLoader(val_dataset, 
+                                                            batch_size=self.batch_size, 
+                                                            shuffle=False,
+                                                            **self.dl_kwargs)
+        else:
+            val_loader = None
+
+        return train_loader, val_loader
+
+    def _prepare_predict_data(self,
+                    X:np.array=None,
+                    y:np.array=None,
+                    test_loader:torch.utils.data.DataLoader=None, 
+                    ):
+        '''
+        Method for building the prediction data.
         
-        test_loader = torch.utils.data.DataLoader(test_dataset, 
-                                                    batch_size=self.batch_size,
-                                                        shuffle=False,
-                                                    **self.dl_kwargs)
-    
-    return test_loader
+        Arguments
+        ---------
+        
+        - ```X```: ```numpy.array``` or ```None```, optional:
+            The input array to test the model on.
+            Defaults to ```None```.
 
+        - ```y```: ```numpy.array``` or ```None```, optional:
+            The target array to test the model on. If set to ```None```,
+            then ```targets_too``` will automatically be set to ```False```.
+            Defaults to ```None```.
+        
+        - ```test_loader```: ```torch.utils.data.DataLoader``` or ```None```, optional: 
+            A data loader containing the test data.
+            Defaults to ```None```.
+        
+        
+        Returns
+        --------
 
+        - ```self```:
+            The ```self``` that is passed as an argument.
 
-def _build_training_methods(self):
-    # optimizer
-    if type(self.passed_optimizer) == dict:
-        self.optimizer = _get_optimizer(self, self.passed_optimizer)
-    else:
-        self.optimizer = copy.deepcopy(self.passed_optimizer)
-    
-    # criterion
-    if type(self.passed_criterion) == str:
-        self.criterion = _get_criterion(self, self.passed_criterion)
-    else:
-        self.criterion = copy.deepcopy(self.passed_criterion)
-    
-    self.built_training_method = True
+        - ```test_loader```: ```torch.utils.data.DataLoader``` : 
+            The test data loader.
+        
+        
+        '''
 
-    return
+        assert ((test_loader is None) ^ (X is None)), 'Please either use train_loader OR X and y'
 
+        self.return_numpy = False
 
-def _get_params_from_names(self, names):
-    '''
-    Returns the layer parameters from the layers name.
-    This is used to specify optimizer layers based on the
-    name of the layers.
-    
-    
-    
-    Arguments
-    ---------
-    
-    - ```names```: ```str```: 
-        Layer name. If ```'all'```, all layers will be returned.
-    
-    
-    Raises
-    ---------
-    
-        ```TypeError```: If layer name is not an attribute of the model.
-    
-    Returns
-    --------
-
-    - ```layer_params```.
-    
-    
-    '''
-    params = []
-    for name in names:
-        if hasattr(self, name):
-            params += list(getattr(self, name).parameters())
-        elif name == 'all':
-            params += list(self.parameters())
-        else:
-            raise TypeError('There is no such parameter name: {}'.format(name))
-    return params
-
-
-def _get_optimizer(self, opt_dict):
-    '''
-    Returns an optimizer, initiated with keywords.
-    
-    
-    
-    Arguments
-    ---------
-    
-    - ```opt_dict```: ```dict```: 
-        The optimizer name as keys, and dictionaries of 
-        keywords as values. An example is:
-        ```
-        {'adam_lap': {
-                        'params':['all'], 
-                        'lr':0.01, 
-                        'lap_n': 20,
-                        'depression_function': 'min_max_mean',
-                        'depression_function_kwargs': {}
-                        },
-        }
-        ```
-        The values may also be a list of optimizer keywords
-        that will be used as different parameter groups in the
-        optimizer. The key can also be a ```torch.optim``` class,
-        but not initiated.
-    
-    Raises
-    ---------
-    
-    - ```NotImplementedError```: 
-        If the values are not dictionaries or a list.
-    
-    Returns
-    --------
-
-    - Single ```optimizer``` or list of ```optimizer```s,
-    depending on the number of optimizers given in the 
-    ```opt_dict```.
-    
-    
-    '''
-    optimizer_list = []
-    for optimizer_name, optimizer_kwargs in opt_dict.items():
-        if type(optimizer_name) == str:
-            optimizer_class = get_optimizer_from_name(optimizer_name)
-        else:
-            optimizer_class = optimizer_name
-        if type(optimizer_kwargs) == dict:
-            if 'params' in optimizer_kwargs:
-                params = _get_params_from_names(self, optimizer_kwargs['params'])
+        if test_loader is None:
+            if y is None:
+                if type(X) == np.ndarray:
+                    X = torch.from_numpy(X)
+                    self.return_numpy = True
+                test_dataset = MyData(X)
             else:
-                params = _get_params_from_names(self, ['all'])
-            optimizer = optimizer_class(params=params, 
-                                        **{k:v for k,v in opt_dict[optimizer_name].items() if k != 'params'})
-        elif type(optimizer_kwargs) == list:
-            param_groups = []
-            params = []
-            for group in optimizer_kwargs:
-                if 'params' in group:
-                    group['params'] = _get_params_from_names(self, group['params'])
-                else:
-                    group['params'] = _get_params_from_names(self, ['all'])
-                param_groups.append(group)
-            optimizer = optimizer_class(param_groups)
-        else:
-            raise NotImplementedError('Either pass a dictionary or list to the optimizer keywords')
+                if type(y) == np.ndarray:
+                    y = torch.from_numpy(y)
+                test_dataset = MyData(X, y)
+            
+            test_loader = torch.utils.data.DataLoader(test_dataset, 
+                                                        batch_size=self.batch_size,
+                                                            shuffle=False,
+                                                        **self.dl_kwargs)
         
-        optimizer_list.append(optimizer)
-
-    if len(optimizer_list) == 1:
-        return optimizer_list[0]
-    else:
-        return CombineOptimizers(*optimizer_list)
-
-
-def _get_criterion(self, name):
-    '''
-    Function that allows you to get the loss function
-    by name.       
-    
-    
-    Arguments
-    ---------
-    
-    - ```name```: ```str```: 
-        The name of the loss function.
-    
-
-    Returns
-    --------
-
-    - ```criterion```.
-    
-    '''
-    return get_criterion_from_name(name)
+        return test_loader
 
 
 
+    def _build_training_methods(self):
+        # optimizer
+        if type(self.passed_optimizer) == dict:
+            self.optimizer = self._get_optimizer(self.passed_optimizer)
+        else:
+            self.optimizer = copy.deepcopy(self.passed_optimizer)
+        
+        # criterion
+        if type(self.passed_criterion) == str:
+            self.criterion = self._get_criterion(self.passed_criterion)
+        else:
+            self.criterion = copy.deepcopy(self.passed_criterion)
+        
+        self.built_training_method = True
 
-def _resolution_calc(dim_in:int, kernel_size:int=3, 
-                        stride:int=1, padding:int=0, dilation:int=1):
-    '''
-    Allows the calculation of resolutions after a convolutional layer.
-    
-    
-    
-    Arguments
-    ---------
-    
-    - ```dim_in```: ```int```: 
-        The dimension of an image before convolution is applied.
-        If dim_in is a ```list``` or ```tuple```, then two dimensions
-        will be returned.
-    
-    - ```kernel_size```: ```int```, optional:
-        Defaults to ```3```.
-    
-    - ```stride```: ```int```, optional:
-        Defaults to ```1```.
-    
-    - ```padding```: ```int```, optional:
-        Defaults to ```0```.
-    
-    - ```dilation```: ```int```, optional:
-        Defaults to ```1```.
-    
-    
-    Returns
-    --------
-    
-    - ```dim_out```: ```int``` : 
-        The dimension size after the convolutional layer.
-    
-    
-    '''
-    if padding == 'valid':
-        padding=0
-
-    if type(dim_in) == list or type(dim_in) == tuple:
-        out_h = dim_in[0]
-        out_w = dim_in[1]
-        out_h = (out_h + 2*padding - dilation * (kernel_size-1) - 1)/stride + 1
-        out_w = (out_w + 2*padding - dilation * (kernel_size-1) - 1)/stride + 1
-
-        return (out_h, out_w)
-    
-    return int(np.floor((dim_in + 2*padding -  (kernel_size - 1) - 1)/stride + 1))
+        return
 
 
+    def _get_params_from_names(self, names):
+        '''
+        Returns the layer parameters from the layers name.
+        This is used to specify optimizer layers based on the
+        name of the layers.
+        
+        
+        
+        Arguments
+        ---------
+        
+        - ```names```: ```str```: 
+            Layer name. If ```'all'```, all layers will be returned.
+        
+        
+        Raises
+        ---------
+        
+            ```TypeError```: If layer name is not an attribute of the model.
+        
+        Returns
+        --------
 
-def _get_conv_params(layer):
-    '''
-    Given a pytorch Conv2d layer, this function can
-    return a dictionary of the kernel size, stride
-    and padding.
-    
-    
-    
-    Arguments
-    ---------
-    
-    - ```layer```: ```torch.nn.Conv2d```: 
-        Pytorch convolutional layer.       
-    
-    
-    Returns
-    --------
-    
-    - ```params```: ```dict``` : 
-        Dictionary containing the parameters of 
-        the convolutional layer.
-    
-    
-    '''
-    kernel_size = layer.kernel_size[0] if type(layer.kernel_size) == tuple else layer.kernel_size
-    stride = layer.stride[0] if type(layer.stride) == tuple else layer.stride
-    padding = layer.padding[0] if type(layer.padding) == tuple else layer.padding
-    return {'kernel_size': kernel_size, 'stride': stride, 'padding': padding}
+        - ```layer_params```.
+        
+        
+        '''
+        params = []
+        for name in names:
+            if hasattr(self, name):
+                params += list(getattr(self, name).parameters())
+            elif name == 'all':
+                params += list(self.parameters())
+            else:
+                raise TypeError('There is no such parameter name: {}'.format(name))
+        return params
+
+
+    def _get_optimizer(self, opt_dict):
+        '''
+        Returns an optimizer, initiated with keywords.
+        
+        
+        
+        Arguments
+        ---------
+        
+        - ```opt_dict```: ```dict```: 
+            The optimizer name as keys, and dictionaries of 
+            keywords as values. An example is:
+            ```
+            {'adam_lap': {
+                            'params':['all'], 
+                            'lr':0.01, 
+                            'lap_n': 20,
+                            'depression_function': 'min_max_mean',
+                            'depression_function_kwargs': {}
+                            },
+            }
+            ```
+            The values may also be a list of optimizer keywords
+            that will be used as different parameter groups in the
+            optimizer. The key can also be a ```torch.optim``` class,
+            but not initiated.
+        
+        Raises
+        ---------
+        
+        - ```NotImplementedError```: 
+            If the values are not dictionaries or a list.
+        
+        Returns
+        --------
+
+        - Single ```optimizer``` or list of ```optimizer```s,
+        depending on the number of optimizers given in the 
+        ```opt_dict```.
+        
+        
+        '''
+        optimizer_list = []
+        for optimizer_name, optimizer_kwargs in opt_dict.items():
+            if type(optimizer_name) == str:
+                optimizer_class = get_optimizer_from_name(optimizer_name)
+            else:
+                optimizer_class = optimizer_name
+            if type(optimizer_kwargs) == dict:
+                if 'params' in optimizer_kwargs:
+                    params = self._get_params_from_names(optimizer_kwargs['params'])
+                else:
+                    params = self._get_params_from_names(['all'])
+                optimizer = optimizer_class(params=params, 
+                                            **{k:v for k,v in opt_dict[optimizer_name].items() if k != 'params'})
+            elif type(optimizer_kwargs) == list:
+                param_groups = []
+                params = []
+                for group in optimizer_kwargs:
+                    if 'params' in group:
+                        group['params'] = self._get_params_from_names(group['params'])
+                    else:
+                        group['params'] = self._get_params_from_names(['all'])
+                    param_groups.append(group)
+                optimizer = optimizer_class(param_groups)
+            else:
+                raise NotImplementedError('Either pass a dictionary or list to the optimizer keywords')
+            
+            optimizer_list.append(optimizer)
+
+        if len(optimizer_list) == 1:
+            return optimizer_list[0]
+        else:
+            return CombineOptimizers(*optimizer_list)
+
+
+    def _get_criterion(self, name):
+        '''
+        Function that allows you to get the loss function
+        by name.       
+        
+        
+        Arguments
+        ---------
+        
+        - ```name```: ```str```: 
+            The name of the loss function.
+        
+
+        Returns
+        --------
+
+        - ```criterion```.
+        
+        '''
+        return get_criterion_from_name(name)
+
+
+
+
+    def _resolution_calc(dim_in:int, kernel_size:int=3, 
+                            stride:int=1, padding:int=0, dilation:int=1):
+        '''
+        Allows the calculation of resolutions after a convolutional layer.
+        
+        
+        
+        Arguments
+        ---------
+        
+        - ```dim_in```: ```int```: 
+            The dimension of an image before convolution is applied.
+            If dim_in is a ```list``` or ```tuple```, then two dimensions
+            will be returned.
+        
+        - ```kernel_size```: ```int```, optional:
+            Defaults to ```3```.
+        
+        - ```stride```: ```int```, optional:
+            Defaults to ```1```.
+        
+        - ```padding```: ```int```, optional:
+            Defaults to ```0```.
+        
+        - ```dilation```: ```int```, optional:
+            Defaults to ```1```.
+        
+        
+        Returns
+        --------
+        
+        - ```dim_out```: ```int``` : 
+            The dimension size after the convolutional layer.
+        
+        
+        '''
+        if padding == 'valid':
+            padding=0
+
+        if type(dim_in) == list or type(dim_in) == tuple:
+            out_h = dim_in[0]
+            out_w = dim_in[1]
+            out_h = (out_h + 2*padding - dilation * (kernel_size-1) - 1)/stride + 1
+            out_w = (out_w + 2*padding - dilation * (kernel_size-1) - 1)/stride + 1
+
+            return (out_h, out_w)
+        
+        return int(np.floor((dim_in + 2*padding -  (kernel_size - 1) - 1)/stride + 1))
+
+
+
+    def _get_conv_params(layer):
+        '''
+        Given a pytorch Conv2d layer, this function can
+        return a dictionary of the kernel size, stride
+        and padding.
+        
+        
+        
+        Arguments
+        ---------
+        
+        - ```layer```: ```torch.nn.Conv2d```: 
+            Pytorch convolutional layer.       
+        
+        
+        Returns
+        --------
+        
+        - ```params```: ```dict``` : 
+            Dictionary containing the parameters of 
+            the convolutional layer.
+        
+        
+        '''
+        kernel_size = layer.kernel_size[0] if type(layer.kernel_size) == tuple else layer.kernel_size
+        stride = layer.stride[0] if type(layer.stride) == tuple else layer.stride
+        padding = layer.padding[0] if type(layer.padding) == tuple else layer.padding
+        return {'kernel_size': kernel_size, 'stride': stride, 'padding': padding}
 
 
 
@@ -472,7 +471,7 @@ def _get_conv_params(layer):
 
 ######################## pytorch only base model
 
-class BaseModel(nn.Module):
+class BaseModel(TrainingHelper, nn.Module):
     '''
     A simple Auto-Encoder model that learns embeddings.
     '''
@@ -644,16 +643,6 @@ class BaseModel(nn.Module):
         self.testing = False
         return
 
-    @staticmethod
-    def _get_conv_params(layer):
-        return _get_conv_params(layer=layer)
-    
-    @staticmethod
-    def _resolution_calc(dim_in:int, kernel_size:int=3, 
-                        stride:int=1, padding:int=0, dilation:int=1):
-        return _resolution_calc(dim_in=dim_in, kernel_size=kernel_size, 
-                                stride=stride, padding=padding, dilation=dilation)
-
     def fit(self, 
             X:np.array=None, 
             y:np.array=None,
@@ -706,17 +695,17 @@ class BaseModel(nn.Module):
         '''
 
         
-        train_loader, val_loader = _prepare_fit_data(self, 
-                                                        X=X, 
-                                                        y=y,
-                                                        train_loader=train_loader,
-                                                        X_val=X_val,
-                                                        y_val=y_val,
-                                                        val_loader=val_loader,
-                                                        )
+        train_loader, val_loader = self._prepare_fit_data( 
+                                                            X=X, 
+                                                            y=y,
+                                                            train_loader=train_loader,
+                                                            X_val=X_val,
+                                                            y_val=y_val,
+                                                            val_loader=val_loader,
+                                                            )
 
         self._build_model()
-        _build_training_methods(self)
+        self._build_training_methods()
 
         writer = SummaryWriter(comment='-'+self.model_name)
 
@@ -780,7 +769,7 @@ class BaseModel(nn.Module):
         
         '''
 
-        test_loader = _prepare_predict_data(self, 
+        test_loader = self._prepare_predict_data(
                                                 X=X,
                                                 y=y,
                                                 test_loader=test_loader,
@@ -837,7 +826,7 @@ class BaseModel(nn.Module):
 
 ######################## pytorch lightning base model
 
-class BaseLightningModule(pl.LightningModule):
+class BaseLightningModule(TrainingHelper, pl.LightningModule):
     def __init__(self,
                     optimizer:typing.Union[typing.Dict[
                                                 typing.Union[str, torch.optim.Optimizer],
@@ -974,16 +963,6 @@ class BaseLightningModule(pl.LightningModule):
 
         return
 
-    @staticmethod
-    def _get_conv_params(layer):
-        return _get_conv_params(layer=layer)
-    
-    @staticmethod
-    def _resolution_calc(dim_in:int, kernel_size:int=3, 
-                        stride:int=1, padding:int=0, dilation:int=1):
-        return _resolution_calc(dim_in=dim_in, kernel_size=kernel_size, 
-                                stride=stride, padding=padding, dilation=dilation)
-
     def configure_optimizers(self):
         '''
         This is required for pytorch lightning.
@@ -1047,7 +1026,7 @@ class BaseLightningModule(pl.LightningModule):
 
         self._reset()
 
-        train_loader, val_loader = _prepare_fit_data(self, 
+        train_loader, val_loader = self._prepare_fit_data( 
                                                         X=X, 
                                                         y=y,
                                                         train_loader=train_loader,
@@ -1056,7 +1035,7 @@ class BaseLightningModule(pl.LightningModule):
                                                         val_loader=val_loader,
                                                         )
 
-        _build_training_methods(self)
+        self._build_training_methods()
         
         self.trainer.fit(self, 
                             train_dataloaders=train_loader, 
@@ -1102,7 +1081,7 @@ class BaseLightningModule(pl.LightningModule):
 
         return_concat = test_loader is None
 
-        test_loader = _prepare_predict_data(self, 
+        test_loader = self._prepare_predict_data( 
                                                 X=X,
                                                 y=y,
                                                 test_loader=test_loader,
