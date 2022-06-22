@@ -164,14 +164,16 @@ class TrainingHelper:
         self.return_numpy = False
 
         if test_loader is None:
+            if type(X) == np.ndarray:
+                X = torch.from_numpy(X)
+                self.return_numpy = True
+
             if y is None:
-                if type(X) == np.ndarray:
-                    X = torch.from_numpy(X)
-                    self.return_numpy = True
                 test_dataset = MyData(X)
             else:
                 if type(y) == np.ndarray:
                     y = torch.from_numpy(y)
+                    self.return_numpy = True
                 test_dataset = MyData(X, y)
             
             test_loader = torch.utils.data.DataLoader(test_dataset, 
@@ -1080,7 +1082,7 @@ class BaseLightningModule(TrainingHelper, pl.LightningModule):
         '''
 
         return_concat = test_loader is None
-
+        
         test_loader = self._prepare_predict_data( 
                                                 X=X,
                                                 y=y,
