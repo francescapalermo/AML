@@ -1082,6 +1082,8 @@ class BaseLightningModule(TrainingHelper, pl.LightningModule):
         '''
 
         return_concat = test_loader is None
+
+        self._reset()
         
         test_loader = self._prepare_predict_data( 
                                                 X=X,

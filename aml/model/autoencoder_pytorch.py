@@ -17,15 +17,12 @@ from .base_model import BaseModel
 
 
 class CodeLayer(BaseModel):
-    '''
-
-    This class can be set up as either an encoder or a decoder section of an autoencoder
-    semi-supervised model. Simply supply the arguments to either reduce or increase the 
-    size of the final dimension of the input.
-
-    '''
     def __init__(self, n_input, n_output, n_layers = 2, dropout=0.2):
         '''
+        This class can be set up as either an encoder or a decoder section of an autoencoder
+        semi-supervised model. Simply supply the arguments to either reduce or increase the 
+        size of the final dimension of the input.
+
         Arguments
         ---------
             
@@ -85,9 +82,6 @@ class CodeLayer(BaseModel):
 
 
 class AEModel(BaseModel):
-    '''
-    A simple Auto-Encoder model that learns embeddings.
-    '''
     def __init__(self,
                     n_input:int,
                     n_embedding:int, 

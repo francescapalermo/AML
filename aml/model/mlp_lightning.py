@@ -9,32 +9,44 @@ from .base_model import BaseLightningModule
 
 
 
-class CodeLayer(nn.Module):
-    def __init__(self, n_input, n_output, n_layers = 2, dropout=0.2):
+class FCLayers(nn.Module):
+    def __init__(self, 
+                    n_input:int, 
+                    n_output:int, 
+                    hidden_layer_sizes:typing.List[int]=(100,),
+                    use_softmax:bool=True, 
+                    dropout=0.2,
+                    ):
         '''
-        This class can be set up as either an encoder or a decoder section of an autoencoder
-        semi-supervised model. Simply supply the arguments to either reduce or increase the 
-        size of the final dimension of the input.
-        
+        This class can be used on its own as an MLP.
+
         Arguments
         ---------
             
-            n_input: int
-                This is the size of the last dimensions of the input and is the axis along which
-                the input will be decoded.
+        - ```n_input```: ```int```:
+            The size of the input feature dimension.
 
-            n_output: int
-                This is the size of the last dimension of the output.
+        - ```n_output```: ```int```:
+            The output dimension sizes.
 
-            n_layers: int
-                The number of layers to get from input to output dimensions.
+        - ```hidden_layer_sizes```: ```typing.List[int]```, optional:
+            The hidden layer sizes.
+            Defaults to ```(100,)```.
+
+        - ```use_softmax```: ```bool```, optional:
+            Whether to use a softmax at the end of the fully
+            connected layers.
+            Defaults to ```True```
+
 
         '''
 
-        super(CodeLayer, self).__init__()
-        
-        in_out_list = np.linspace(n_input, n_output, n_layers + 1, dtype = int)
+        super(FCLayers, self).__init__()
 
+        self.use_softmax = use_softmax
+        
+        in_out_list = [n_input] + list(hidden_layer_sizes) + [n_output] 
+        
         in_list = in_out_list[:-1][:-1]
         out_list = in_out_list[:-1][1:]
 
@@ -42,13 +54,18 @@ class CodeLayer(nn.Module):
                                             nn.Linear(in_value, out_value), 
                                             nn.Dropout(dropout),
                                             nn.BatchNorm1d(out_value), 
-                                            nn.ReLU())
-                                     for in_value, out_value in zip(in_list, out_list)])
+                                            nn.ReLU(),
+                                            )
+                                            for in_value, out_value in zip(in_list, out_list)])
         
         self.last_layer = nn.Linear(in_out_list[-2], in_out_list[-1])
+        
+        if self.use_softmax:
+            self.softmax = nn.Softmax(dim=1)
 
         return
     
+
     def forward(self, X):
         '''
         Returns
@@ -62,9 +79,10 @@ class CodeLayer(nn.Module):
         for layer in self.layers:
             out = layer(out)
         out = self.last_layer(out)
+        if self.use_softmax:
+            out = self.softmax(out)
 
         return out
-    
 
 
 
@@ -77,11 +95,12 @@ class CodeLayer(nn.Module):
 
 
 
-class AEModel(BaseLightningModule):
+class MLPModel(BaseLightningModule):
     def __init__(self,
                     n_input:int,
-                    n_embedding:int, 
-                    n_layers:int=2, 
+                    n_output:int, 
+                    hidden_layer_sizes:typing.List[int]=(100,),
+                    use_softmax:bool=True,
                     dropout:float=0.2,
                     optimizer:dict={'adam':{'lr':0.01}},
                     criterion:str='mseloss',
@@ -90,14 +109,15 @@ class AEModel(BaseLightningModule):
                     **kwargs,
                     ):
         '''
-        An auto-encoder model, built to be run similar to sklearn models.
+        A simple MLP model that can be used for classification and
+        built to be run similar to sklearn models.
 
         Example
         ---------
         ```
-        ae_model = AEModel(n_input=100, 
-                            n_embedding=5, 
-                            n_layers=2,
+        mlp_model = MLPModel(n_input=100, 
+                            n_output=2, 
+                            hidden_layer_sizes=(100,100,50),
                             n_epochs = 2,
                             verbose=True,
                             batch_size=10,
@@ -108,8 +128,8 @@ class AEModel(BaseLightningModule):
         X = torch.tensor(np.random.random((10000,100))).float()
         X_val = torch.tensor(np.random.random((10000,100))).float()
 
-        training_metrics = ae_model.fit(X=X, X_val=X_val)
-        output = ae_model.transform(X_test=X)
+        training_metrics = mlp_model.fit(X=X, X_val=X_val)
+        output = mlp_model.transform(X_test=X)
 
 
         ```
@@ -121,13 +141,17 @@ class AEModel(BaseLightningModule):
         - ```n_input```: ```int```:
             The size of the input feature dimension.
 
-        - ```n_embedding```: ```int```:
-            The number of features that the embedding will have.
+        - ```n_output```: ```int```:
+            The output dimension sizes.
 
-        - ```n_layers```: ```int```, optional:
-            The number of layers in the encoder model. The decoder
-            model will have the same number of layers.
-            Defaults to ```2```.
+        - ```hidden_layer_sizes```: ```typing.List[int]```, optional:
+            The hidden layer sizes.
+            Defaults to ```(100,)```.
+
+        - ```use_softmax```: ```bool```, optional:
+            Whether to use a softmax at the end of the fully
+            connected layers.
+            Defaults to ```True```
 
         - ```dropout```: ```float```, optional:
             The dropout value in each of the layers.
@@ -165,9 +189,10 @@ class AEModel(BaseLightningModule):
 
         if 'model_name' in kwargs:
             if kwargs['model_name'] is None:
-                self.model_name = f'AE-{n_input}-{n_embedding}-{n_layers}-{dropout}'
+                self.model_name = f'MLP-{n_input}-{n_output}'\
+                                    f'-{int("".join(map(str, hidden_layer_sizes)))}-{dropout}'
 
-        super(AEModel, self).__init__(
+        super(MLPModel, self).__init__(
             optimizer=optimizer,
             criterion=criterion,
             n_epochs=n_epochs,
@@ -176,35 +201,39 @@ class AEModel(BaseLightningModule):
         )
         
         self.n_input = n_input
-        self.n_embedding = n_embedding
-        self.n_layers = n_layers
+        self.n_output = n_output
+        self.hidden_layer_sizes = hidden_layer_sizes
+        self.use_softmax = use_softmax
         self.dropout = dropout
 
         return
     
     def _build_model(self):
-        self.e = CodeLayer(n_input=self.n_input, n_output=self.n_embedding, n_layers=self.n_layers, dropout=self.dropout)
-        self.d = CodeLayer(n_input=self.n_embedding, n_output=self.n_input, n_layers=self.n_layers, dropout=self.dropout)
+        self.fc_layers = FCLayers(
+                                    n_input=self.n_input, 
+                                    n_output=self.n_output, 
+                                    hidden_layer_sizes=self.hidden_layer_sizes, 
+                                    use_softmax=self.use_softmax,
+                                    dropout=self.dropout,
+                                    )
         return
 
     def forward(self,X):
-        return self.e(X)
+        return self.fc_layers(X)
     
     def training_step(self, batch, batch_idx):
         x, y = batch
         x = x.view(x.size(0), -1)
-        z = self.e(x)
-        x_hat = self.d(z)
-        loss = self.criterion(x_hat, x)
+        z = self.fc_layers(x)
+        loss = self.criterion(z, y)
         self.log('train_loss', loss)
         return loss
 
     def validation_step(self, val_batch, batch_idx):
         x, y = val_batch
         x = x.view(x.size(0), -1)
-        z = self.e(x)
-        x_hat = self.d(z)
-        loss = self.criterion(x_hat, x)
+        z = self.fc_layers(x)
+        loss = self.criterion(z, y)
         self.log('val_loss', loss, prog_bar=True)
         return loss
     
@@ -212,7 +241,8 @@ class AEModel(BaseLightningModule):
         if type(batch) == list:
             batch = batch[0]
         batch = batch.view(batch.size(0), -1)
-        return self(batch)
+        _, predictions = torch.max(self(batch), dim=1)
+        return predictions
 
     def fit(self,
             X:np.array=None, 
@@ -255,17 +285,7 @@ class AEModel(BaseLightningModule):
         
         self._build_model()
 
-        if train_loader is None:
-            y = deepcopy(X)
-        else:
-            y = None
-        
-        if val_loader is None:
-            y_val = deepcopy(X_val)
-        else:
-            y_val = None
-
-        return super(AEModel, self).fit(train_loader=train_loader,
+        return super(MLPModel, self).fit(train_loader=train_loader,
                                             X=X, 
                                             y=y,
                                             val_loader=val_loader,
@@ -273,40 +293,4 @@ class AEModel(BaseLightningModule):
                                             y_val=y_val,
                                             **kwargs,
                                             )
-
-    def transform(self,
-                    X:np.array=None, 
-                    test_loader:torch.utils.data.DataLoader=None,
-                    **kwargs,
-                  ):
-        '''
-        Method for transforming data based on the fit AE.
-        
-        Arguments
-        ---------
-        
-        - ```X_test```: ```numpy.array``` or ```None```, optional:
-            The input array to test the model on.
-            Defaults to ```None```.
-        
-        - ```test_loader```: ```torch.utils.data.DataLoader``` or ```None```, optional: 
-            A data loader containing the test data.
-            Defaults to ```None```.
-        
-        
-        Returns
-        --------
-        
-        - ```output```: ```torch.tensor``` : 
-            The resutls from the predictions
-        
-        
-        '''
-        
-        return super(AEModel, self).predict(
-                    X=X, 
-                    test_loader=test_loader,
-                    **kwargs,
-                    )
-
 
