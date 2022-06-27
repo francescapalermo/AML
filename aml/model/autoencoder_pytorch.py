@@ -48,7 +48,7 @@ class CodeLayer(BaseModel):
         self.layers = nn.ModuleList([nn.Sequential(
                                             nn.Linear(in_value, out_value), 
                                             nn.Dropout(dropout),
-                                            nn.BatchNorm1d(out_value), 
+                                            #nn.BatchNorm1d(out_value), 
                                             nn.ReLU())
                                      for in_value, out_value in zip(in_list, out_list)])
         

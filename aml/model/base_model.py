@@ -949,7 +949,10 @@ class BaseLightningModule(TrainingHelper, pl.LightningModule):
 
         #call_backs_to_pass = [pl.callbacks.TQDMProgressBar(refresh_rate=10)]
         #call_backs_to_pass = [ProgressBar()]
-        call_backs_to_pass = [MyProgressBar(refresh_rate=10)]
+        if self.verbose:
+            call_backs_to_pass = [MyProgressBar(refresh_rate=10)]
+        else:
+            call_backs_to_pass = []
         call_backs_to_pass.extend(self.callbacks)
 
         self.trainer = pl.Trainer(
