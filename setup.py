@@ -17,6 +17,7 @@ setup(
                         "numpy>=1.22",
                         "pandas>=1.4",
                         "matplotlib>=3.5",
+                        "seaborn>=0.11.2",
                         "scikit-learn>=1.0",
                         "tqdm>=4.64",
                         "tensorboard>=2.9",
