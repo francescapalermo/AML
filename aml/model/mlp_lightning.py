@@ -205,6 +205,7 @@ class MLPModel(BaseLightningModule):
         self.hidden_layer_sizes = hidden_layer_sizes
         self.use_softmax = use_softmax
         self.dropout = dropout
+        self.predict_type = 'classes'
 
         return
     
@@ -241,8 +242,11 @@ class MLPModel(BaseLightningModule):
         if type(batch) == list:
             batch = batch[0]
         batch = batch.view(batch.size(0), -1)
-        _, predictions = torch.max(self(batch), dim=1)
-        return predictions
+        probabilities, predictions = torch.max(self(batch), dim=1)
+        if self.predict_type == 'classes':
+            return predictions
+        elif self.predict_type == 'probabilities':
+            return probabilities
 
     def fit(self,
             X:np.array=None, 
@@ -292,5 +296,85 @@ class MLPModel(BaseLightningModule):
                                             X_val=X_val,
                                             y_val=y_val,
                                             **kwargs,
+                                            )
+    def predict(self,
+                X:np.array=None,
+                y:np.array=None,
+                test_loader:torch.utils.data.DataLoader=None, 
+                ):
+        '''
+        Method for making predictions on a test loader.
+        
+        Arguments
+        ---------
+        
+        - ```X```: ```numpy.array``` or ```None```, optional:
+            The input array to test the model on.
+            Defaults to ```None```.
+
+        - ```y```: ```numpy.array``` or ```None```, optional:
+            The target array to test the model on. If set to ```None```,
+            then ```targets_too``` will automatically be set to ```False```.
+            Defaults to ```None```.
+        
+        - ```test_loader```: ```torch.utils.data.DataLoader``` or ```None```, optional: 
+            A data loader containing the test data.
+            Defaults to ```None```.
+        
+        
+        Returns
+        --------
+        
+        - ```output```: ```torch.tensor``` : 
+            The resutls from the predictions
+        
+        
+        '''
+        self.predict_type = 'classes'
+        return super(MLPModel, self).predict(
+                                            X=X, 
+                                            y=y,
+                                            test_loader=test_loader,
+                                            )
+
+
+    def predict_proba(self,
+                X:np.array=None,
+                y:np.array=None,
+                test_loader:torch.utils.data.DataLoader=None, 
+                ):
+        '''
+        Method for making probability predictions on a test loader.
+        
+        Arguments
+        ---------
+        
+        - ```X```: ```numpy.array``` or ```None```, optional:
+            The input array to test the model on.
+            Defaults to ```None```.
+
+        - ```y```: ```numpy.array``` or ```None```, optional:
+            The target array to test the model on. If set to ```None```,
+            then ```targets_too``` will automatically be set to ```False```.
+            Defaults to ```None```.
+        
+        - ```test_loader```: ```torch.utils.data.DataLoader``` or ```None```, optional: 
+            A data loader containing the test data.
+            Defaults to ```None```.
+        
+        
+        Returns
+        --------
+        
+        - ```output```: ```torch.tensor``` : 
+            The resutls from the predictions
+        
+        
+        '''
+        self.predict_type = 'probabilities'
+        return super(MLPModel, self).predict(
+                                            X=X, 
+                                            y=y,
+                                            test_loader=test_loader,
                                             )
 
