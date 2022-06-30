@@ -842,6 +842,7 @@ class BaseLightningModule(TrainingHelper, pl.LightningModule):
                     dl_kwargs:dict={},
                     accelerator:str='auto',
                     enable_model_summary:bool=False,
+                    enable_checkpointing=False,
                     pl_trainer_kwargs:dict={},
                     callbacks:list=[],
                     log_every_n_steps:int=20,
@@ -934,6 +935,7 @@ class BaseLightningModule(TrainingHelper, pl.LightningModule):
         self.enable_model_summary = enable_model_summary
         self.verbose = verbose
         self.log_every_n_steps = log_every_n_steps
+        self.enable_checkpointing = enable_checkpointing
 
         self._reset()
 
@@ -963,6 +965,7 @@ class BaseLightningModule(TrainingHelper, pl.LightningModule):
                                 callbacks=call_backs_to_pass,
                                 logger=logger,
                                 log_every_n_steps=self.log_every_n_steps,
+                                enable_checkpointing=self.enable_checkpointing,
                                 **self.pl_trainer_kwargs
                                 )
 
