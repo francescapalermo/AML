@@ -842,9 +842,10 @@ class BaseLightningModule(TrainingHelper, pl.LightningModule):
                     dl_kwargs:dict={},
                     accelerator:str='auto',
                     enable_model_summary:bool=False,
-                    enable_checkpointing=False,
+                    enable_checkpointing:bool=False,
                     pl_trainer_kwargs:dict={},
                     callbacks:list=[],
+                    logging:bool=False,
                     log_every_n_steps:int=20,
                     ):
         '''
@@ -905,6 +906,14 @@ class BaseLightningModule(TrainingHelper, pl.LightningModule):
             Whether to pint a model summary when training.
             Defaults to ```False```.
 
+        - ```logging```: ```bool```, optional:
+            Whether to log the run data.
+            Defaults to ```False```.
+
+        - ```enable_checkpointing```: ```bool```, optional:
+            Whether to save the model periodically.
+            Defaults to ```False```.
+
         - ```pl_trainer_kwargs```: ```dict```, optional:
             These are keyword arguments that will be passed to 
             ```pytorch_lightning.Trainer```.
@@ -934,6 +943,7 @@ class BaseLightningModule(TrainingHelper, pl.LightningModule):
         self.callbacks = callbacks
         self.enable_model_summary = enable_model_summary
         self.verbose = verbose
+        self.logging = logging
         self.log_every_n_steps = log_every_n_steps
         self.enable_checkpointing = enable_checkpointing
 
@@ -945,12 +955,15 @@ class BaseLightningModule(TrainingHelper, pl.LightningModule):
         '''
         To reset the pytorch-lightning training.
         '''
-
-        logger = [pl.loggers.CSVLogger(save_dir='./', name=f'{type(self).__name__}_logs'), 
-                    pl.loggers.TensorBoardLogger(save_dir='./', name=f'{type(self).__name__}_logs')]
+        if self.logging:
+            logger = [pl.loggers.CSVLogger(save_dir='./', name=f'{type(self).__name__}_logs'), 
+                        pl.loggers.TensorBoardLogger(save_dir='./', name=f'{type(self).__name__}_logs')]
+        else:
+            logger = False
 
         #call_backs_to_pass = [pl.callbacks.TQDMProgressBar(refresh_rate=10)]
         #call_backs_to_pass = [ProgressBar()]
+
         if self.verbose:
             call_backs_to_pass = [MyProgressBar(refresh_rate=10)]
         else:
