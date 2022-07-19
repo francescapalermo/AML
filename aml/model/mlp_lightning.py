@@ -246,6 +246,7 @@ class MLPModel(BaseLightningModule):
         if self.predict_type == 'classes':
             return predictions
         elif self.predict_type == 'probabilities':
+            probabilities = nn.functional.softmax(self(batch), dim=1)
             return probabilities
 
     def fit(self,
@@ -373,8 +374,8 @@ class MLPModel(BaseLightningModule):
         '''
         self.predict_type = 'probabilities'
         return super(MLPModel, self).predict_proba(
-            X=X,
-            y=y,
-            test_loader=test_loader,
-        )
+                                            X=X, 
+                                            y=y,
+                                            test_loader=test_loader,
+                                            )
 
