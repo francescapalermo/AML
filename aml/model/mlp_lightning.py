@@ -372,9 +372,9 @@ class MLPModel(BaseLightningModule):
         
         '''
         self.predict_type = 'probabilities'
-        return super(MLPModel, self).predict(
-                                            X=X, 
-                                            y=y,
-                                            test_loader=test_loader,
-                                            )
+        return super(MLPModel, self).predict_proba(
+            X=X,
+            y=y,
+            test_loader=test_loader,
+        )
 
