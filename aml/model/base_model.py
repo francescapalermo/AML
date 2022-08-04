@@ -5,8 +5,6 @@ import typing
 import numpy as np
 from torch.utils.tensorboard import SummaryWriter
 import pytorch_lightning as pl
-import warnings
-import logging 
 import copy
 
  
@@ -16,11 +14,6 @@ from .fitting import BasicModelFitter
 from .testing import BasicModelTesting
 from .progress import MyProgressBar
 
-
-## pytorch lightning warnings
-warnings.filterwarnings("ignore", ".*does not have many workers.*")
-warnings.filterwarnings("ignore", '.*You defined a `validation_step` but have no `val_dataloader`.*')
-logging.getLogger("pytorch_lightning").setLevel(logging.WARNING)
 
 
 
