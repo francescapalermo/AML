@@ -25,31 +25,31 @@ def loss_plot(loss, val_loss = None, n_epochs = None):
     Arguments
     ---------
 
-    - ```loss```: ```list``` or ```np.array```:
+    - `loss`: `list` or `np.array`:
         The loss values to plot. Each value
         should represent the loss on that step.
     
-    - ```val_loss```: ```list``` or ```np.array```:
+    - `val_loss`: `list` or `np.array`:
         The validation loss values to plot. Each value
         should represent the validation loss on that step.
-        If ```None```, no validation loss line will be drawn.
-        Defaults to ```None```.
+        If `None`, no validation loss line will be drawn.
+        Defaults to `None`.
 
-    - ```n_epochs```: ```int```:
+    - `n_epochs`: `int`:
         The total number of steps that the model
         will be trained for. This is used to set the 
-        bounds on the figure. If ```None```, then
+        bounds on the figure. If `None`, then
         the limits will be based on the data given.
-        Defaults to ```None```.
+        Defaults to `None`.
 
     Returns
     ---------
 
-    - ```fig```: ```matplotlib.pyplot.figure```:
+    - `fig`: `matplotlib.pyplot.figure`:
         The figure containing the axes, which contains
         the plot.
     
-    - ```ax```: ```matplotlib.pyplot.axes```:
+    - `ax`: `matplotlib.pyplot.axes`:
         The axes containing the plot.
 
 
@@ -111,52 +111,52 @@ class BasicModelFitter:
 
         Arguments
         ---------
-        - ```model```: pytorch model
+        - `model`: pytorch model
             This is the pytorch model that can be fit
             and have inference done using.
 
-        - ```device```: ```str``` (optional):
+        - `device`: `str` (optional):
             This is the device name that the model will be trained on. 
-            Most common arguments here will be ```'cpu'``` 
-            or ```'cuda'```. ```'auto'``` will 
-            pick  ```'cuda'``` if available, otherwise
-            the training will be performed on ```'cpu'```.
-            Defaults to ```'auto'```.
+            Most common arguments here will be `'cpu'` 
+            or `'cuda'`. `'auto'` will 
+            pick  `'cuda'` if available, otherwise
+            the training will be performed on `'cpu'`.
+            Defaults to `'auto'`.
         
-        - ```verbose```: ```bool``` (optional):
+        - `verbose`: `bool` (optional):
             Allows the user to specify whether progress
             should be printed as the model is training.
-            Defaults to ```False```.
+            Defaults to `False`.
 
-        - ```model_path```: ```str``` or ```None``` (optional):
+        - `model_path`: `str` or `None` (optional):
             Path to the directory in which the models will be saved
-            after training. If ```None```, no models are saved.
+            after training. If `None`, no models are saved.
             If specifying a path, make sure that this path exists.
-            Defaults to ```None```.
+            Defaults to `None`.
         
-        - ```model_name```: ```str```:
+        - `model_name`: `str`:
             The name of the model. This is used when saving
             results and the model.
-            Defaults to ```''```
+            Defaults to `''`
         
-        - ```metrics_track```: ```list``` of ```str``` or ```None```:
+        - `metrics_track`: `list` of `str` or `None`:
             List of strings containing the names of the 
             metrics to be tracked. Acceptable values are in
-            ```['accuracy']```. Loss is tracked by default.
-            Defaults to ```None```.
+            `['accuracy']`. Loss is tracked by default.
+            Defaults to `None`.
             
-            - ```'accuracy'``` reports the mean accuracy over 
+            - `'accuracy'` reports the mean accuracy over 
                 an epoch AFTER the model has been trained on the examples.
-                ```'accuracy'``` is accessible via the attributes 
-                ```.train_accuracy``` and ```.val_accuracy```.
+                `'accuracy'` is accessible via the attributes 
+                `.train_accuracy` and `.val_accuracy`.
 
-            Defaults to ```[]```.
+            Defaults to `[]`.
         
-        - ```writer```: ```torch.utils.tensorboard.SummaryWriter```:
+        - `writer`: `torch.utils.tensorboard.SummaryWriter`:
             This is the tensorboard writer that is used to track
             metrics as the model is training. If a writer is not
             passed as an argument then one is assigned with
-            the current date and time, and ```model_name``` as its title.
+            the current date and time, and `model_name` as its title.
 
         '''
 
@@ -374,41 +374,41 @@ class BasicModelFitter:
         Arguments
         ---------
             
-        - ```train_loader```: ```torch.utils.data.DataLoader```:
+        - `train_loader`: `torch.utils.data.DataLoader`:
             Data loader for the training data. Each iteration 
             should contain the inputs and the targets.
 
-        - ```n_epochs```: ```int```:
+        - `n_epochs`: `int`:
             This is the number of epochs to run the training for.
         
-        - ```criterion```: pytorch loss function:
+        - `criterion`: pytorch loss function:
             This is the loss function that will be used in the training.
         
-        - ```optimizer```: pytorch optimiser:
+        - `optimizer`: pytorch optimiser:
             This is the optimisation method used in the training.
         
-        - ```val_loader```: ```torch.utils.data.DataLoader``` (optional):
+        - `val_loader`: `torch.utils.data.DataLoader` (optional):
             Data loader for the validation data. Each iteration 
             should contain the inputs and the targets.
-            If ```None``` then no validation tests will be performed
+            If `None` then no validation tests will be performed
             as the model is training.
-            Defaults to ```None```.
+            Defaults to `None`.
         
-        - ```train_scheduler```: ```torch.optim.lr_scheduler``` (optional):
+        - `train_scheduler`: `torch.optim.lr_scheduler` (optional):
             Learning rate scheduler for training. 
-            Defaults to ```None```.
+            Defaults to `None`.
         
-        - ```source_fit```: ```bool``` (optional):
+        - `source_fit`: `bool` (optional):
             This argument tells the class whether sources are available in 
             the train and validation loaders and passes them to the optimizer
             during training.
-            Defaults to ```False```.
+            Defaults to `False`.
 
 
         Returns
         ---------
 
-        - ```model```: pytorch model
+        - `model`: pytorch model
             This returns the pytorch model after being 
             fitted using the arguments given.
 

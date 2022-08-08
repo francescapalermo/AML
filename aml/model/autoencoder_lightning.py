@@ -92,7 +92,7 @@ class AEModel(BaseLightningModule):
         '''
         An auto-encoder model, built to be run similar to sklearn models.
 
-        Example
+        Examples
         ---------
         ```
         ae_model = AEModel(n_input=100, 
@@ -118,47 +118,47 @@ class AEModel(BaseLightningModule):
         Arguments
         ---------
 
-        - ```n_input```: ```int```:
+        - `n_input`: `int`:
             The size of the input feature dimension.
 
-        - ```n_embedding```: ```int```:
+        - `n_embedding`: `int`:
             The number of features that the embedding will have.
 
-        - ```n_layers```: ```int```, optional:
+        - `n_layers`: `int`, optional:
             The number of layers in the encoder model. The decoder
             model will have the same number of layers.
-            Defaults to ```2```.
+            Defaults to `2`.
 
-        - ```dropout```: ```float```, optional:
+        - `dropout`: `float`, optional:
             The dropout value in each of the layers.
-            Defaults to ```0.2```
+            Defaults to `0.2`
 
-        - ```criterion```: ```str``` or ```torch.nn.Module```:
+        - `criterion`: `str` or `torch.nn.Module`:
             The criterion that is used to calculate the loss.
-            If using a string, please use one of ```['mseloss', 'celoss']```
-            Defaults to ```mseloss```.
+            If using a string, please use one of `['mseloss', 'celoss']`
+            Defaults to `mseloss`.
 
-        - ```optimizer```: ```dict```, optional:
+        - `optimizer`: `dict`, optional:
             A dictionary containing the optimizer name as keys and
             a dictionary as values containing the arguments as keys. 
-            For example: ```{'adam':{'lr':0.01}}```. 
-            The key can also be a ```torch.optim``` class,
+            For example: `{'adam':{'lr':0.01}}`. 
+            The key can also be a `torch.optim` class,
             but not initiated.
-            For example: ```{torch.optim.Adam:{'lr':0.01}}```. 
-            Defaults to ```{'adam':{'lr':0.01}}```.
+            For example: `{torch.optim.Adam:{'lr':0.01}}`. 
+            Defaults to `{'adam':{'lr':0.01}}`.
         
-        - ```n_epochs```: ```int```, optional:
+        - `n_epochs`: `int`, optional:
             The number of epochs to run the training for.
-            Defaults to ```10```.
+            Defaults to `10`.
         
-        - ```accelerator```: ```str```, optional:
+        - `accelerator`: `str`, optional:
             The device to use for training. Please use 
-            any of ```(“cpu”, “gpu”, “tpu”, “ipu”, “hpu”, “auto”)```.
-            Defaults to ```'auto'```
+            any of `(“cpu”, “gpu”, “tpu”, “ipu”, “hpu”, “auto”)`.
+            Defaults to `'auto'`
 
-        - ```kwargs```: optional:
+        - `kwargs`: optional:
             These keyword arguments will be passed to 
-            ```dcarte_transform.model.base_model.BaseModel```.
+            `dcarte_transform.model.base_model.BaseModel`.
 
 
         '''
@@ -225,31 +225,31 @@ class AEModel(BaseLightningModule):
             ):
         '''
         This is used to fit the model. Please either use 
-        the ```train_loader``` or ```X``` and ```y```.
+        the `train_loader` or `X` and `y`.
         This corresponds to using either a torch DataLoader
         or a numpy array as the training data. If using 
-        the ```train_loader```, ensure each iteration returns
-        ```[X, X]```.
+        the `train_loader`, ensure each iteration returns
+        `[X, X]`.
 
         Arguments
         ---------
 
-        - ```X```: ```numpy.array``` or ```None```, optional:
+        - `X`: `numpy.array` or `None`, optional:
             The input array to fit the model on.
-            Defaults to ```None```.
+            Defaults to `None`.
 
-        - ```train_loader```: ```torch.utils.data.DataLoader``` or ```None```, optional:
+        - `train_loader`: `torch.utils.data.DataLoader` or `None`, optional:
             The training data, which contains the input and the targets.
-            Defaults to ```None```.
+            Defaults to `None`.
 
-        - ```X_val```: ```numpy.array``` or ```None```, optional:
+        - `X_val`: `numpy.array` or `None`, optional:
             The validation input to calculate validation 
             loss on when training the model.
-            Defaults to ```None```
+            Defaults to `None`
 
-        - ```val_loader```: ```torch.utils.data.DataLoader``` or ```None```, optional:
+        - `val_loader`: `torch.utils.data.DataLoader` or `None`, optional:
             The validation data, which contains the input and the targets.
-            Defaults to ```None```.
+            Defaults to `None`.
 
         '''
         
@@ -285,19 +285,19 @@ class AEModel(BaseLightningModule):
         Arguments
         ---------
         
-        - ```X_test```: ```numpy.array``` or ```None```, optional:
+        - `X_test`: `numpy.array` or `None`, optional:
             The input array to test the model on.
-            Defaults to ```None```.
+            Defaults to `None`.
         
-        - ```test_loader```: ```torch.utils.data.DataLoader``` or ```None```, optional: 
+        - `test_loader`: `torch.utils.data.DataLoader` or `None`, optional: 
             A data loader containing the test data.
-            Defaults to ```None```.
+            Defaults to `None`.
         
         
         Returns
         --------
         
-        - ```output```: ```torch.tensor``` : 
+        - `output`: `torch.tensor` : 
             The resutls from the predictions
         
         

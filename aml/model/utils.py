@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 
 ###### making numpy or tensors a torch dataset
 class MyData(torch.utils.data.Dataset):
@@ -22,27 +23,27 @@ def get_optimizer_from_name(name):
     Arguments
     ---------
     
-    - ```name```: ```str```: 
-        This can be any of ```'adam'```,
-        ```'adadelta'```, ```'sgd'```
+    - `name`: `str`: 
+        This can be any of `'adam'`,
+        `'adadelta'`, `'sgd'`
     
     
     Raises
     ---------
     
-        ```NotImplementedError```: If optimizer name
+        `NotImplementedError`: If optimizer name
         is not implemented.
     
     Returns
     --------
     
-    - ```optimizer```: ```torch.optim``` optimizer.
+    - `optimizer`: `torch.optim` optimizer.
     
     
     '''
     if name == 'adam':
         return torch.optim.Adam
-    if name =='adadelta':
+    elif name =='adadelta':
         return torch.optim.Adadelta
     elif name == 'sgd':
         return torch.optim.SGD
@@ -59,25 +60,66 @@ def get_criterion_from_name(name):
     Arguments
     ---------
     
-    - ```name```: ```str```: 
-        This can be any of ```'celoss'```,
-        ```'mseloss'```.
+    - `name`: `str`: 
+        This can be any of `'celoss'`,
+        `'mseloss'`.
     
     
     Raises
     ---------
     
-        ```NotImplementedError```: If loss name
+        `NotImplementedError`: If loss name
         is not implemented.
     
     Returns
     --------
     
-    - ```loss_function```.
+    - `loss_function`.
     
     
     '''
     if name == 'celoss':
         return nn.CrossEntropyLoss() 
-    if name == 'mseloss':
+    elif name == 'mseloss':
         return nn.MSELoss()
+
+
+def get_function_from_name(name):
+    '''
+    Get a torch.nn.functional from a given name.
+    
+    
+    
+    Arguments
+    ---------
+    
+    - `name`: `str`: 
+        This can be any of:
+        - `'identity'`: The identity function.
+        - `'logistic'` or `'sigmoid'`: The logistic sigmoid function.
+        - `'tanh'`, the hyperbolic tan function.
+        - `'relu'`, the rectified linear unit function.
+    
+    
+    Raises
+    ---------
+    
+        `NotImplementedError`: If loss name
+        is not implemented.
+    
+    Returns
+    --------
+    
+    - `loss_function`.
+    
+    
+    '''
+
+    if name == 'relu':
+        return F.relu
+    elif name == 'logistic' or 'sigmoid':
+        return torch.sigmoid
+    elif name == 'tanh':
+        return F.tanh
+    elif name == 'identity':
+        return lambda x: x

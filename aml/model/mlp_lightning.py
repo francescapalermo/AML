@@ -5,7 +5,7 @@ import typing
 from copy import deepcopy
 
 from .base_model import BaseLightningModule
-
+from .utils import get_function_from_name
 
 
 
@@ -14,6 +14,7 @@ class FCLayers(nn.Module):
                     n_input:int, 
                     n_output:int, 
                     hidden_layer_sizes:typing.List[int]=(100,),
+                    activation:typing.Union[str, torch.nn.Module]='relu',
                     use_softmax:bool=True, 
                     dropout=0.2,
                     ):
@@ -23,20 +24,31 @@ class FCLayers(nn.Module):
         Arguments
         ---------
             
-        - ```n_input```: ```int```:
+        - `n_input`: `int`:
             The size of the input feature dimension.
 
-        - ```n_output```: ```int```:
+        - `n_output`: `int`:
             The output dimension sizes.
 
-        - ```hidden_layer_sizes```: ```typing.List[int]```, optional:
+        - `hidden_layer_sizes`: `typing.List[int]`, optional:
             The hidden layer sizes.
-            Defaults to ```(100,)```.
+            Defaults to `(100,)`.
 
-        - ```use_softmax```: ```bool```, optional:
+        - `activation`: `typing.Union[str,torch.nn.Module] `, optional:
+            The activation function to be used in the hidden layers to add
+            non-linearity. You may pass a str of the form:
+            - `'identity'`: The identity function.
+            - `'logistic'`: The logistic sigmoid function.
+            - `'tanh'`, the hyperbolic tan function.
+            - `'relu'`, the rectified linear unit function.
+            You may also pass a torch module itself, which should be
+            callable, taking a tensor as input and outputting a tensor.
+            Defaults to `relu`.
+
+        - `use_softmax`: `bool`, optional:
             Whether to use a softmax at the end of the fully
             connected layers.
-            Defaults to ```True```
+            Defaults to `True`
 
 
         '''
@@ -44,7 +56,10 @@ class FCLayers(nn.Module):
         super(FCLayers, self).__init__()
 
         self.use_softmax = use_softmax
-        
+        self.activation = get_function_from_name(activation) if type(activation) == str  \
+                            else activation
+
+
         in_out_list = [n_input] + list(hidden_layer_sizes) + [n_output] 
         
         in_list = in_out_list[:-1][:-1]
@@ -54,7 +69,6 @@ class FCLayers(nn.Module):
                                             nn.Linear(in_value, out_value), 
                                             nn.Dropout(dropout),
                                             #nn.BatchNorm1d(out_value), 
-                                            nn.ReLU(),
                                             )
                                             for in_value, out_value in zip(in_list, out_list)])
         
@@ -78,6 +92,7 @@ class FCLayers(nn.Module):
         out = X
         for layer in self.layers:
             out = layer(out)
+            out = self.activation(out)
         out = self.last_layer(out)
         if self.use_softmax:
             out = self.softmax(out)
@@ -100,6 +115,7 @@ class MLPModel(BaseLightningModule):
                     n_input:int,
                     n_output:int, 
                     hidden_layer_sizes:typing.List[int]=(100,),
+                    activation:typing.Union[str,torch.nn.Module]='relu',
                     use_softmax:bool=True,
                     dropout:float=0.2,
                     optimizer:dict={'adam':{'lr':0.01}},
@@ -112,7 +128,7 @@ class MLPModel(BaseLightningModule):
         A simple MLP model that can be used for classification and
         built to be run similar to sklearn models.
 
-        Example
+        Examples
         ---------
         ```
         mlp_model = MLPModel(n_input=100, 
@@ -138,51 +154,62 @@ class MLPModel(BaseLightningModule):
         Arguments
         ---------
 
-        - ```n_input```: ```int```:
+        - `n_input`: `int`:
             The size of the input feature dimension.
 
-        - ```n_output```: ```int```:
+        - `n_output`: `int`:
             The output dimension sizes.
 
-        - ```hidden_layer_sizes```: ```typing.List[int]```, optional:
+        - `hidden_layer_sizes`: `typing.List[int]`, optional:
             The hidden layer sizes.
-            Defaults to ```(100,)```.
+            Defaults to `(100,)`.
 
-        - ```use_softmax```: ```bool```, optional:
+        - `activation`: `typing.Union[str,torch.nn.Module] `, optional:
+            The activation function to be used in the hidden layers to add
+            non-linearity. You may pass a str of the form:
+            - `'identity'`: The identity function.
+            - `'logistic'`: The logistic sigmoid function.
+            - `'tanh'`, the hyperbolic tan function.
+            - `'relu'`, the rectified linear unit function.
+            You may also pass a torch module itself, which should be
+            callable, taking a tensor as input and outputting a tensor.
+            Defaults to `relu`.
+
+        - `use_softmax`: `bool`, optional:
             Whether to use a softmax at the end of the fully
             connected layers.
-            Defaults to ```True```
+            Defaults to `True`
 
-        - ```dropout```: ```float```, optional:
+        - `dropout`: `float`, optional:
             The dropout value in each of the layers.
-            Defaults to ```0.2```
+            Defaults to `0.2`
 
-        - ```criterion```: ```str``` or ```torch.nn.Module```:
+        - `criterion`: `str` or `torch.nn.Module`:
             The criterion that is used to calculate the loss.
-            If using a string, please use one of ```['mseloss', 'celoss']```
-            Defaults to ```mseloss```.
+            If using a string, please use one of `['mseloss', 'celoss']`
+            Defaults to `mseloss`.
 
-        - ```optimizer```: ```dict```, optional:
+        - `optimizer`: `dict`, optional:
             A dictionary containing the optimizer name as keys and
             a dictionary as values containing the arguments as keys. 
-            For example: ```{'adam':{'lr':0.01}}```. 
-            The key can also be a ```torch.optim``` class,
+            For example: `{'adam':{'lr':0.01}}`. 
+            The key can also be a `torch.optim` class,
             but not initiated.
-            For example: ```{torch.optim.Adam:{'lr':0.01}}```. 
-            Defaults to ```{'adam':{'lr':0.01}}```.
+            For example: `{torch.optim.Adam:{'lr':0.01}}`. 
+            Defaults to `{'adam':{'lr':0.01}}`.
         
-        - ```n_epochs```: ```int```, optional:
+        - `n_epochs`: `int`, optional:
             The number of epochs to run the training for.
-            Defaults to ```10```.
+            Defaults to `10`.
         
-        - ```accelerator```: ```str```, optional:
+        - `accelerator`: `str`, optional:
             The device to use for training. Please use 
-            any of ```(“cpu”, “gpu”, “tpu”, “ipu”, “hpu”, “auto”)```.
-            Defaults to ```'auto'```
+            any of `(“cpu”, “gpu”, “tpu”, “ipu”, “hpu”, “auto”)`.
+            Defaults to `'auto'`
 
-        - ```kwargs```: optional:
+        - `kwargs`: optional:
             These keyword arguments will be passed to 
-            ```dcarte_transform.model.base_model.BaseModel```.
+            `dcarte_transform.model.base_model.BaseModel`.
 
 
         '''
@@ -205,18 +232,20 @@ class MLPModel(BaseLightningModule):
         self.hidden_layer_sizes = hidden_layer_sizes
         self.use_softmax = use_softmax
         self.dropout = dropout
+        self.activation = activation
         self.predict_type = 'classes'
 
         return
     
     def _build_model(self):
         self.fc_layers = FCLayers(
-                                    n_input=self.n_input, 
-                                    n_output=self.n_output, 
-                                    hidden_layer_sizes=self.hidden_layer_sizes, 
-                                    use_softmax=self.use_softmax,
-                                    dropout=self.dropout,
-                                    )
+                            n_input=self.n_input, 
+                            n_output=self.n_output, 
+                            hidden_layer_sizes=self.hidden_layer_sizes, 
+                            use_softmax=self.use_softmax,
+                            activation=self.activation,
+                            dropout=self.dropout,
+                            )
         return
 
     def forward(self,X):
@@ -242,11 +271,11 @@ class MLPModel(BaseLightningModule):
         if type(batch) == list:
             batch = batch[0]
         batch = batch.view(batch.size(0), -1)
-        probabilities, predictions = torch.max(self(batch), dim=1)
         if self.predict_type == 'classes':
+            _, predictions = torch.max(self(batch), dim=1)
             return predictions
         elif self.predict_type == 'probabilities':
-            return probabilities
+            return self(batch)
 
     def fit(self,
             X:np.array=None, 
@@ -259,31 +288,31 @@ class MLPModel(BaseLightningModule):
             ):
         '''
         This is used to fit the model. Please either use 
-        the ```train_loader``` or ```X``` and ```y```.
+        the `train_loader` or `X` and `y`.
         This corresponds to using either a torch DataLoader
         or a numpy array as the training data. If using 
-        the ```train_loader```, ensure each iteration returns
-        ```[X, X]```.
+        the `train_loader`, ensure each iteration returns
+        `[X, X]`.
 
         Arguments
         ---------
 
-        - ```X```: ```numpy.array``` or ```None```, optional:
+        - `X`: `numpy.array` or `None`, optional:
             The input array to fit the model on.
-            Defaults to ```None```.
+            Defaults to `None`.
 
-        - ```train_loader```: ```torch.utils.data.DataLoader``` or ```None```, optional:
+        - `train_loader`: `torch.utils.data.DataLoader` or `None`, optional:
             The training data, which contains the input and the targets.
-            Defaults to ```None```.
+            Defaults to `None`.
 
-        - ```X_val```: ```numpy.array``` or ```None```, optional:
+        - `X_val`: `numpy.array` or `None`, optional:
             The validation input to calculate validation 
             loss on when training the model.
-            Defaults to ```None```
+            Defaults to `None`
 
-        - ```val_loader```: ```torch.utils.data.DataLoader``` or ```None```, optional:
+        - `val_loader`: `torch.utils.data.DataLoader` or `None`, optional:
             The validation data, which contains the input and the targets.
-            Defaults to ```None```.
+            Defaults to `None`.
 
         '''
         
@@ -308,24 +337,24 @@ class MLPModel(BaseLightningModule):
         Arguments
         ---------
         
-        - ```X```: ```numpy.array``` or ```None```, optional:
+        - `X`: `numpy.array` or `None`, optional:
             The input array to test the model on.
-            Defaults to ```None```.
+            Defaults to `None`.
 
-        - ```y```: ```numpy.array``` or ```None```, optional:
-            The target array to test the model on. If set to ```None```,
-            then ```targets_too``` will automatically be set to ```False```.
-            Defaults to ```None```.
+        - `y`: `numpy.array` or `None`, optional:
+            The target array to test the model on. If set to `None`,
+            then `targets_too` will automatically be set to `False`.
+            Defaults to `None`.
         
-        - ```test_loader```: ```torch.utils.data.DataLoader``` or ```None```, optional: 
+        - `test_loader`: `torch.utils.data.DataLoader` or `None`, optional: 
             A data loader containing the test data.
-            Defaults to ```None```.
+            Defaults to `None`.
         
         
         Returns
         --------
         
-        - ```output```: ```torch.tensor``` : 
+        - `output`: `torch.tensor` : 
             The resutls from the predictions
         
         
@@ -349,24 +378,24 @@ class MLPModel(BaseLightningModule):
         Arguments
         ---------
         
-        - ```X```: ```numpy.array``` or ```None```, optional:
+        - `X`: `numpy.array` or `None`, optional:
             The input array to test the model on.
-            Defaults to ```None```.
+            Defaults to `None`.
 
-        - ```y```: ```numpy.array``` or ```None```, optional:
-            The target array to test the model on. If set to ```None```,
-            then ```targets_too``` will automatically be set to ```False```.
-            Defaults to ```None```.
+        - `y`: `numpy.array` or `None`, optional:
+            The target array to test the model on. If set to `None`,
+            then `targets_too` will automatically be set to `False`.
+            Defaults to `None`.
         
-        - ```test_loader```: ```torch.utils.data.DataLoader``` or ```None```, optional: 
+        - `test_loader`: `torch.utils.data.DataLoader` or `None`, optional: 
             A data loader containing the test data.
-            Defaults to ```None```.
+            Defaults to `None`.
         
         
         Returns
         --------
         
-        - ```output```: ```torch.tensor``` : 
+        - `output`: `torch.tensor` : 
             The resutls from the predictions
         
         

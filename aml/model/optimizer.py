@@ -5,7 +5,7 @@ class CombineOptimizers(object):
     def __init__(self, *optimizers):
         '''
         Allows the user to add multiple optimizers and update parameters with
-        a single ```.step()``` call.
+        a single `.step()` call.
         This code has been edited from:
         https://discuss.pytorch.org/t/two-optimizers-for-one-model/11085/7
         
@@ -13,7 +13,7 @@ class CombineOptimizers(object):
         Arguments
         ---------
 
-        - ```optimizers```: ```torch.optim```:
+        - `optimizers`: `torch.optim`:
             The optimizers to combine into one class. You 
             may pass as many as you like.
 
