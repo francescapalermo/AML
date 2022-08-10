@@ -30,10 +30,12 @@ def make_input_roll(data:np.ndarray, sequence_length:int)->np.ndarray:
         This is an array with the rolled data.
     
     '''
-    if data.shape[0] < sequence_length + 1:
-        if data.shape[1] > 0:
-            return np.zeros((1,sequence_length, data.shape[1]), dtype = data.dtype)
-        else: return np.zeros((1,sequence_length, 1), dtype = data.dtype)
+    assert type(sequence_length) == int, "Please ensure that sequence_length is an integer"
+    
+    if data.shape[0] < sequence_length:
+        raise TypeError("Please ensure that the input can be rolled "\
+                        "by the specified sequence_length. Input size was "\
+                        f"{data.shape} and the sequence_length was {sequence_length}.")
     
     output = np.empty((data.shape[0]-sequence_length + 1,
                 sequence_length, 
