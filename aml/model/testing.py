@@ -20,17 +20,17 @@ class BasicModelTesting:
         Arguments 
         ---------
 
-        - ```model```: pytorch model:
+        - `model`: pytorch model:
             The model to be tested.
         
-        - ```device```: ```str``` (optional):
+        - `device`: `str` (optional):
             The device for the model and data to be 
             loaded to and used during testing.
-            Defaults to ```'auto'```.
+            Defaults to `'auto'`.
 
-        - ```verbose```: ```bool``` (optional):
+        - `verbose`: `bool` (optional):
             Whether to print information about progress during testing.
-            Defaults to ```True```.
+            Defaults to `True`.
 
         '''
         
@@ -52,20 +52,20 @@ class BasicModelTesting:
         Arguments
         ---------
 
-        - ```test_loader```: ```torch.utils.data.DataLoader```:
+        - `test_loader`: `torch.utils.data.DataLoader`:
             This is the test data loader that contains the test data.
             If this data loader contains the inputs as well as 
             the outputs, then make sure to set the argument
-            ```targets_too=True```. If the targets are included
+            `targets_too=True`. If the targets are included
             as well, make sure that each iteration of the dataloader
             returns (inputs, targets).
         
         Returns
         ---------
 
-        - ```predictions```: ```torch.tensor```:
+        - `predictions`: `torch.tensor`:
             The outputs of the model for each of the inputs
-            given in the ```test_loader```.
+            given in the `test_loader`.
 
         '''
         self.model.to(self.device) # move model to devicetqdm
