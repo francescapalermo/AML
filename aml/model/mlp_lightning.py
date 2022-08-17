@@ -275,12 +275,7 @@ class MLPModel(BaseLightningModule):
             _, predictions = torch.max(self(batch), dim=1)
             return predictions
         elif self.predict_type == 'probabilities':
-<<<<<<< HEAD
-            probabilities = nn.functional.softmax(self(batch), dim=1)
-            return probabilities
-=======
             return self(batch)
->>>>>>> main
 
     def fit(self,
             X:np.array=None, 
@@ -406,7 +401,7 @@ class MLPModel(BaseLightningModule):
         
         '''
         self.predict_type = 'probabilities'
-        return super(MLPModel, self).predict_proba(
+        return super(MLPModel, self).predict(
                                             X=X, 
                                             y=y,
                                             test_loader=test_loader,
