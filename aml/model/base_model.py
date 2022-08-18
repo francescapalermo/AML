@@ -6,7 +6,7 @@ import numpy as np
 from torch.utils.tensorboard import SummaryWriter
 import pytorch_lightning as pl
 import copy
-
+import gc
  
 from .utils import MyData, get_optimizer_from_name, get_criterion_from_name
 from .optimizer import CombineOptimizers
@@ -940,11 +940,11 @@ class BaseLightningModule(TrainingHelper, pl.LightningModule):
         self.log_every_n_steps = log_every_n_steps
         self.enable_checkpointing = enable_checkpointing
 
-        self._reset()
+        self._reset_trainer()
 
         return
     
-    def _reset(self):
+    def _reset_trainer(self):
         '''
         To reset the pytorch-lightning training.
         '''
@@ -1038,7 +1038,7 @@ class BaseLightningModule(TrainingHelper, pl.LightningModule):
 
         '''
 
-        self._reset()
+        self._reset_trainer()
 
         train_loader, val_loader = self._prepare_fit_data( 
                                                         X=X, 
@@ -1056,6 +1056,14 @@ class BaseLightningModule(TrainingHelper, pl.LightningModule):
                             val_dataloaders=val_loader,
                             ckpt_path=ckpt_path,
                             )
+        
+        del train_loader
+        del val_loader
+        del self.trainer
+
+        self.cpu()
+        gc.collect()
+        torch.cuda.empty_cache()
 
 
 
@@ -1095,7 +1103,7 @@ class BaseLightningModule(TrainingHelper, pl.LightningModule):
 
         return_concat = test_loader is None
 
-        self._reset()
+        self._reset_trainer()
         
         test_loader = self._prepare_predict_data( 
                                                 X=X,
@@ -1109,5 +1117,12 @@ class BaseLightningModule(TrainingHelper, pl.LightningModule):
             output = torch.cat(output)
             if self.return_numpy:
                 output = output.numpy()
+
+        del test_loader
+        del self.trainer
+
+        self.cpu()
+        gc.collect()
+        torch.cuda.empty_cache()
 
         return output

@@ -256,7 +256,7 @@ class MLPModel(BaseLightningModule):
         x = x.view(x.size(0), -1)
         z = self.fc_layers(x)
         loss = self.criterion(z, y)
-        self.log('train_loss', loss)
+        self.log('train_loss', float(loss))
         return loss
 
     def validation_step(self, val_batch, batch_idx):
@@ -264,7 +264,7 @@ class MLPModel(BaseLightningModule):
         x = x.view(x.size(0), -1)
         z = self.fc_layers(x)
         loss = self.criterion(z, y)
-        self.log('val_loss', loss, prog_bar=True)
+        self.log('val_loss', float(loss), prog_bar=True)
         return loss
     
     def predict_step(self, batch, batch_idx: int):
