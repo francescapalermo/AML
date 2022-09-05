@@ -107,6 +107,52 @@ def format_mean_iqr_missing(
 
 
 
+def format_mean_std(
+    values:np.ndarray, 
+    string:str="{mean:.2f} ({std:.2f})",
+    ) -> str:
+    '''
+    A function useful for formatting a table with information 
+    on the mean and standard deviation an attribute.
+
+    Examples
+    ---------
+    ```
+    >>> import numpy as np
+    >>> format_mean_std(
+            values=np.array([1,2,3,4,5]),
+            string="{mean:.2f} ({std:.2f})",
+            )
+    '3.00 (1.41)'
+    ```
+
+    Arguments
+    ---------
+
+    - `values`: `numpy.ndarray`:
+        The array to calculate the values on.
+    
+    - `string`: `str`, optional:
+        The string that dictates the output.
+        This should include somewhere `{mean}` and
+        `{std}`.
+        Defaults to `"{mean:.2f} ({std:.2f})"`.
+    
+    Returns
+    ---------
+
+    - `stats`: `str`:
+        A string of the desired format with the 
+        statistics included.
+
+    
+    '''
+    mean = np.mean(values)
+    std = np.std(values)
+    return string.format(mean=mean, std=std)
+
+
+
 def module_from_file(module_name:str, file_path:str):
     '''
     Will open a module from a file path.
