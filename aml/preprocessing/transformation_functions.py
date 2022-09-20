@@ -43,7 +43,6 @@ def make_input_roll(
                 [5,6]]]
 
 
-
     Arguments
     ---------
     
@@ -52,7 +51,8 @@ def make_input_roll(
     
     - sequence_length: int:
         This is an integer that contains the length of each of the returned sequences.
-            
+
+
     Returns:
     ---------
 
