@@ -1,0 +1,18 @@
+[build-system]
+requires = ["flit_core >=3.2,<4", "setuptools"]
+build-backend = "flit_core.buildapi"
+
+[project]
+name = "aml"
+authors = [{name = "Alex Capstick", email = "alexander.capstick19@imperial.ac.uk"}]
+dynamic = ["version", "description"]
+dependencies = [
+    "numpy>=1.22",
+    "pandas>=1.4",
+    "matplotlib>=3.5",
+    "seaborn>=0.11.2",
+    "scikit-learn>=1.0",
+    "tqdm>=4.64",
+    "tensorboard>=2.9",
+    "pytorch-lightning>=1.6",
+    ]
