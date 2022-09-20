@@ -185,7 +185,8 @@ def make_input_roll_old(data:np.ndarray, sequence_length:int)->np.ndarray:
     
     - sequence_length: int:
         This is an integer that contains the length of each of the returned sequences.
-            
+
+
     Returns:
     ---------
 
