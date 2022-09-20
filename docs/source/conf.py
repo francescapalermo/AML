@@ -8,18 +8,13 @@ from unittest import mock
 
 sys.path.insert(0, os.path.abspath("../.."))
 
-# Mock dcarte because it fails to build in readthedocs
-MOCK_MODULES = ["aml", "aml.preprocessing.transformation_functions"]
-for mod_name in MOCK_MODULES:
-    sys.modules[mod_name] = mock.Mock()
+import aml
 
-import sku
-
-version = sku.__version__
-doc = sku.__doc__
-author = sku.__author__
-project = sku.__title__
-copyright = sku.__copyright__
+version = aml.__version__
+doc = aml.__doc__
+author = aml.__author__
+project = aml.__title__
+copyright = aml.__copyright__
 release = '.'.join(version.split('.')[:2])
 
 # -- General configuration
