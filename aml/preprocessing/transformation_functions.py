@@ -30,6 +30,17 @@ def make_input_roll(
 
                 [[4],
                 [5]]]
+    
+    similarly:
+
+    .. code-block::
+
+        >>> make_input_roll(np.array([[1, 2],[3, 4],[5, 6]]), sequence_length=2)
+        array([[[1,2],
+                [3,4]],
+
+                [[3,4],
+                [5,6]]]
 
 
 
