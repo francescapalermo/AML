@@ -24,31 +24,31 @@ class FCLayers(nn.Module):
         Arguments
         ---------
             
-        - `n_input`: `int`:
+        - n_input: int:
             The size of the input feature dimension.
 
-        - `n_output`: `int`:
+        - n_output: int:
             The output dimension sizes.
 
-        - `hidden_layer_sizes`: `typing.List[int]`, optional:
+        - hidden_layer_sizes: typing.List[int], optional:
             The hidden layer sizes.
-            Defaults to `(100,)`.
+            Defaults to :code:`(100,)`.
 
-        - `activation`: `typing.Union[str,torch.nn.Module] `, optional:
+        - activation: typing.Union[str,torch.nn.Module] , optional:
             The activation function to be used in the hidden layers to add
             non-linearity. You may pass a str of the form:
-            - `'identity'`: The identity function.
-            - `'logistic'`: The logistic sigmoid function.
-            - `'tanh'`, the hyperbolic tan function.
-            - `'relu'`, the rectified linear unit function.
+            - 'identity': The identity function.
+            - 'logistic': The logistic sigmoid function.
+            - 'tanh'`, the hyperbolic tan function.
+            - 'relu'`, the rectified linear unit function.
             You may also pass a torch module itself, which should be
             callable, taking a tensor as input and outputting a tensor.
-            Defaults to `relu`.
+            Defaults to :code:`relu`.
 
-        - `use_softmax`: `bool`, optional:
+        - use_softmax: bool, optional:
             Whether to use a softmax at the end of the fully
             connected layers.
-            Defaults to `True`
+            Defaults to :code:`True`
 
 
         '''
@@ -130,86 +130,86 @@ class MLPModel(BaseLightningModule):
 
         Examples
         ---------
-        ```
-        mlp_model = MLPModel(n_input=100, 
-                            n_output=2, 
-                            hidden_layer_sizes=(100,100,50),
-                            n_epochs = 2,
-                            verbose=True,
-                            batch_size=10,
-                            optimizer={'adam':{'lr':0.01}},
-                            criterion='mseloss',
-                            )
+        .. code-block::
 
-        X = torch.tensor(np.random.random((10000,100))).float()
-        X_val = torch.tensor(np.random.random((10000,100))).float()
+            mlp_model = MLPModel(n_input=100, 
+                                n_output=2, 
+                                hidden_layer_sizes=(100,100,50),
+                                n_epochs = 2,
+                                verbose=True,
+                                batch_size=10,
+                                optimizer={'adam':{'lr':0.01}},
+                                criterion='mseloss',
+                                )
 
-        training_metrics = mlp_model.fit(X=X, X_val=X_val)
-        output = mlp_model.transform(X_test=X)
+            X = torch.tensor(np.random.random((10000,100))).float()
+            X_val = torch.tensor(np.random.random((10000,100))).float()
+
+            training_metrics = mlp_model.fit(X=X, X_val=X_val)
+            output = mlp_model.transform(X_test=X)
 
 
-        ```
 
 
         Arguments
         ---------
 
-        - `n_input`: `int`:
+        - n_input: int:
             The size of the input feature dimension.
 
-        - `n_output`: `int`:
+        - n_output: int:
             The output dimension sizes.
 
-        - `hidden_layer_sizes`: `typing.List[int]`, optional:
+        - hidden_layer_sizes: typing.List[int], optional:
             The hidden layer sizes.
-            Defaults to `(100,)`.
+            Defaults to :code:`(100,)`.
 
-        - `activation`: `typing.Union[str,torch.nn.Module] `, optional:
+        - activation: typing.Union[str,torch.nn.Module] , optional:
             The activation function to be used in the hidden layers to add
             non-linearity. You may pass a str of the form:
-            - `'identity'`: The identity function.
-            - `'logistic'`: The logistic sigmoid function.
-            - `'tanh'`, the hyperbolic tan function.
-            - `'relu'`, the rectified linear unit function.
+            - 'identity': The identity function.
+            - 'logistic': The logistic sigmoid function.
+            - 'tanh'`, the hyperbolic tan function.
+            - 'relu'`, the rectified linear unit function.
             You may also pass a torch module itself, which should be
             callable, taking a tensor as input and outputting a tensor.
-            Defaults to `relu`.
+            Defaults to :code:`relu`.
 
-        - `use_softmax`: `bool`, optional:
+        - use_softmax: bool, optional:
             Whether to use a softmax at the end of the fully
             connected layers.
-            Defaults to `True`
+            Defaults to :code:`True`
 
-        - `dropout`: `float`, optional:
+        - dropout: float, optional:
             The dropout value in each of the layers.
-            Defaults to `0.2`
+            Defaults to :code:`0.2`
 
-        - `criterion`: `str` or `torch.nn.Module`:
+        - criterion: str or torch.nn.Module:
             The criterion that is used to calculate the loss.
-            If using a string, please use one of `['mseloss', 'celoss']`
-            Defaults to `mseloss`.
+            If using a string, please use one of :code:`['mseloss', 'celoss']`
+            Defaults to :code:`mseloss`.
 
-        - `optimizer`: `dict`, optional:
+        - optimizer: dict, optional:
             A dictionary containing the optimizer name as keys and
             a dictionary as values containing the arguments as keys. 
-            For example: `{'adam':{'lr':0.01}}`. 
-            The key can also be a `torch.optim` class,
+            For example: :code:`{'adam':{'lr':0.01}}`. 
+            The key can also be a :code:`torch.optim` class,
             but not initiated.
-            For example: `{torch.optim.Adam:{'lr':0.01}}`. 
-            Defaults to `{'adam':{'lr':0.01}}`.
+            For example: :code:`{torch.optim.Adam:{'lr':0.01}}`. 
+            Defaults to :code:`{'adam':{'lr':0.01}}`.
         
-        - `n_epochs`: `int`, optional:
+        - n_epochs: int, optional:
             The number of epochs to run the training for.
-            Defaults to `10`.
+            Defaults to :code:`10`.
         
-        - `accelerator`: `str`, optional:
+        - accelerator: str, optional:
             The device to use for training. Please use 
-            any of `(“cpu”, “gpu”, “tpu”, “ipu”, “hpu”, “auto”)`.
-            Defaults to `'auto'`
+            any of :code:`(“cpu”, “gpu”, “tpu”, “ipu”, “hpu”, “auto”)`.
+            Defaults to :code:`'auto'`
 
-        - `kwargs`: optional:
+        - kwargs: optional:
             These keyword arguments will be passed to 
-            `dcarte_transform.model.base_model.BaseModel`.
+            :code:`dcarte_transform.model.base_model.BaseModel`.
 
 
         '''
@@ -288,31 +288,31 @@ class MLPModel(BaseLightningModule):
             ):
         '''
         This is used to fit the model. Please either use 
-        the `train_loader` or `X` and `y`.
+        the :code:`train_loader` or :code:`X` and :code:`y`.
         This corresponds to using either a torch DataLoader
         or a numpy array as the training data. If using 
-        the `train_loader`, ensure each iteration returns
-        `[X, X]`.
+        the :code:`train_loader`, ensure each iteration returns
+        :code:`[X, X]`.
 
         Arguments
         ---------
 
-        - `X`: `numpy.array` or `None`, optional:
+        - X: numpy.array or None, optional:
             The input array to fit the model on.
-            Defaults to `None`.
+            Defaults to :code:`None`.
 
-        - `train_loader`: `torch.utils.data.DataLoader` or `None`, optional:
+        - train_loader: torch.utils.data.DataLoader or None, optional:
             The training data, which contains the input and the targets.
-            Defaults to `None`.
+            Defaults to :code:`None`.
 
-        - `X_val`: `numpy.array` or `None`, optional:
+        - X_val: numpy.array or None, optional:
             The validation input to calculate validation 
             loss on when training the model.
-            Defaults to `None`
+            Defaults to :code:`None`
 
-        - `val_loader`: `torch.utils.data.DataLoader` or `None`, optional:
+        - val_loader: torch.utils.data.DataLoader or None, optional:
             The validation data, which contains the input and the targets.
-            Defaults to `None`.
+            Defaults to :code:`None`.
 
         '''
         
@@ -337,24 +337,24 @@ class MLPModel(BaseLightningModule):
         Arguments
         ---------
         
-        - `X`: `numpy.array` or `None`, optional:
+        - X: numpy.array or None, optional:
             The input array to test the model on.
-            Defaults to `None`.
+            Defaults to :code:`None`.
 
-        - `y`: `numpy.array` or `None`, optional:
-            The target array to test the model on. If set to `None`,
-            then `targets_too` will automatically be set to `False`.
-            Defaults to `None`.
+        - y: numpy.array or None, optional:
+            The target array to test the model on. If set to :code:`None`,
+            then :code:`targets_too` will automatically be set to :code:`False`.
+            Defaults to :code:`None`.
         
-        - `test_loader`: `torch.utils.data.DataLoader` or `None`, optional: 
+        - test_loader: torch.utils.data.DataLoader or None, optional: 
             A data loader containing the test data.
-            Defaults to `None`.
+            Defaults to :code:`None`.
         
         
         Returns
         --------
         
-        - `output`: `torch.tensor` : 
+        - output: torch.tensor` : 
             The resutls from the predictions
         
         
@@ -378,24 +378,24 @@ class MLPModel(BaseLightningModule):
         Arguments
         ---------
         
-        - `X`: `numpy.array` or `None`, optional:
+        - X: numpy.array or None, optional:
             The input array to test the model on.
-            Defaults to `None`.
+            Defaults to :code:`None`.
 
-        - `y`: `numpy.array` or `None`, optional:
-            The target array to test the model on. If set to `None`,
-            then `targets_too` will automatically be set to `False`.
-            Defaults to `None`.
+        - y: numpy.array or None, optional:
+            The target array to test the model on. If set to :code:`None`,
+            then :code:`targets_too` will automatically be set to :code:`False`.
+            Defaults to :code:`None`.
         
-        - `test_loader`: `torch.utils.data.DataLoader` or `None`, optional: 
+        - test_loader: torch.utils.data.DataLoader or None, optional: 
             A data loader containing the test data.
-            Defaults to `None`.
+            Defaults to :code:`None`.
         
         
         Returns
         --------
         
-        - `output`: `torch.tensor` : 
+        - output: torch.tensor` : 
             The resutls from the predictions
         
         

@@ -8,7 +8,7 @@ class ArgFake:
         Arguments
         ---------
         
-        - `arguments`: `typing.Any`: 
+        - arguments: typing.Any: 
             Keyword arguments that will be accessable as
             attributes of this class.
         

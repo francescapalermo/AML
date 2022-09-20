@@ -19,7 +19,7 @@ def make_confusion_matrix(
     title:typing.Union[str, None]=None,
     ) -> typing.Tuple[plt.figure, plt.axes]:
     '''
-    This function was edited from `https://github.com/DTrimarchi10/confusion_matrix/blob/master/cfm_matrix.py`.
+    This function was edited from :code:`https://github.com/DTrimarchi10/confusion_matrix/blob/master/cfm_matrix.py`.
 
     This function will plot a confusion matrix, based on the array given.
 
@@ -27,77 +27,78 @@ def make_confusion_matrix(
     Examples
     ---------
 
-    ```
-    >>> from sklearn.metrics import confusion_matrix
-    >>> make_confusion_matrix(
-        confusion_matrix(
-            y_test, 
-            predictions_test
+    .. code-block::
+
+        >>> from sklearn.metrics import confusion_matrix
+        >>> make_confusion_matrix(
+            confusion_matrix(
+                y_test, 
+                predictions_test
+                )
             )
-        )
-    ```
+
 
     Arguments
     ---------
     
 
-    - `cfm`: `np.ndarray`: 
+    - cfm: np.ndarray: 
         Confusion matrix to be plotted.
     
-    - `group_names`: `typing.Union[None, typing.List[str]]`, optional:
+    - group_names: typing.Union[None, typing.List[str]], optional:
         List of strings that represent the labels row by row to be shown in each square. 
-        Defaults to `None`.
+        Defaults to :code:`None`.
     
-    - `categories`: `typing.Union[None, typing.List[str]]`, optional:
+    - categories: typing.Union[None, typing.List[str]], optional:
         List of strings containing the categories to be displayed on the x,y axis. 
-        Defaults to `'auto'`.
+        Defaults to :code:`'auto'`.
     
-    - `count`: `bool`, optional:
+    - count: bool, optional:
         If True, show the raw number in the confusion matrix. 
-        Defaults to `True`.
+        Defaults to :code:`True`.
     
-    - `percent`: `bool`, optional:
+    - percent: bool, optional:
         If True, show the proportions for each category. 
-        Defaults to `True`.
+        Defaults to :code:`True`.
     
-    - `cbar`: `bool`, optional:
+    - cbar: bool, optional:
         If True, show the color bar. The cbar values are based off the values in the confusion matrix. 
-        Defaults to `True`.
+        Defaults to :code:`True`.
     
-    - `xyticks`: `bool`, optional:
+    - xyticks: bool, optional:
         If True, show x and y ticks. 
-        Defaults to `True`.
+        Defaults to :code:`True`.
     
-    - `xyplotlabels`: `bool`, optional:
+    - xyplotlabels: bool, optional:
         If True, show 'True Label' and 'Predicted Label' on the figure. 
-        Defaults to `True`.
+        Defaults to :code:`True`.
     
-    - `sum_stats`: `bool`, optional:
+    - sum_stats: bool, optional:
         If True, display summary statistics below the figure. 
-        Defaults to `True`.
+        Defaults to :code:`True`.
     
-    - `figsize`: `typing.Union[tuple, list]`, optional:
-        Tuple representing the figure size.  If `None`, the matplotlib
+    - figsize: typing.Union[tuple, list], optional:
+        Tuple representing the figure size.  If :code:`None`, the matplotlib
         rcParams value will be used.
-        Defaults to `None`.
+        Defaults to :code:`None`.
     
-    - `cmap`: `str`, optional:
+    - cmap: str, optional:
         Colormap of the values displayed from matplotlib.pyplot.cm. 
-        See `http://matplotlib.org/examples/color/colormaps_reference.html`.
-        Defaults to `'Blues'`.
+        See :code:`http://matplotlib.org/examples/color/colormaps_reference.html`.
+        Defaults to :code:`'Blues'`.
     
-    - `title`: `typing.Union[str, None]`, optional:
+    - title: typing.Union[str, None], optional:
         Title for the heatmap. 
-        Defaults to `None`.
+        Defaults to :code:`None`.
     
     
     Returns
     ---------
 
-    - `figure`: `matplotlib.pyplot.figure`:
+    - figure: matplotlib.pyplot.figure:
         The figure containing the axes.
     
-    - `ax`: `matplotlib.pyplot.axes`:
+    - ax: matplotlib.pyplot.axes:
         The axes containing the plot.
 
     

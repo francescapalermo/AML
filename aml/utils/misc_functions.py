@@ -9,19 +9,19 @@ def countna(array:np.ndarray, normalise:bool=True,) -> float:
     Arguments
     ---------
 
-    - `array`: `numpy.ndarray`:
+    - array: numpy.ndarray:
         The array to calculate the number of missing
         values on.
     
-    - `normalise`: `bool`, optional:
+    - normalise: bool, optional:
         Whether to return the values as a percentage.
-        Defaults to `True`.
+        Defaults to :code:`True`.
     
     Returns
     ---------
 
-    - `countna`: `float`:
-        A `float` equal to the number or proportion
+    - countna: float:
+        A :code:`float` equal to the number or proportion
         of missing values in an array.
 
     '''
@@ -39,22 +39,22 @@ def interquartile_range(values:np.ndarray, lower:float=25, upper:float=75) -> fl
     Arguments
     ---------
 
-    - `array`: `numpy.ndarray`:
+    - array: numpy.ndarray:
         The array to calculate the IQR of.
     
-    - `lower`: `float`, optional:
+    - lower: float, optional:
         The percentile of the lower quartile.
-        Defaults to `25`.
+        Defaults to :code:`25`.
     
-    - `upper`: `float`, optional:
+    - upper: float, optional:
         The percentile of the upper quartile.
-        Defaults to `75`.
+        Defaults to :code:`75`.
 
     Returns
     ---------
 
-    - `iqr`: `float`:
-        A `float` equal to the interquartile range.
+    - iqr: float:
+        A :code:`float` equal to the interquartile range.
 
     '''
     return np.subtract(*np.nanpercentile(values, [upper, lower]))
@@ -70,31 +70,33 @@ def format_mean_iqr_missing(
 
     Examples
     ---------
-    ```
-    >>> import numpy as np
-    >>> format_mean_iqr_missing(
-            values=np.array([1,2,3,4,5]),
-            string="{mean:.2f} ({iqr:.2f}) (({count_na:.0f}%))",
-            )
-    '3.00 (2) ((0%))'
-    ```
+
+    .. code-block::
+
+        >>> import numpy as np
+        >>> format_mean_iqr_missing(
+                values=np.array([1,2,3,4,5]),
+                string="{mean:.2f} ({iqr:.2f}) (({count_na:.0f}%))",
+                )
+        '3.00 (2) ((0%))'
+
 
     Arguments
     ---------
 
-    - `values`: `numpy.ndarray`:
+    - values: numpy.ndarray:
         The array to calculate the values on.
     
-    - `string`: `str`, optional:
+    - string: str, optional:
         The string that dictates the output.
-        This should include somewhere `{mean}`,
-        `{iqr}`, and `{count_na}`.
-        Defaults to `"{mean:.2f} ({iqr:.2f}) (({count_na:.0f}%))"`.
+        This should include somewhere :code:`{mean}`,
+        :code:`{iqr}`, and :code:`{count_na}`.
+        Defaults to :code:`"{mean:.2f} ({iqr:.2f}) (({count_na:.0f}%))"`.
     
     Returns
     ---------
 
-    - `stats`: `str`:
+    - stats: str:
         A string of the desired format with the 
         statistics included.
 
@@ -117,31 +119,33 @@ def format_mean_std(
 
     Examples
     ---------
-    ```
-    >>> import numpy as np
-    >>> format_mean_std(
-            values=np.array([1,2,3,4,5]),
-            string="{mean:.2f} ({std:.2f})",
-            )
-    '3.00 (1.41)'
-    ```
+
+    .. code-block::
+
+        >>> import numpy as np
+        >>> format_mean_std(
+                values=np.array([1,2,3,4,5]),
+                string="{mean:.2f} ({std:.2f})",
+                )
+        '3.00 (1.41)'
+
 
     Arguments
     ---------
 
-    - `values`: `numpy.ndarray`:
+    - values: numpy.ndarray:
         The array to calculate the values on.
     
-    - `string`: `str`, optional:
+    - string: str, optional:
         The string that dictates the output.
-        This should include somewhere `{mean}` and
-        `{std}`.
-        Defaults to `"{mean:.2f} ({std:.2f})"`.
+        This should include somewhere :code:`{mean}` and
+        :code:`{std}`.
+        Defaults to :code:`"{mean:.2f} ({std:.2f})"`.
     
     Returns
     ---------
 
-    - `stats`: `str`:
+    - stats: str:
         A string of the desired format with the 
         statistics included.
 
@@ -161,22 +165,24 @@ def module_from_file(module_name:str, file_path:str):
     
     Examples
     ---------
-    ```
-    >>> validated_date = module_from_file(
-            "validated_date", 
-            "../data/manual_uti_labels.py"
-            ).validated_date
-    >>> validated_date
-    <function validated_date.validated_date(return_df=False)>
-    ```
+
+    .. code-block::
+
+        >>> validated_date = module_from_file(
+                "validated_date", 
+                "../data/manual_uti_labels.py"
+                ).validated_date
+        >>> validated_date
+        <function validated_date.validated_date(return_df=False)>
+
     
     Arguments
     ---------
     
-    - `module_name`: `str`: 
+    - module_name: str: 
         The name of the module to load.
     
-    - `file_path`: `str`: 
+    - file_path: str: 
         File path to that module.
     
     
@@ -184,7 +190,7 @@ def module_from_file(module_name:str, file_path:str):
     Returns
     --------
     
-    - `out`: `module` : 
+    - out: module` : 
         A python module that can be 
         used to access objects from 
         within it.
@@ -206,26 +212,28 @@ def time_interval(hour:int, minute:int, interval:int)->list:
     
     Examples
     ---------
-    ```
-    >>> time_interval(24, 60, 30)
-    ['00:00',
-    '00:30',
-    ...,
-    '22:30',
-    '23:00',
-    '23:30']
-    ```
+
+    .. code-block::
+
+        >>> time_interval(24, 60, 30)
+        ['00:00',
+        '00:30',
+        ...,
+        '22:30',
+        '23:00',
+        '23:30']
+
     
     Arguments
     ---------
     
-    - `hour`: `int`: 
+    - hour: int: 
         The number of hours to run to.
     
-    - `minute`: `int`: 
+    - minute: int: 
         The number of minutes in each hour.
     
-    - `interval`: `int`: 
+    - interval: int: 
         The interval for a new element.
     
     
@@ -233,7 +241,7 @@ def time_interval(hour:int, minute:int, interval:int)->list:
     Returns
     --------
     
-    - `out`: `list` : 
+    - out: list` : 
         List of time range
     
     

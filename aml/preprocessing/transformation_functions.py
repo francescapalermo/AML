@@ -16,35 +16,36 @@ def make_input_roll(
     Examples
     ---------
     
-    ```
-    >>> make_input_roll(np.array([[1],[2],[3],[4],[5]]), sequence_length=2)
-    array([[[1],
-            [2]],
+    .. code-block::
 
-            [[2],
-            [3]],
+        >>> make_input_roll(np.array([[1],[2],[3],[4],[5]]), sequence_length=2)
+        array([[[1],
+                [2]],
 
-            [[3],
-            [4]],
+                [[2],
+                [3]],
 
-            [[4],
-            [5]]]
-    ```
+                [[3],
+                [4]],
+
+                [[4],
+                [5]]]
+
 
 
     Arguments
     ---------
     
-    - `data`: `numpy.ndarray`:
+    - data: numpy.ndarray:
         This is the data that you want transformed. Please use the shape (n_datapoints, n_features).
     
-    - `sequence_length`: `int`:
+    - sequence_length: int:
         This is an integer that contains the length of each of the returned sequences.
             
     Returns:
     ---------
 
-    - `output`: `numpy.ndarray`:
+    - output: numpy.ndarray:
         This is an array with the rolled data.
     
     '''
@@ -77,41 +78,43 @@ def flatten(
     '''
     This class allows you to flatten an array inside a pipeline.
     This class was implemented to mirror the behaviour in 
-    `https://pytorch.org/docs/stable/generated/torch.flatten.html`.
+    :code:`https://pytorch.org/docs/stable/generated/torch.flatten.html`.
     
     
     Examples
     ---------
-    ```
-    >>> flat = Flatten(start_dim=1, end_dim=-1)
-    >>> flat.fit(None, None) # ignored
-    >>> flat.transform(
-            [[[1, 2],
-              [3, 4]],
-             [[5, 6],
-              [7, 8]]]
-            )
-    [[1,2,3,4],
-     [5,6,7,8]]
-    ```
+
+    .. code-block::
+
+        >>> flat = Flatten(start_dim=1, end_dim=-1)
+        >>> flat.fit(None, None) # ignored
+        >>> flat.transform(
+                [[[1, 2],
+                [3, 4]],
+                [[5, 6],
+                [7, 8]]]
+                )
+        [[1,2,3,4],
+        [5,6,7,8]]
+
 
 
     Arguments
     ---------
     
-    - `start_dim`: `int`, optional:
+    - start_dim: int, optional:
         The first dim to flatten. 
-        Defaults to `0`.
+        Defaults to :code:`0`.
     
-    - `end_dim`: `int`, optional:
+    - end_dim: int, optional:
         The last dim to flatten. 
-        Defaults to `-1`.
+        Defaults to :code:`-1`.
     
-    - `copy`: `bool`, optional:
+    - copy: bool, optional:
         Whether to return a copied version
         of the array during the transform
         method.
-        Defaults to `False`.
+        Defaults to :code:`False`.
     
     '''
 
@@ -156,36 +159,37 @@ def make_input_roll_old(data:np.ndarray, sequence_length:int)->np.ndarray:
     
     Examples
     ---------
-    
-    ```
-    >>> make_input_roll(np.array([[1],[2],[3],[4],[5]]), sequence_length=2)
-    array([[[1],
-            [2]],
 
-            [[2],
-            [3]],
+    .. code-block::
 
-            [[3],
-            [4]],
+        >>> make_input_roll(np.array([[1],[2],[3],[4],[5]]), sequence_length=2)
+        array([[[1],
+                [2]],
 
-            [[4],
-            [5]]]
-    ```
+                [[2],
+                [3]],
+
+                [[3],
+                [4]],
+
+                [[4],
+                [5]]]
+
 
 
     Arguments
     ---------
     
-    - `data`: `numpy.ndarray`:
+    - data: numpy.ndarray:
         This is the data that you want transformed. Please use the shape (n_datapoints, n_features).
     
-    - `sequence_length`: `int`:
+    - sequence_length: int:
         This is an integer that contains the length of each of the returned sequences.
             
     Returns:
     ---------
 
-    - `output`: `numpy.ndarray`:
+    - output: numpy.ndarray:
         This is an array with the rolled data.
     
     '''

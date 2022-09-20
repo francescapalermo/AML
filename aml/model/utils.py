@@ -23,21 +23,21 @@ def get_optimizer_from_name(name):
     Arguments
     ---------
     
-    - `name`: `str`: 
-        This can be any of `'adam'`,
-        `'adadelta'`, `'sgd'`
+    - name: str: 
+        This can be any of :code:`'adam'`,
+        :code:`'adadelta'`, :code:`'sgd'`
     
     
     Raises
     ---------
     
-        `NotImplementedError`: If optimizer name
+        :code:`NotImplementedError: If optimizer name
         is not implemented.
     
     Returns
     --------
     
-    - `optimizer`: `torch.optim` optimizer.
+    - optimizer: torch.optim` optimizer.
     
     
     '''
@@ -60,21 +60,21 @@ def get_criterion_from_name(name):
     Arguments
     ---------
     
-    - `name`: `str`: 
-        This can be any of `'celoss'`,
-        `'mseloss'`.
+    - name: str: 
+        This can be any of :code:`'celoss'`,
+        :code:`'mseloss'`.
     
     
     Raises
     ---------
     
-        `NotImplementedError`: If loss name
+        :code:`NotImplementedError: If loss name
         is not implemented.
     
     Returns
     --------
     
-    - `loss_function`.
+    - loss_function`.
     
     
     '''
@@ -93,24 +93,24 @@ def get_function_from_name(name):
     Arguments
     ---------
     
-    - `name`: `str`: 
+    - name: str: 
         This can be any of:
-        - `'identity'`: The identity function.
-        - `'logistic'` or `'sigmoid'`: The logistic sigmoid function.
-        - `'tanh'`, the hyperbolic tan function.
-        - `'relu'`, the rectified linear unit function.
+        - 'identity': The identity function.
+        - 'logistic'` or :code:`'sigmoid': The logistic sigmoid function.
+        - 'tanh'`, the hyperbolic tan function.
+        - 'relu'`, the rectified linear unit function.
     
     
     Raises
     ---------
     
-        `NotImplementedError`: If loss name
+        :code:`NotImplementedError: If loss name
         is not implemented.
     
     Returns
     --------
     
-    - `loss_function`.
+    - loss_function`.
     
     
     '''

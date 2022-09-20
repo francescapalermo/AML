@@ -35,49 +35,49 @@ class TrainingHelper:
                             ):
         '''
         This is used to prepare the fit model. Please either use 
-        the `train_loader` or `X` and `y`.
+        the :code:`train_loader` or :code:`X` and :code:`y`.
         This corresponds to using either a torch DataLoader
         or a numpy array as the training data.
 
         Arguments
         ---------
 
-        - `X`: `numpy.array` or `None`, optional:
+        - X: numpy.array or None, optional:
             The input array to fit the model on.
-            Defaults to `None`.
+            Defaults to :code:`None`.
 
-        - `y`: `numpy.array` or `None`, optional:
+        - y: numpy.array or None, optional:
             The target array to fit the model on.
-            Defaults to `None`.
+            Defaults to :code:`None`.
 
-        - `train_loader`: `torch.utils.data.DataLoader` or `None`, optional:
+        - train_loader: torch.utils.data.DataLoader or None, optional:
             The training data, which contains the input and the targets.
-            Defaults to `None`.
+            Defaults to :code:`None`.
 
-        - `X_val`: `numpy.array` or `None`, optional:
+        - X_val: numpy.array or None, optional:
             The validation input to calculate validation 
             loss on when training the model.
-            Defaults to `None`
+            Defaults to :code:`None`
 
-        - `X_val`: `numpy.array` or `None`, optional:
+        - X_val: numpy.array or None, optional:
             The validation target to calculate validation 
             loss on when training the model.
-            Defaults to `None`
+            Defaults to :code:`None`
 
-        - `val_loader`: `torch.utils.data.DataLoader` or `None`, optional:
+        - val_loader: torch.utils.data.DataLoader or None, optional:
             The validation data, which contains the input and the targets.
-            Defaults to `None`.
+            Defaults to :code:`None`.
 
         Returns
         --------
 
-        - `self`:
-            The `self` that is passed as an argument.
+        - self:
+            The :code:`self` that is passed as an argument.
 
-        - `train_loader`: `torch.utils.data.DataLoader` : 
+        - train_loader: torch.utils.data.DataLoader` : 
             The train data loader.
         
-        - `val_loader`: `torch.utils.data.DataLoader` : 
+        - val_loader: torch.utils.data.DataLoader` : 
             The validation data loader.
 
         '''
@@ -126,27 +126,27 @@ class TrainingHelper:
         Arguments
         ---------
         
-        - `X`: `numpy.array` or `None`, optional:
+        - X: numpy.array or None, optional:
             The input array to test the model on.
-            Defaults to `None`.
+            Defaults to :code:`None`.
 
-        - `y`: `numpy.array` or `None`, optional:
-            The target array to test the model on. If set to `None`,
-            then `targets_too` will automatically be set to `False`.
-            Defaults to `None`.
+        - y: numpy.array or None, optional:
+            The target array to test the model on. If set to :code:`None`,
+            then :code:`targets_too` will automatically be set to :code:`False`.
+            Defaults to :code:`None`.
         
-        - `test_loader`: `torch.utils.data.DataLoader` or `None`, optional: 
+        - test_loader: torch.utils.data.DataLoader or None, optional: 
             A data loader containing the test data.
-            Defaults to `None`.
+            Defaults to :code:`None`.
         
         
         Returns
         --------
 
-        - `self`:
-            The `self` that is passed as an argument.
+        - self:
+            The :code:`self` that is passed as an argument.
 
-        - `test_loader`: `torch.utils.data.DataLoader` : 
+        - test_loader: torch.utils.data.DataLoader` : 
             The test data loader.
         
         
@@ -207,19 +207,19 @@ class TrainingHelper:
         Arguments
         ---------
         
-        - `names`: `str`: 
-            Layer name. If `'all'`, all layers will be returned.
+        - names: str: 
+            Layer name. If :code:`'all'`, all layers will be returned.
         
         
         Raises
         ---------
         
-            `TypeError`: If layer name is not an attribute of the model.
+            :code:`TypeError: If layer name is not an attribute of the model.
         
         Returns
         --------
 
-        - `layer_params`.
+        - layer_params`.
         
         
         '''
@@ -243,10 +243,10 @@ class TrainingHelper:
         Arguments
         ---------
         
-        - `opt_dict`: `dict`: 
+        - opt_dict: dict: 
             The optimizer name as keys, and dictionaries of 
             keywords as values. An example is:
-            `
+            :code:`
             {'adam_lap': {
                             'params':['all'], 
                             'lr':0.01, 
@@ -255,24 +255,24 @@ class TrainingHelper:
                             'depression_function_kwargs': {}
                             },
             }
-            `
+            :code:`
             The values may also be a list of optimizer keywords
             that will be used as different parameter groups in the
-            optimizer. The key can also be a `torch.optim` class,
+            optimizer. The key can also be a :code:`torch.optim` class,
             but not initiated.
         
         Raises
         ---------
         
-        - `NotImplementedError`: 
+        - NotImplementedError: 
             If the values are not dictionaries or a list.
         
         Returns
         --------
 
-        - Single `optimizer` or list of `optimizer`s,
+        - Single :code:`optimizer` or list of :code:`optimizer`s,
         depending on the number of optimizers given in the 
-        `opt_dict`.
+        :code:`opt_dict`.
         
         
         '''
@@ -319,14 +319,14 @@ class TrainingHelper:
         Arguments
         ---------
         
-        - `name`: `str`: 
+        - name: str: 
             The name of the loss function.
         
 
         Returns
         --------
 
-        - `criterion`.
+        - criterion`.
         
         '''
         return get_criterion_from_name(name)
@@ -344,28 +344,28 @@ class TrainingHelper:
         Arguments
         ---------
         
-        - `dim_in`: `int`: 
+        - dim_in: int: 
             The dimension of an image before convolution is applied.
-            If dim_in is a `list` or `tuple`, then two dimensions
+            If dim_in is a :code:`list` or :code:`tuple`, then two dimensions
             will be returned.
         
-        - `kernel_size`: `int`, optional:
-            Defaults to `3`.
+        - kernel_size: int, optional:
+            Defaults to :code:`3`.
         
-        - `stride`: `int`, optional:
-            Defaults to `1`.
+        - stride: int, optional:
+            Defaults to :code:`1`.
         
-        - `padding`: `int`, optional:
-            Defaults to `0`.
+        - padding: int, optional:
+            Defaults to :code:`0`.
         
-        - `dilation`: `int`, optional:
-            Defaults to `1`.
+        - dilation: int, optional:
+            Defaults to :code:`1`.
         
         
         Returns
         --------
         
-        - `dim_out`: `int` : 
+        - dim_out: int` : 
             The dimension size after the convolutional layer.
         
         
@@ -396,14 +396,14 @@ class TrainingHelper:
         Arguments
         ---------
         
-        - `layer`: `torch.nn.Conv2d`: 
+        - layer: torch.nn.Conv2d: 
             Pytorch convolutional layer.       
         
         
         Returns
         --------
         
-        - `params`: `dict` : 
+        - params: dict` : 
             Dictionary containing the parameters of 
             the convolutional layer.
         
@@ -494,63 +494,63 @@ class BaseModel(TrainingHelper, nn.Module):
         Arguments
         ---------
 
-        - `device`: `str`, optional:
-            The device to use the model on. If `'auto'`,
+        - device: str, optional:
+            The device to use the model on. If :code:`'auto'`,
             the model will train on CUDA if available.
             Otherwise, specify a string of the device name, for
-            example `'cpu'` or `'cuda'`.
-            Defaults to `'auto'`
+            example :code:`'cpu'` or :code:`'cuda'`.
+            Defaults to :code:`'auto'`
 
-        - `batch_size`: `int`, optional:
+        - batch_size: int, optional:
             The batch size to use in training and transforming.
             Only used if the input data is not a torch DataLoader.
-            Defaults to `10`.
+            Defaults to :code:`10`.
 
-        - `n_epochs`: `int`, optional:
+        - n_epochs: int, optional:
             The number of epochs to run the training for.
-            Defaults to `10`.
+            Defaults to :code:`10`.
 
-        - `shuffle`: `bool`, optional:
+        - shuffle: bool, optional:
             Whether to shuffle the training and validation data when 
             training. Only used if the input data is not a torch DataLoader.
-            Defaults to `True`.
+            Defaults to :code:`True`.
 
-        - `dl_kwargs`: `dict`, optional:
+        - dl_kwargs: dict, optional:
             A dictionary of keyword arguments that
             will be passed to the training data loader.
-            These will be passed to `torch.utils.data.DataLoader`.
+            These will be passed to :code:`torch.utils.data.DataLoader`.
             Only used if the input data is not a torch DataLoader.
-            Defaults to `{}`.
+            Defaults to :code:`{}`.
 
-        - `verbose`: `bool`, optional:
+        - verbose: bool, optional:
             Whether to print information whilst training.
-            Defaults to `True`.
+            Defaults to :code:`True`.
 
-        - `criterion`: `str` or `torch.nn.Module`:
+        - criterion: str or torch.nn.Module:
             The criterion that is used to calculate the loss.
-            If using a string, please use one of `['mseloss', 'celoss']`
-            Defaults to `mseloss`.
+            If using a string, please use one of :code:`['mseloss', 'celoss']`
+            Defaults to :code:`mseloss`.
 
-        - `optimizer`: `dict`, optional:
+        - optimizer: dict, optional:
             A dictionary containing the optimizer name as keys and
             a dictionary as values containing the arguments as keys. 
-            For example: `{'adam':{'lr':0.01}}`. 
-            The key can also be a `torch.optim` class,
+            For example: :code:`{'adam':{'lr':0.01}}`. 
+            The key can also be a :code:`torch.optim` class,
             but not initiated.
-            For example: `{torch.optim.Adam:{'lr':0.01}}`. 
-            Defaults to `{'adam':{'lr':0.01}}`.
+            For example: :code:`{torch.optim.Adam:{'lr':0.01}}`. 
+            Defaults to :code:`{'adam':{'lr':0.01}}`.
 
-        - `result_path`: `str` or `None`:
+        - result_path: str or None:
             If a string is given, a graph of the loss values will 
             be saved to this path.
             Defaults to None.
 
-        - `model_path`: `str` or `None`:
-            If a string is given, the fitted model `state_dict` will 
+        - model_path: str or None:
+            If a string is given, the fitted model :code:`state_dict` will 
             be saved to this path.
             Defaults to None.
 
-        - `model_name_suffix`: `str` or `None`:
+        - model_name_suffix: str or None:
             If a string is given, this will be added to 
             the end of the default model name, which will 
             be used when saving the model and results.
@@ -650,42 +650,42 @@ class BaseModel(TrainingHelper, nn.Module):
             ):
         '''
         This is used to fit the model. Please either use 
-        the `train_loader` or `X` and `y`.
+        the :code:`train_loader` or :code:`X` and :code:`y`.
         This corresponds to using either a torch DataLoader
         or a numpy array as the training data.
 
         Arguments
         ---------
 
-        - `X`: `numpy.array` or `None`, optional:
+        - X: numpy.array or None, optional:
             The input array to fit the model on.
-            Defaults to `None`.
+            Defaults to :code:`None`.
 
-        - `y`: `numpy.array` or `None`, optional:
+        - y: numpy.array or None, optional:
             The target array to fit the model on.
-            Defaults to `None`.
+            Defaults to :code:`None`.
 
-        - `train_loader`: `torch.utils.data.DataLoader` or `None`, optional:
+        - train_loader: torch.utils.data.DataLoader or None, optional:
             The training data, which contains the input and the targets.
-            Defaults to `None`.
+            Defaults to :code:`None`.
 
-        - `X_val`: `numpy.array` or `None`, optional:
+        - X_val: numpy.array or None, optional:
             The validation input to calculate validation 
             loss on when training the model.
-            Defaults to `None`
+            Defaults to :code:`None`
 
-        - `X_val`: `numpy.array` or `None`, optional:
+        - X_val: numpy.array or None, optional:
             The validation target to calculate validation 
             loss on when training the model.
-            Defaults to `None`
+            Defaults to :code:`None`
 
-        - `val_loader`: `torch.utils.data.DataLoader` or `None`, optional:
+        - val_loader: torch.utils.data.DataLoader or None, optional:
             The validation data, which contains the input and the targets.
-            Defaults to `None`.
+            Defaults to :code:`None`.
 
-        - `train_scheduler`: `torch.optim.lr_scheduler._LRScheduler` or None, optional:
+        - train_scheduler: torch.optim.lr_scheduler._LRScheduler` or None, optional:
             A learning rate scheduler, used in training.
-            Defaults to `None`.
+            Defaults to :code:`None`.
 
         '''
 
@@ -742,23 +742,23 @@ class BaseModel(TrainingHelper, nn.Module):
         Arguments
         ---------
         
-        - `X_test`: `numpy.array` or `None`, optional:
+        - X_test: numpy.array or None, optional:
             The input array to test the model on.
-            Defaults to `None`.
+            Defaults to :code:`None`.
 
-        - `y_test`: `numpy.array` or `None`, optional:
-            The target array to test the model on. If set to `None`,
-            then `targets_too` will automatically be set to `False`.
-            Defaults to `None`.
+        - y_test: numpy.array or None, optional:
+            The target array to test the model on. If set to :code:`None`,
+            then :code:`targets_too` will automatically be set to :code:`False`.
+            Defaults to :code:`None`.
         
-        - `test_loader`: `torch.utils.data.DataLoader` or `None`, optional: 
+        - test_loader: torch.utils.data.DataLoader or None, optional: 
             A data loader containing the test data.
-            Defaults to `None`.
+            Defaults to :code:`None`.
         
         Returns
         --------
         
-        - `output`: `torch.tensor` : 
+        - output: torch.tensor` : 
             The resutls from the predictions
         
         
@@ -843,7 +843,7 @@ class BaseLightningModule(TrainingHelper, pl.LightningModule):
                     ):
         '''
         An auto-encoder model, built to be run similar to sklearn models.
-        This is built on top of `pytorch_lightning.LightningModule`.
+        This is built on top of :code:`pytorch_lightning.LightningModule`.
         When training, a folder containing the pytorch and CSV logs will be
         made.
 
@@ -851,77 +851,77 @@ class BaseLightningModule(TrainingHelper, pl.LightningModule):
         Arguments
         ---------
 
-        - `batch_size`: `int`, optional:
+        - batch_size: int, optional:
             The batch size to use in training and transforming.
             Only used if the input data is not a torch DataLoader.
-            Defaults to `10`.
+            Defaults to :code:`10`.
 
-        - `shuffle`: `bool`, optional:
+        - shuffle: bool, optional:
             Whether to shuffle the training data when 
             training. Only used if the input data is not a torch DataLoader.
-            Defaults to `True`.
+            Defaults to :code:`True`.
 
-        - `dl_kwargs`: `dict`, optional:
+        - dl_kwargs: dict, optional:
             A dictionary of keyword arguments that
             will be passed to the training, validation and testing data loader.
-            These will be passed to `torch.utils.data.DataLoader`.
+            These will be passed to :code:`torch.utils.data.DataLoader`.
             Only used if the input data is not a torch DataLoader.
-            Defaults to `{}`.
+            Defaults to :code:`{}`.
 
-        - `verbose`: `bool`, optional:
+        - verbose: bool, optional:
             Whether to print information whilst training.
-            Defaults to `True`.
+            Defaults to :code:`True`.
 
-        - `criterion`: `str` or `torch.nn.Module`:
+        - criterion: str or torch.nn.Module:
             The criterion that is used to calculate the loss.
-            If using a string, please use one of `['mseloss', 'celoss']`
-            Defaults to `mseloss`.
+            If using a string, please use one of :code:`['mseloss', 'celoss']`
+            Defaults to :code:`mseloss`.
 
-        - `optimizer`: `dict`, optional:
+        - optimizer: dict, optional:
             A dictionary containing the optimizer name as keys and
             a dictionary as values containing the arguments as keys. 
-            For example: `{'adam':{'lr':0.01}}`. 
-            The key can also be a `torch.optim` class,
+            For example: :code:`{'adam':{'lr':0.01}}`. 
+            The key can also be a :code:`torch.optim` class,
             but not initiated.
-            For example: `{torch.optim.Adam:{'lr':0.01}}`. 
-            Defaults to `{'adam':{'lr':0.01}}`.
+            For example: :code:`{torch.optim.Adam:{'lr':0.01}}`. 
+            Defaults to :code:`{'adam':{'lr':0.01}}`.
         
-        - `n_epochs`: `int`, optional:
+        - n_epochs: int, optional:
             The number of epochs to run the training for.
-            Defaults to `10`.
+            Defaults to :code:`10`.
         
-        - `accelerator`: `str`, optional:
+        - accelerator: str, optional:
             The device to use for training. Please use 
-            any of `(“cpu”, “gpu”, “tpu”, “ipu”, “hpu”, “auto”)`.
-            Defaults to `'auto'``.
+            any of :code:`(“cpu”, “gpu”, “tpu”, “ipu”, “hpu”, “auto”)`.
+            Defaults to :code:`'auto'``.
         
-        - `enable_model_summary`: `bool`, optional:
+        - enable_model_summary: bool, optional:
             Whether to pint a model summary when training.
-            Defaults to `False`.
+            Defaults to :code:`False`.
 
-        - `logging`: `bool`, optional:
+        - logging: bool, optional:
             Whether to log the run data.
-            Defaults to `False`.
+            Defaults to :code:`False`.
 
-        - `enable_checkpointing`: `bool`, optional:
+        - enable_checkpointing: bool, optional:
             Whether to save the model periodically.
-            Defaults to `False`.
+            Defaults to :code:`False`.
 
-        - `pl_trainer_kwargs`: `dict`, optional:
+        - pl_trainer_kwargs: dict, optional:
             These are keyword arguments that will be passed to 
-            `pytorch_lightning.Trainer`.
-            Defaults to `{}`.
+            :code:`pytorch_lightning.Trainer`.
+            Defaults to :code:`{}`.
 
-        - `callbacks`: `list`, optional:
+        - callbacks: list, optional:
             These are there callbacks passed to the 
-            `pytorch_lightning.Trainer` class. Please don't
+            :code:`pytorch_lightning.Trainer` class. Please don't
             pass a progress bar to this list, as the TQDM progress bar
             is passed to this list within this class.
-            Defaults to `[]`.
+            Defaults to :code:`[]`.
 
-        - `log_every_n_steps`: `int`, optional:
+        - log_every_n_steps: int, optional:
             How many steps to train before logging metrics.
-            Defaults to `20`.
+            Defaults to :code:`20`.
 
         '''
         super(BaseLightningModule, self).__init__()
@@ -982,11 +982,11 @@ class BaseLightningModule(TrainingHelper, pl.LightningModule):
         This is required for pytorch lightning.
         If using overwriting with you own function,
         please use it to return a dictionary with 
-        keys `'optimizer'` and `'lr_scheduler'`,
+        keys :code:`'optimizer'` and :code:`'lr_scheduler'`,
         if one is being used.
         The optimizer is also saved in this class as an 
-        attribute `.optimizer`, which is built from
-        the input, saved in `.passed_optimizer`.
+        attribute :code:`.optimizer`, which is built from
+        the input, saved in :code:`.passed_optimizer`.
         '''
         return {'optimizer': self.optimizer}
 
@@ -1003,38 +1003,38 @@ class BaseLightningModule(TrainingHelper, pl.LightningModule):
             ):
         '''
         This is used to fit the model. Please either use 
-        the `train_loader` or `X` and `y`.
+        the :code:`train_loader` or :code:`X` and :code:`y`.
         This corresponds to using either a torch DataLoader
         or a numpy array as the training data.
 
         Arguments
         ---------
 
-        - `X`: `numpy.array` or `None`, optional:
+        - X: numpy.array or None, optional:
             The input array to fit the model on.
-            Defaults to `None`.
+            Defaults to :code:`None`.
 
-        - `y`: `numpy.array` or `None`, optional:
+        - y: numpy.array or None, optional:
             The target array to fit the model on.
-            Defaults to `None`.
+            Defaults to :code:`None`.
 
-        - `train_loader`: `torch.utils.data.DataLoader` or `None`, optional:
+        - train_loader: torch.utils.data.DataLoader or None, optional:
             The training data, which contains the input and the targets.
-            Defaults to `None`.
+            Defaults to :code:`None`.
 
-        - `X_val`: `numpy.array` or `None`, optional:
+        - X_val: numpy.array or None, optional:
             The validation input to calculate validation 
             loss on when training the model.
-            Defaults to `None`
+            Defaults to :code:`None`
 
-        - `X_val`: `numpy.array` or `None`, optional:
+        - X_val: numpy.array or None, optional:
             The validation target to calculate validation 
             loss on when training the model.
-            Defaults to `None`
+            Defaults to :code:`None`
 
-        - `val_loader`: `torch.utils.data.DataLoader` or `None`, optional:
+        - val_loader: torch.utils.data.DataLoader or None, optional:
             The validation data, which contains the input and the targets.
-            Defaults to `None`.
+            Defaults to :code:`None`.
 
         '''
 
@@ -1078,24 +1078,24 @@ class BaseLightningModule(TrainingHelper, pl.LightningModule):
         Arguments
         ---------
         
-        - `X`: `numpy.array` or `None`, optional:
+        - X: numpy.array or None, optional:
             The input array to test the model on.
-            Defaults to `None`.
+            Defaults to :code:`None`.
 
-        - `y`: `numpy.array` or `None`, optional:
-            The target array to test the model on. If set to `None`,
-            then `targets_too` will automatically be set to `False`.
-            Defaults to `None`.
+        - y: numpy.array or None, optional:
+            The target array to test the model on. If set to :code:`None`,
+            then :code:`targets_too` will automatically be set to :code:`False`.
+            Defaults to :code:`None`.
         
-        - `test_loader`: `torch.utils.data.DataLoader` or `None`, optional: 
+        - test_loader: torch.utils.data.DataLoader or None, optional: 
             A data loader containing the test data.
-            Defaults to `None`.
+            Defaults to :code:`None`.
         
         
         Returns
         --------
         
-        - `output`: `torch.tensor` : 
+        - output: torch.tensor` : 
             The resutls from the predictions
         
         
