@@ -1,12 +1,13 @@
 from tensorboard.backend.event_processing.event_multiplexer import EventMultiplexer
 import typing
-import aml
 import joblib
 import tqdm
 import functools
 import pandas as pd
 
 from ..utils.directory import dirtree
+from ..utils.parallel import ProgressParallel
+from ..utils.progress import tqdm_style
 
 class TBToPD:
     def __init__(
@@ -148,7 +149,7 @@ class TBToPD:
         for level, files in tqdm.tqdm(
             self.level_dict.items(),
             desc='Loading Level',
-            **aml.tqdm_style,
+            **tqdm_style,
             ):
             acc = EventMultiplexer()
             for file in files:
@@ -163,7 +164,7 @@ class TBToPD:
             total=n_files, 
             desc='Reading Files', 
             disable=not self.verbose,
-            **aml.tqdm_style,
+            **tqdm_style,
             )
 
         for level in self.level_dict.keys():
@@ -183,7 +184,7 @@ class TBToPD:
                 for tag in (level_runs[run]['scalars'] if tags is None else tags)
                 ]
 
-            level_results = aml.ProgressParallel(
+            level_results = ProgressParallel(
                 tqdm_bar=tqdm_progress, 
                 n_jobs=self.n_jobs,
                 )(parallel_comps)
