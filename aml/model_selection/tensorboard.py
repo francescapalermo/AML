@@ -17,6 +17,35 @@ class TBToPD:
         n_jobs:int=1,
         verbose:bool=True,
         ):
+        '''
+        This class allows you to load tensorboard files
+        from a directory. 
+        
+        
+        Arguments
+        ---------
+        
+        - path: str: 
+            The path of the directory containing the files.
+        
+        - level: typing.Union[int, None], optional:
+            The maximum number of levels to dive into
+            when loading the files. If :code:`None` then
+            all levels are loaded. 
+            Defaults to :code:`None`.
+        
+        - n_jobs: int, optional:
+            The number of parallel operations when loading 
+            the data.
+            Defaults to :code:`1`.
+        
+        - verbose: bool, optional:
+            Whether to print progress when
+            loading the files. 
+            Defaults to :code:`True`.
+        
+        
+        '''
 
 
         assert n_jobs == 1, "This currently only supports 1 thread."
