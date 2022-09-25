@@ -24,5 +24,6 @@ setup(
                         "tqdm>=4.64",
                         "tensorboard>=2.9",
                         "pytorch-lightning>=1.6",
+                        "torch>=1.10",
     ]
 )
