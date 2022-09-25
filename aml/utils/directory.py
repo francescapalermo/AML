@@ -21,7 +21,7 @@ def dirtree(
     
     .. code_block::
     
-        >>> dirtree('./')
+        >>> dirtree('a_path')
     
     
     Arguments
