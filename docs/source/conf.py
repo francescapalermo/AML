@@ -8,13 +8,13 @@ from unittest import mock
 
 sys.path.insert(0, os.path.abspath("../.."))
 
-import aml
+from aml.__version__ import __version__, __doc__, __author__, __title__, __copyright__
 
-version = aml.__version__
-doc = aml.__doc__
-author = aml.__author__
-project = aml.__title__
-copyright = aml.__copyright__
+version = __version__
+doc = __doc__
+author = __author__
+project = __title__
+copyright = __copyright__
 release = '.'.join(version.split('.')[:2])
 
 # -- General configuration
