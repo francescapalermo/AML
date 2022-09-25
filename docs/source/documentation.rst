@@ -40,19 +40,6 @@ Here is the documentation for the model functionality and classes.
 
 
 
-Model Selection
------------------------
-
-Here is the documentation for the model selection functionality.
-
-
-.. automodule:: aml.model_selection
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-
-
 
 
 
