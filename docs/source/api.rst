@@ -2,11 +2,11 @@ API
 ====
 
 
-The following is the documentation for the SKUtils module.
+The following is the documentation for the AML module.
 
-.. autosummary:: sku
+.. autosummary:: aml
    :toctree: _autosummary
    :template: custom-module-template.rst
    :recursive:
 
-   sku
+   aml
