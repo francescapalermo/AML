@@ -46,7 +46,7 @@ Model Selection
 Here is the documentation for the model selection functionality.
 
 
-.. automodule:: sku.model_selection
+.. automodule:: aml.model_selection
    :members:
    :undoc-members:
    :show-inheritance:
