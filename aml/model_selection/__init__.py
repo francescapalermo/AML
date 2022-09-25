@@ -1,5 +1,5 @@
-from .tensorboard import TBToPD
+from .tensorboard import TensorboardLoad
 
 __all__ = [
-    'TBToPD',
+    'TensorboardLoad',
     ]
