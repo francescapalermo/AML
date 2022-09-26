@@ -24,13 +24,13 @@ def time_interval(hour:int, minute:int, interval:int)->list:
     Arguments
     ---------
     
-    - hour: int: 
+    - hour:
         The number of hours to run to.
     
-    - minute: int: 
+    - minute:
         The number of minutes in each hour.
     
-    - interval: int: 
+    - interval: 
         The interval for a new element.
     
     
@@ -38,7 +38,7 @@ def time_interval(hour:int, minute:int, interval:int)->list:
     Returns
     --------
     
-    - out: list` : 
+    - out: list: 
         List of time range
     
     
