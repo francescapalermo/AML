@@ -298,7 +298,7 @@ class AEModel(BaseLightningModule):
         Returns
         --------
         
-        - output: torch.tensor` : 
+        - output: torch.tensor: 
             The resutls from the predictions
         
         

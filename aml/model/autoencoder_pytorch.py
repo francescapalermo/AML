@@ -292,7 +292,7 @@ class AEModel(BaseModel):
         Returns
         --------
         
-        - output: torch.tensor` : 
+        - output: torch.tensor: 
             The resutls from the predictions
         
         

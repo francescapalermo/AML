@@ -74,10 +74,10 @@ class TrainingHelper:
         - self:
             The :code:`self` that is passed as an argument.
 
-        - train_loader: torch.utils.data.DataLoader` : 
+        - train_loader: torch.utils.data.DataLoader: 
             The train data loader.
         
-        - val_loader: torch.utils.data.DataLoader` : 
+        - val_loader: torch.utils.data.DataLoader: 
             The validation data loader.
 
         '''
@@ -146,7 +146,7 @@ class TrainingHelper:
         - self:
             The :code:`self` that is passed as an argument.
 
-        - test_loader: torch.utils.data.DataLoader` : 
+        - test_loader: torch.utils.data.DataLoader: 
             The test data loader.
         
         
@@ -365,7 +365,7 @@ class TrainingHelper:
         Returns
         --------
         
-        - dim_out: int` : 
+        - dim_out: int: 
             The dimension size after the convolutional layer.
         
         
@@ -403,7 +403,7 @@ class TrainingHelper:
         Returns
         --------
         
-        - params: dict` : 
+        - params: dict: 
             Dictionary containing the parameters of 
             the convolutional layer.
         
@@ -758,7 +758,7 @@ class BaseModel(TrainingHelper, nn.Module):
         Returns
         --------
         
-        - output: torch.tensor` : 
+        - output: torch.tensor: 
             The resutls from the predictions
         
         
@@ -1095,7 +1095,7 @@ class BaseLightningModule(TrainingHelper, pl.LightningModule):
         Returns
         --------
         
-        - output: torch.tensor` : 
+        - output: torch.tensor: 
             The resutls from the predictions
         
         

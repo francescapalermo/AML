@@ -35,7 +35,7 @@ def module_from_file(module_name:str, file_path:str):
     Returns
     --------
     
-    - out: module` : 
+    - out: module: 
         A python module that can be 
         used to access objects from 
         within it.
