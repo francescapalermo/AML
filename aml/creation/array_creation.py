@@ -38,7 +38,7 @@ def time_interval(hour:int, minute:int, interval:int)->list:
     Returns
     --------
     
-    - out: list: 
+    - out:
         List of time range
     
     
