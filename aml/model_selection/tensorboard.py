@@ -197,7 +197,7 @@ class TensorboardLoad:
         ) -> typing.Dict[int, pd.DataFrame]:
         '''
         This function collects all of the scalars
-        written to the tensorboard, with the give
+        written to the tensorboard, with the given
         tag and querying expression.
         
         Examples
@@ -258,7 +258,7 @@ class TensorboardLoad:
         ) -> typing.Dict[int, pd.DataFrame]:
         '''
         This function collects all of the histograms
-        written to the tensorboard, with the give
+        written to the tensorboard, with the given
         tag and querying expression.
         
         Examples
@@ -317,7 +317,7 @@ class TensorboardLoad:
         ) -> typing.Dict[int, pd.DataFrame]:
         '''
         This function collects all of the distributions
-        written to the tensorboard, with the give
+        written to the tensorboard, with the given
         tag and querying expression.
         
         Examples
@@ -376,7 +376,7 @@ class TensorboardLoad:
         ) -> typing.Dict[int, pd.DataFrame]:
         '''
         This function collects all of the images
-        written to the tensorboard, with the give
+        written to the tensorboard, with the given
         tag and querying expression.
         
         Examples
@@ -435,7 +435,7 @@ class TensorboardLoad:
         ) -> typing.Dict[int, pd.DataFrame]:
         '''
         This function collects all of the audio
-        written to the tensorboard, with the give
+        written to the tensorboard, with the given
         tag and querying expression.
         
         Examples
@@ -494,7 +494,7 @@ class TensorboardLoad:
         ) -> typing.Dict[int, pd.DataFrame]:
         '''
         This function collects all of the tensors
-        written to the tensorboard, with the give
+        written to the tensorboard, with the given
         tag and querying expression.
         
         Examples
