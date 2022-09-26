@@ -13,7 +13,7 @@ class MyData(torch.utils.data.Dataset):
         Examples
         ---------
         
-        .. code_block::
+        .. code-block:: 
         
             >>> data = MyData(X, y, other)
             >>> len(data) == len(X)

@@ -207,7 +207,7 @@ class TensorboardLoad:
         values from all files, in which the accuracy
         is more than or equal to 0.5.
 
-        .. code_block::
+        .. code-block:: 
         
             >>> tbload = TensorboardLoad('./')
             >>> tbload.scalars(
@@ -267,7 +267,7 @@ class TensorboardLoad:
         The following would load the accuracy
         histograms from all files.
 
-        .. code_block::
+        .. code-block:: 
         
             >>> tbload = TensorboardLoad('./')
             >>> tbload.histograms(
@@ -326,7 +326,7 @@ class TensorboardLoad:
         The following would load the accuracy
         distributions from all files.
 
-        .. code_block::
+        .. code-block:: 
         
             >>> tbload = TensorboardLoad('./')
             >>> tbload.distributions(
@@ -385,7 +385,7 @@ class TensorboardLoad:
         The following would load the accuracy
         images from all files.
 
-        .. code_block::
+        .. code-block:: 
         
             >>> tbload = TensorboardLoad('./')
             >>> tbload.images(
@@ -444,7 +444,7 @@ class TensorboardLoad:
         The following would load the accuracy
         audio from all files.
 
-        .. code_block::
+        .. code-block:: 
         
             >>> tbload = TensorboardLoad('./')
             >>> tbload.audio(
@@ -503,7 +503,7 @@ class TensorboardLoad:
         The following would load the accuracy
         tensors from all files.
 
-        .. code_block::
+        .. code-block:: 
         
             >>> tbload = TensorboardLoad('./')
             >>> tbload.tensors(

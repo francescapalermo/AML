@@ -19,7 +19,7 @@ def dirtree(
     Examples
     ---------
     
-    .. code_block::
+    .. code-block:: 
     
         >>> dirtree('./')
     

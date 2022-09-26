@@ -14,7 +14,7 @@ class ProgressParallel(Parallel):
         Examples
         ---------
         
-        .. code_block::
+        .. code-block:: 
         
             >>> pbar = tqdm.tqdm(total=5)
             >>> result = ProgressParallel(
