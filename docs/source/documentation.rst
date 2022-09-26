@@ -4,9 +4,23 @@ Documentation
 
 The full documentation is available here. Use the side bar to select the sub-module that is most applicable.
 
-All of these functions can be loaded in the following way::
+All of these functions can be loaded from the :code:`aml` package directly, for example::
 
 	>>> import aml
+   >>> aml.TensorboardLoad('./')
+
+
+
+Creation
+-----------------------
+
+Here is the documentation for the object creation functionality.
+
+
+.. automodule:: aml.creation
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 
 
@@ -55,6 +69,21 @@ Here is the documentation for the model selection functionality.
 
 
 
+Parallel
+-----------------------
+
+Here is the documentation for the parallel compute functionality.
+
+
+.. automodule:: aml.parallel
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+
+
+
 
 Pre-Processing
 -----------------------
@@ -63,6 +92,24 @@ Here is the documentation for the pre-processing functionality.
 
 
 .. automodule:: aml.preprocessing
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+
+
+
+
+
+
+Progress
+-----------------------
+
+Here is the documentation for the progress functionality.
+
+
+.. automodule:: aml.progress
    :members:
    :undoc-members:
    :show-inheritance:

@@ -3,7 +3,7 @@ import torch
 import time
 import tqdm
 
-from ..utils.progress import tqdm_style
+from ..progress.progress import tqdm_style
 
 
 class BasicModelTesting:

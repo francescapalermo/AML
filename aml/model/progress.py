@@ -9,7 +9,7 @@ import pytorch_lightning as pl
 from tqdm import tqdm as _tqdm
 from pytorch_lightning.callbacks.progress.tqdm_progress import TQDMProgressBar, convert_inf
 import sys
-from ..utils.progress import tqdm_style
+from ..progress.progress import tqdm_style
 
 
 
