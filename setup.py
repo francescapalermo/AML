@@ -25,5 +25,6 @@ setup(
                         "tensorboard>=2.9",
                         "pytorch-lightning>=1.6",
                         "torch>=1.10",
+                        "torchvision>=0.11.0",
     ]
 )

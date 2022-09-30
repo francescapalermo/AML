@@ -1,5 +1,4 @@
 import typing
-import wfdb
 import ast
 import pandas as pd
 import numpy as np
@@ -177,6 +176,10 @@ class PTB_XL(torch.utils.data.Dataset):
         
         
         '''
+        try:
+            import wfdb
+        except ImportError:
+            raise ImportError('Please install wfdb first.')
 
         assert sampling_rate in [100, 500], \
             "Please choose sampling_rate from [100, 500]"
