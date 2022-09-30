@@ -89,7 +89,7 @@ class MemoryDataset(torch.utils.data.Dataset):
                     joblib.delayed(return_value)(index)
                     for index in range(len(dataset))
                     )
-            
+            pbar.close()
             self.data_dict = {
                 data_point[0]:data_point[1]
                 for data_point in data_point_list
