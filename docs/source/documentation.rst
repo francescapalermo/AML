@@ -25,6 +25,22 @@ Here is the documentation for the object creation functionality.
 
 
 
+Data
+-----------------------
+
+Here is the documentation for the data functionality.
+
+
+.. automodule:: aml.data
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+
+
+
+
 Metrics
 -----------------------
 
