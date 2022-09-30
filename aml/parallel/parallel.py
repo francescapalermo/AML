@@ -1,8 +1,9 @@
+import typing
 from joblib import Parallel
 import tqdm
 
 class ProgressParallel(Parallel):
-    def __init__(self, tqdm_bar:tqdm.tqdm, *args, **kwargs):
+    def __init__(self, tqdm_bar:typing.Union[tqdm.tqdm, None]=None, *args, **kwargs):
         '''
         This is a wrapper for the joblib Parallel
         class that allows for a progress bar to be passed into
@@ -29,12 +30,14 @@ class ProgressParallel(Parallel):
         Arguments
         ---------
         
-        - tqdm_bar: tqdm.tqdm: 
+        - tqdm_bar: typing.Union[tqdm.tqdm, None]: 
             The tqdm bar that will be used in the
             progress updates.
             Every time progress is displayed, 
             :code:`tqdm_bar.update(n)` will be called,
             where :code:`n` is the number of updates made.
+            If :code:`None`, then no bar is shown.
+            Defaults to :code:`None`.
 
         
         '''
@@ -47,6 +50,7 @@ class ProgressParallel(Parallel):
 
     def print_progress(self):
         difference = self.n_completed_tasks - self.previously_completed
-        self.tqdm_bar.update(difference)
-        self.tqdm_bar.refresh()
+        if not self.tqdm_bar is None:
+            self.tqdm_bar.update(difference)
+            self.tqdm_bar.refresh()
         self.previously_completed += difference
