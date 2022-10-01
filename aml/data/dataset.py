@@ -9,6 +9,12 @@ from torchvision.datasets.utils import download_and_extract_archive
 import tqdm
 import joblib
 
+try:
+    import wfdb
+    wfdb_import_error = False
+except ImportError:
+    wfdb_import_error = True
+
 from ..progress.progress import tqdm_style
 from ..parallel.parallel import ProgressParallel
 
@@ -176,10 +182,9 @@ class PTB_XL(torch.utils.data.Dataset):
         
         
         '''
-        try:
-            import wfdb
-        except ImportError:
-            raise ImportError('Please install wfdb first.')
+
+        if wfdb_import_error:
+            raise ImportError('Please install wfdb before using this dataset.')
 
         assert sampling_rate in [100, 500], \
             "Please choose sampling_rate from [100, 500]"
@@ -274,6 +279,7 @@ class PTB_XL(torch.utils.data.Dataset):
         return
 
     def __getitem__(self, index):
+
         data = self.meta_data.iloc[index]
 
         if self.sampling_rate == 100:
