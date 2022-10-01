@@ -32,7 +32,9 @@ class MemoryDataset(torch.utils.data.Dataset):
         load all of the outputs into memory,
         so that they are accessed from RAM 
         instead of storage. All attributes of
-        the original dataset will still be available.
+        the original dataset will still be available, except
+        for :code:`.dataset` and :code:`.data_dict` if they 
+        were defined.
         It also allows the data to be saved in memory right
         away or after the data is accessed for the first time.
                
