@@ -8,6 +8,7 @@ import os
 from torchvision.datasets.utils import download_and_extract_archive
 import tqdm
 import joblib
+from joblib.externals.loky import get_reusable_executor
 
 try:
     import wfdb
@@ -24,7 +25,6 @@ class MemoryDataset(torch.utils.data.Dataset):
         dataset:torch.utils.data.Dataset,
         now:bool=True,
         verbose:bool=True,
-        n_jobs:int=1,
         ):
         '''
         This dataset allows the user
@@ -65,40 +65,21 @@ class MemoryDataset(torch.utils.data.Dataset):
             memory. This is ignored if :code:`now=False`.
             Defaults to :code:`True`.
         
-        - n_jobs: int, optional:
-            The number of parallel
-            loads into memory.
-            This is ignored if :code:`now=False`. 
-            Currently :code:`n_jobs=1` runs fastest...
-            Defaults to :code:`1`.
-        
         
         '''
 
         self.dataset = dataset
         self.data_dict = {}
         if now:
-            pbar = tqdm.tqdm(
-                desc='Loading into memory',
-                total=len(dataset),
-                disable=not verbose,
-                **tqdm_style
-                )
 
-            def return_value(index):
-                return [index, dataset[index]]
-
-            data_point_list = ProgressParallel(
-                pbar, 
-                n_jobs=n_jobs,
-                )(
-                    joblib.delayed(return_value)(index)
-                    for index in range(len(dataset))
-                    )
-            pbar.close()
             self.data_dict = {
-                data_point[0]:data_point[1]
-                for data_point in data_point_list
+                dataset[index] 
+                for index in tqdm.tqdm(
+                    range(len(dataset)),
+                    desc='Loading into memory',
+                    disable=not verbose,
+                    **tqdm_style
+                    )
                 }
 
         return
@@ -114,9 +95,20 @@ class MemoryDataset(torch.utils.data.Dataset):
     
     def __len__(self):
         return len(self.dataset)
-    
+
+    # defined since __getattr__ causes pickling problems
+    def __getstate__(self):
+        return vars(self)
+
+    # defined since __getattr__ causes pickling problems
+    def __setstate__(self, state):
+        vars(self).update(state)
+
     def __getattr__(self, name):
-        return getattr(self.dataset, name)
+        if hasattr(self.dataset, name):
+            return getattr(self.dataset, name)
+        else:
+            raise AttributeError
 
 
 
