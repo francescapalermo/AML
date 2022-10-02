@@ -1,14 +1,24 @@
 import typing
 from joblib import Parallel
 import tqdm
+from ..progress.progress import tqdm_style
 
 class ProgressParallel(Parallel):
-    def __init__(self, tqdm_bar:typing.Union[tqdm.tqdm, None]=None, *args, **kwargs):
+    def __init__(
+        self, 
+        tqdm_bar:typing.Union[tqdm.tqdm, None]=None, 
+        verbose:bool=True,
+        *args, 
+        **kwargs,
+        ):
         '''
         This is a wrapper for the joblib Parallel
         class that allows for a progress bar to be passed into
         the :code:`__init__` function so that the progress 
         can be viewed.
+
+        Recall that using :code:`backend='threading'`
+        allows for shared access to variables!
         
         
         
@@ -38,10 +48,21 @@ class ProgressParallel(Parallel):
             where :code:`n` is the number of updates made.
             If :code:`None`, then no bar is shown.
             Defaults to :code:`None`.
+        
+        - verbose: bool: 
+            If :code:`tqdm_bar=None`, then this
+            argument allows the user to stop the 
+            progress bar from printing at all.
+            Defaults to :code:`True`.
 
         
         '''
-        self.tqdm_bar = tqdm_bar
+        if tqdm_bar is None:
+            self.tqdm_bar = tqdm.tqdm(desc='In Parallel', disable=not verbose, **tqdm_style)
+            self.build_pbar_each_time=True
+        else:
+            self.tqdm_bar = tqdm_bar
+            self.build_pbar_each_time=False
         self.previously_completed = 0
         super().__init__(*args, **kwargs)
     
@@ -49,8 +70,14 @@ class ProgressParallel(Parallel):
         return Parallel.__call__(self, *args, **kwargs)
 
     def print_progress(self):
-        difference = self.n_completed_tasks - self.previously_completed
-        if not self.tqdm_bar is None:
+        
+        if self.build_pbar_each_time:
+            self.tqdm_bar.total = self.n_dispatched_tasks
+            self.tqdm_bar.n = self.n_completed_tasks
+            self.tqdm_bar.refresh()
+
+        else:
+            difference = self.n_completed_tasks - self.previously_completed
             self.tqdm_bar.update(difference)
             self.tqdm_bar.refresh()
-        self.previously_completed += difference
+            self.previously_completed += difference
