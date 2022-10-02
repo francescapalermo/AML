@@ -75,7 +75,7 @@ class MemoryDataset(torch.utils.data.Dataset):
         if now:
 
             self.data_dict = {
-                dataset[index] 
+                index: dataset[index] 
                 for index in tqdm.tqdm(
                     range(len(dataset)),
                     desc='Loading into memory',
