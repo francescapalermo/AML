@@ -25,6 +25,7 @@ class MemoryDataset(torch.utils.data.Dataset):
         dataset:torch.utils.data.Dataset,
         now:bool=True,
         verbose:bool=True,
+        n_jobs:int=1,
         ):
         '''
         This dataset allows the user
@@ -33,7 +34,7 @@ class MemoryDataset(torch.utils.data.Dataset):
         so that they are accessed from RAM 
         instead of storage. All attributes of
         the original dataset will still be available, except
-        for :code:`.dataset` and :code:`.data_dict` if they 
+        for :code:`._dataset` and :code:`._data_dict` if they 
         were defined.
         It also allows the data to be saved in memory right
         away or after the data is accessed for the first time.
@@ -67,36 +68,61 @@ class MemoryDataset(torch.utils.data.Dataset):
             memory. This is ignored if :code:`now=False`.
             Defaults to :code:`True`.
         
+        - n_jobs: int, optional:
+            The number of parallel operations when loading 
+            the data to memory.
+            Defaults to :code:`1`.
+        
         
         '''
 
-        self.dataset = dataset
-        self.data_dict = {}
+        self._dataset = dataset
+        self._data_dict = {}
         if now:
-
-            self.data_dict = {
-                index: dataset[index] 
-                for index in tqdm.tqdm(
-                    range(len(dataset)),
+            #self._data_dict = {
+            #    index: dataset[index]
+            #    for index in tqdm.tqdm(
+            #        iterable=range(len(dataset)),
+            #        desc='Loading into memory',
+            #        total=len(dataset),
+            #        **tqdm_style,
+            #        )
+            #    }
+            def add_to_dict(index):
+                self._data_dict[index] = dataset[index]
+                return None
+            
+            pbar = tqdm.tqdm(
+                    total = len(dataset),
                     desc='Loading into memory',
                     disable=not verbose,
                     **tqdm_style
                     )
-                }
+
+            ProgressParallel(
+                pbar, 
+                n_jobs=n_jobs,
+                backend='threading',
+                )(
+                    joblib.delayed(add_to_dict)(index)
+                    for index in range(len(dataset))
+                    )
+            
+            pbar.close()
 
         return
 
     def __getitem__(self, index):
 
-        if index in self.data_dict:
-            return self.data_dict[index]
+        if index in self._data_dict:
+            return self._data_dict[index]
         else:
-            output = self.dataset[index]
-            self.data_dict[index] = output
+            output = self._dataset[index]
+            self._data_dict[index] = output
             return output
     
     def __len__(self):
-        return len(self.dataset)
+        return len(self._dataset)
 
     # defined since __getattr__ causes pickling problems
     def __getstate__(self):
@@ -107,8 +133,8 @@ class MemoryDataset(torch.utils.data.Dataset):
         vars(self).update(state)
 
     def __getattr__(self, name):
-        if hasattr(self.dataset, name):
-            return getattr(self.dataset, name)
+        if hasattr(self._dataset, name):
+            return getattr(self._dataset, name)
         else:
             raise AttributeError
 
