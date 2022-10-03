@@ -8,6 +8,7 @@ class ProgressParallel(Parallel):
         self, 
         tqdm_bar:typing.Union[tqdm.tqdm, None]=None, 
         verbose:bool=True,
+        desc:str='In Parallel',
         *args, 
         **kwargs,
         ):
@@ -54,11 +55,17 @@ class ProgressParallel(Parallel):
             argument allows the user to stop the 
             progress bar from printing at all.
             Defaults to :code:`True`.
+        
+        - desc: str: 
+            If :code:`tqdm_bar=None`, then this
+            argument allows the user to add 
+            a description to the progress bar.
+            Defaults to :code:`In Parallel`.
 
         
         '''
         if tqdm_bar is None:
-            self.tqdm_bar = tqdm.tqdm(desc='In Parallel', disable=not verbose, **tqdm_style)
+            self.tqdm_bar = tqdm.tqdm(desc=desc, disable=not verbose, **tqdm_style)
             self.build_pbar_each_time=True
         else:
             self.tqdm_bar = tqdm_bar
