@@ -51,12 +51,12 @@ def make_input_roll(
     
     - sequence_length: int:
         This is an integer that contains the length of each of the returned sequences.
-    
+
 
     Returns
     ---------
 
-    - output: numpy.ndarray:
+    - output: ndarray:
         This is an array with the rolled data.
     
     '''
