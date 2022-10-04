@@ -69,7 +69,7 @@ class ParallelModelling:
         case is when trying to access the weights of pytorch models
         in parallel. :code:`pf.layer1.weight` will raise an error, as 
         :code:`pf.layer1` is callable. To access the weights, please
-        instead use: :code:`[model.layer1.weight for model in pf.models]`
+        instead use: :code:`[model.layer1.weight for model in pf.models]`.
 
 
         Arguments
