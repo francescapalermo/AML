@@ -17,7 +17,7 @@ except ImportError:
     wfdb_import_error = True
 
 from ..progress.progress import tqdm_style
-from ..parallel.parallel import ProgressParallel
+from ..parallel.parallel_progress import ProgressParallel
 
 class MemoryDataset(torch.utils.data.Dataset):
     def __init__(

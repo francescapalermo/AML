@@ -7,7 +7,7 @@ import functools
 import pandas as pd
 
 from ..utils.directory import dirtree
-from ..parallel.parallel import ProgressParallel
+from ..parallel.parallel_progress import ProgressParallel
 from ..progress.progress import tqdm_style
 
 class TensorboardLoad:

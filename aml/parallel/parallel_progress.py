@@ -9,6 +9,7 @@ class ProgressParallel(Parallel):
         tqdm_bar:typing.Union[tqdm.tqdm, None]=None, 
         verbose:bool=True,
         desc:str='In Parallel',
+        total:int=None,
         *args, 
         **kwargs,
         ):
@@ -37,6 +38,19 @@ class ProgressParallel(Parallel):
                         for i in range(5)
                     )
         
+        Alternatively, you do not need to pass a :code:`tqdm` bar:
+
+        .. code-block:: 
+        
+            >>> result = ProgressParallel(
+                    n_jobs=10,
+                    total=20,
+                    desc='In Parallel',
+                    )(
+                        joblib.delayed(f_parallel)(i)
+                        for i in range(20)
+                    )
+        
         
         Arguments
         ---------
@@ -47,7 +61,8 @@ class ProgressParallel(Parallel):
             Every time progress is displayed, 
             :code:`tqdm_bar.update(n)` will be called,
             where :code:`n` is the number of updates made.
-            If :code:`None`, then no bar is shown.
+            If :code:`None`, then a bar is created 
+            inside this class.
             Defaults to :code:`None`.
         
         - verbose: bool: 
@@ -61,11 +76,22 @@ class ProgressParallel(Parallel):
             argument allows the user to add 
             a description to the progress bar.
             Defaults to :code:`In Parallel`.
+        
+        - total: str: 
+            If :code:`tqdm_bar=None`, then this
+            argument allows the user to add 
+            a total to the progress bar, rather
+            than let the bar automatically update it
+            as it finds new tasks. If :code:`None`, then
+            the total might update multiple times as the 
+            parallel process queues jobs.
+            Defaults to :code:`None`.
 
         
         '''
         if tqdm_bar is None:
-            self.tqdm_bar = tqdm.tqdm(desc=desc, disable=not verbose, **tqdm_style)
+            self.tqdm_bar = tqdm.tqdm(desc=desc, total=total, disable=not verbose, **tqdm_style)
+            self.total=total
             self.build_pbar_each_time=True
         else:
             self.tqdm_bar = tqdm_bar
@@ -79,10 +105,12 @@ class ProgressParallel(Parallel):
     def print_progress(self):
         
         if self.build_pbar_each_time:
-            self.tqdm_bar.total = self.n_dispatched_tasks
+            if self.total is None:
+                self.tqdm_bar.total = self.n_dispatched_tasks
             self.tqdm_bar.n = self.n_completed_tasks
             self.tqdm_bar.refresh()
-
+            if self.n_dispatched_tasks == self.n_completed_tasks:
+                self.tqdm_bar.close()
         else:
             difference = self.n_completed_tasks - self.previously_completed
             self.tqdm_bar.update(difference)
