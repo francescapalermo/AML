@@ -27,6 +27,7 @@ class ParallelModelling:
         ---------
         
         .. code-block::
+
             >>> n_runs = 20
             >>> pf = ParallelModelling(
                     models=[
