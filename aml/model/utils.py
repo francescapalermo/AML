@@ -3,38 +3,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 import typing
 
-###### making numpy or tensors a torch dataset
-class MyData(torch.utils.data.Dataset):
-    def __init__(self, *inputs: torch.tensor):
-        '''
-        Allows the user to turn any set of tensors 
-        into a dataset.
-        
-        Examples
-        ---------
-        
-        .. code-block:: 
-        
-            >>> data = MyData(X, y, other)
-            >>> len(data) == len(X)
-            True
-        
-        
-        Arguments
-        ---------
-
-        - *inputs: torch.tensor:
-            Any tensors.
-        
-        '''
-        self.inputs = inputs
-    def __getitem__(self,index):
-        if len(self.inputs) == 1:
-            return self.inputs[0][index]
-        return [x[index] for x in self.inputs]
-    def __len__(self):
-        return len(self.inputs[0])
-
 
 def get_optimizer_from_name(name):
     '''

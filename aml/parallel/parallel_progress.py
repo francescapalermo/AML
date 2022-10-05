@@ -1,7 +1,8 @@
 import typing
 from joblib import Parallel
 import tqdm
-from ..progress.progress import tqdm_style
+
+from ..progress import tqdm_style
 
 class ProgressParallel(Parallel):
     def __init__(
@@ -75,7 +76,7 @@ class ProgressParallel(Parallel):
             If :code:`tqdm_bar=None`, then this
             argument allows the user to add 
             a description to the progress bar.
-            Defaults to :code:`In Parallel`.
+            Defaults to :code:`'In Parallel'`.
         
         - total: str: 
             If :code:`tqdm_bar=None`, then this

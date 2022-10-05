@@ -6,9 +6,9 @@ import tqdm
 import functools
 import pandas as pd
 
-from ..utils.directory import dirtree
-from ..parallel.parallel_progress import ProgressParallel
-from ..progress.progress import tqdm_style
+from ..utils import dirtree
+from ..parallel import ProgressParallel
+from ..progress import tqdm_style
 
 class TensorboardLoad:
     def __init__(
@@ -545,9 +545,3 @@ class TensorboardLoad:
             tags=tags, 
             query_expression=query_expression,
             )
-
-    #def __getattr__(self, name):
-    #    if name in self.type_func_dict:
-    #        return functools.partial(self._type_loader, type_name=name)
-    #    else:
-    #        raise AttributeError

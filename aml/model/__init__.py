@@ -1,6 +1,6 @@
 from .autoencoder_lightning import AEModel
 from .mlp_lightning import MLPModel
-from .utils import MyData
+from .base_model import BaseLightningModule
 
 import warnings
 import logging 
@@ -14,5 +14,5 @@ logging.getLogger("pytorch_lightning").setLevel(logging.WARNING)
 __all__=[
         'AEModel',
         'MLPModel',
-        'MyData'
+        'BaseLightningModule',
         ]

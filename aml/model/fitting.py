@@ -11,7 +11,8 @@ from torch.utils.tensorboard import SummaryWriter
 import typing
 import tqdm
 from collections import OrderedDict
-from ..progress.progress import tqdm_style
+
+from ..progress import tqdm_style
 
 
 

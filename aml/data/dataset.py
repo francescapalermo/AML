@@ -16,8 +16,9 @@ try:
 except ImportError:
     wfdb_import_error = True
 
-from ..progress.progress import tqdm_style
-from ..parallel.parallel_progress import ProgressParallel
+from ..progress import tqdm_style
+from ..parallel import ProgressParallel
+
 
 class MemoryDataset(torch.utils.data.Dataset):
     def __init__(
@@ -79,15 +80,7 @@ class MemoryDataset(torch.utils.data.Dataset):
         self._dataset = dataset
         self._data_dict = {}
         if now:
-            #self._data_dict = {
-            #    index: dataset[index]
-            #    for index in tqdm.tqdm(
-            #        iterable=range(len(dataset)),
-            #        desc='Loading into memory',
-            #        total=len(dataset),
-            #        **tqdm_style,
-            #        )
-            #    }
+
             def add_to_dict(index):
                 self._data_dict[index] = dataset[index]
                 return None
@@ -137,6 +130,41 @@ class MemoryDataset(torch.utils.data.Dataset):
             return getattr(self._dataset, name)
         else:
             raise AttributeError
+
+
+
+class MyData(torch.utils.data.Dataset):
+    def __init__(self, *inputs: torch.tensor):
+        '''
+        Allows the user to turn any set of tensors 
+        into a dataset.
+        
+        Examples
+        ---------
+        
+        .. code-block:: 
+        
+            >>> data = MyData(X, y, other)
+            >>> len(data) == len(X)
+            True
+        
+        
+        Arguments
+        ---------
+
+        - inputs: torch.tensor:
+            Any tensors.
+        
+        '''
+        self.inputs = inputs
+    def __getitem__(self,index):
+        if len(self.inputs) == 1:
+            return self.inputs[0][index]
+        return [x[index] for x in self.inputs]
+    def __len__(self):
+        return len(self.inputs[0])
+
+
 
 
 

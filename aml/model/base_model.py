@@ -8,12 +8,12 @@ import pytorch_lightning as pl
 import copy
 import gc
  
-from .utils import MyData, get_optimizer_from_name, get_criterion_from_name
+from .utils import get_optimizer_from_name, get_criterion_from_name
 from .optimizer import CombineOptimizers
 from .fitting import BasicModelFitter
 from .testing import BasicModelTesting
-from .progress import MyProgressBar
-
+from ..progress import PLTQDMProgressBar as MyProgressBar
+from ..data import MyData
 
 
 
@@ -35,7 +35,7 @@ class TrainingHelper:
                             ):
         '''
         This is used to prepare the fit model. Please either use 
-        the :code:`train_loader` or :code:`X` and :code:`y`.
+        the :code:`train_loader`, or :code:`X` and :code:`y`.
         This corresponds to using either a torch DataLoader
         or a numpy array as the training data.
 
@@ -179,6 +179,13 @@ class TrainingHelper:
 
 
     def _build_training_methods(self):
+        '''
+        This method takes the :code:`passed_optimizer`
+        and :code:`passed_criterion` attributes and 
+        creates the :code:`optimizer` and :code:`criterion`
+        attributes. It also sets the :code:`built_training_method=True`.
+        
+        '''
         # optimizer
         if type(self.passed_optimizer) == dict:
             self.optimizer = self._get_optimizer(self.passed_optimizer)
@@ -463,8 +470,6 @@ class TrainingHelper:
 
 
 
-
-######################## pytorch only base model
 
 class BaseModel(TrainingHelper, nn.Module):
     '''
@@ -819,7 +824,6 @@ class BaseModel(TrainingHelper, nn.Module):
 
 
 
-######################## pytorch lightning base model
 
 class BaseLightningModule(TrainingHelper, pl.LightningModule):
     def __init__(self,
@@ -842,14 +846,31 @@ class BaseLightningModule(TrainingHelper, pl.LightningModule):
                     log_every_n_steps:int=20,
                     ):
         '''
-        An auto-encoder model, built to be run similar to sklearn models.
-        This is built on top of :code:`pytorch_lightning.LightningModule`.
-        When training, a folder containing the pytorch and CSV logs will be
-        made.
+        A base model class, built to be run similar to sklearn models.
+        This is built on top of :code:`pytorch_lightning.LightningModule`
+        and includes some helper functions.
 
 
         Arguments
         ---------
+
+        - optimizer: dict, optional:
+            A dictionary containing the optimizer name as keys and
+            a dictionary as values containing the arguments as keys. 
+            For example: :code:`{'adam':{'lr':0.01}}`. 
+            The key can also be a :code:`torch.optim` class,
+            but not initiated.
+            For example: :code:`{torch.optim.Adam:{'lr':0.01}}`. 
+            Defaults to :code:`{'adam':{'lr':0.01}}`.
+
+        - criterion: str or torch.nn.Module:
+            The criterion that is used to calculate the loss.
+            If using a string, please use one of :code:`['mseloss', 'celoss']`
+            Defaults to :code:`mseloss`.
+        
+        - n_epochs: int, optional:
+            The number of epochs to run the training for.
+            Defaults to :code:`10`.
 
         - batch_size: int, optional:
             The batch size to use in training and transforming.
@@ -861,34 +882,16 @@ class BaseLightningModule(TrainingHelper, pl.LightningModule):
             training. Only used if the input data is not a torch DataLoader.
             Defaults to :code:`True`.
 
+        - verbose: bool, optional:
+            Whether to print information whilst training.
+            Defaults to :code:`True`.
+
         - dl_kwargs: dict, optional:
             A dictionary of keyword arguments that
             will be passed to the training, validation and testing data loader.
             These will be passed to :code:`torch.utils.data.DataLoader`.
             Only used if the input data is not a torch DataLoader.
             Defaults to :code:`{}`.
-
-        - verbose: bool, optional:
-            Whether to print information whilst training.
-            Defaults to :code:`True`.
-
-        - criterion: str or torch.nn.Module:
-            The criterion that is used to calculate the loss.
-            If using a string, please use one of :code:`['mseloss', 'celoss']`
-            Defaults to :code:`mseloss`.
-
-        - optimizer: dict, optional:
-            A dictionary containing the optimizer name as keys and
-            a dictionary as values containing the arguments as keys. 
-            For example: :code:`{'adam':{'lr':0.01}}`. 
-            The key can also be a :code:`torch.optim` class,
-            but not initiated.
-            For example: :code:`{torch.optim.Adam:{'lr':0.01}}`. 
-            Defaults to :code:`{'adam':{'lr':0.01}}`.
-        
-        - n_epochs: int, optional:
-            The number of epochs to run the training for.
-            Defaults to :code:`10`.
         
         - accelerator: str, optional:
             The device to use for training. Please use 
@@ -897,10 +900,6 @@ class BaseLightningModule(TrainingHelper, pl.LightningModule):
         
         - enable_model_summary: bool, optional:
             Whether to pint a model summary when training.
-            Defaults to :code:`False`.
-
-        - logging: bool, optional:
-            Whether to log the run data.
             Defaults to :code:`False`.
 
         - enable_checkpointing: bool, optional:
@@ -918,6 +917,10 @@ class BaseLightningModule(TrainingHelper, pl.LightningModule):
             pass a progress bar to this list, as the TQDM progress bar
             is passed to this list within this class.
             Defaults to :code:`[]`.
+
+        - logging: bool, optional:
+            Whether to log the run data.
+            Defaults to :code:`False`.
 
         - log_every_n_steps: int, optional:
             How many steps to train before logging metrics.
@@ -946,16 +949,14 @@ class BaseLightningModule(TrainingHelper, pl.LightningModule):
     
     def _reset_trainer(self):
         '''
-        To reset the pytorch-lightning training.
+        This will reset the pytorch-lightning trainer
+        class by passing the inputs to it again.
         '''
         if self.logging:
             logger = [pl.loggers.CSVLogger(save_dir='./', name=f'{type(self).__name__}_logs'), 
                         pl.loggers.TensorBoardLogger(save_dir='./', name=f'{type(self).__name__}_logs')]
         else:
             logger = False
-
-        #call_backs_to_pass = [pl.callbacks.TQDMProgressBar(refresh_rate=10)]
-        #call_backs_to_pass = [ProgressBar()]
 
         if self.verbose:
             call_backs_to_pass = [MyProgressBar(refresh_rate=10)]
@@ -974,22 +975,21 @@ class BaseLightningModule(TrainingHelper, pl.LightningModule):
                                 enable_checkpointing=self.enable_checkpointing,
                                 **self.pl_trainer_kwargs
                                 )
-
         return
 
     def configure_optimizers(self):
         '''
         This is required for pytorch lightning.
-        If using overwriting with you own function,
-        please use it to return a dictionary with 
+        If overwriting with your own function,
+        please return a dictionary with 
         keys :code:`'optimizer'` and :code:`'lr_scheduler'`,
         if one is being used.
         The optimizer is also saved in this class as an 
         attribute :code:`.optimizer`, which is built from
-        the input, saved in :code:`.passed_optimizer`.
+        the input, saved in :code:`.passed_optimizer`, when
+        the :code:`fit` method is called.
         '''
         return {'optimizer': self.optimizer}
-
 
     def fit(self, 
             X:np.array=None, 
@@ -1003,9 +1003,9 @@ class BaseLightningModule(TrainingHelper, pl.LightningModule):
             ):
         '''
         This is used to fit the model. Please either use 
-        the :code:`train_loader` or :code:`X` and :code:`y`.
+        the :code:`train_loader`, or :code:`X` and :code:`y`.
         This corresponds to using either a torch DataLoader
-        or a numpy array as the training data.
+        or numpy arrays as the training data.
 
         Arguments
         ---------
@@ -1057,15 +1057,15 @@ class BaseLightningModule(TrainingHelper, pl.LightningModule):
                             ckpt_path=ckpt_path,
                             )
         
+        # making sure ram and vram is cleared of models and data.
         del train_loader
         del val_loader
         del self.trainer
-
         self.cpu()
         gc.collect()
         torch.cuda.empty_cache()
 
-
+        return self
 
     def predict(self,
                 X:np.array=None,
@@ -1073,7 +1073,12 @@ class BaseLightningModule(TrainingHelper, pl.LightningModule):
                 test_loader:torch.utils.data.DataLoader=None, 
                 ):
         '''
-        Method for making predictions on a test loader.
+        Method for making predictions on a 
+        test loader or numpy arrays. Please either use 
+        the :code:`test_loader`, or :code:`X` and :code:`y`.
+        This corresponds to using either a torch DataLoader
+        or numpy arrays as the training data.
+
         
         Arguments
         ---------
@@ -1083,8 +1088,10 @@ class BaseLightningModule(TrainingHelper, pl.LightningModule):
             Defaults to :code:`None`.
 
         - y: numpy.array or None, optional:
-            The target array to test the model on. If set to :code:`None`,
-            then :code:`targets_too` will automatically be set to :code:`False`.
+            The target array to test the model on. 
+            If set to :code:`None`, then the batches given
+            to the pytorch lightning model will just contain 
+            :code:`X`.
             Defaults to :code:`None`.
         
         - test_loader: torch.utils.data.DataLoader or None, optional: 
@@ -1096,7 +1103,7 @@ class BaseLightningModule(TrainingHelper, pl.LightningModule):
         --------
         
         - output: torch.tensor: 
-            The resutls from the predictions
+            The results from the predictions
         
         
         '''
