@@ -13,7 +13,8 @@ All of these functions can be loaded from the :code:`aml` package directly, for 
 Array
 -----------------------
 
-Here is the documentation for the array functionality.
+Here is the documentation for the array functionality. This includes
+building arrays and performing transformation functions on arrays.
 
 
 .. automodule:: aml.array
@@ -23,18 +24,6 @@ Here is the documentation for the array functionality.
 
 
 
-
-
-Creation
------------------------
-
-Here is the documentation for the object creation functionality.
-
-
-.. automodule:: aml.creation
-   :members:
-   :undoc-members:
-   :show-inheritance:
 
 
 
