@@ -1,4 +1,8 @@
-from .dataset import MemoryDataset, MyData, PTB_XL
+from .dataset import (
+    MemoryDataset, 
+    MyData, 
+    PTB_XL,
+    )
 
 __all__ =[
     'MemoryDataset',

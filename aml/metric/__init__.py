@@ -1,4 +1,6 @@
-from .confusion_matrix import make_confusion_matrix
+from .confusion_matrix import (
+    make_confusion_matrix,
+    )
 from .metric_functions import (
     countna, 
     format_mean_iqr_missing, 
