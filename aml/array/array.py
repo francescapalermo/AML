@@ -1,6 +1,7 @@
 import numpy as np
 import typing
 import copy as _copy
+import pandas as pd
 
 
 
@@ -145,3 +146,96 @@ def flatten(
 
 
 
+
+def stratification(
+    array:np.ndarray, 
+    **leq:float,
+    ) -> np.ndarray:
+    '''
+    This function allows you to replace
+    values in a numpy array less than or 
+    equal to the given values with the keywords
+    given in the function arguments. All
+    values that are more than the largest
+    argument will have a returned value of :code:`None`.
+    
+    
+    
+    Examples
+    ---------
+    
+    Here, we stratify an array into 
+    three groups:
+
+    .. code-block::
+    
+        >>> stratification(
+                np.array(
+                    [[0.1, 0.2], 
+                    [0.7, 0.9]]),
+                Orange=0.8,
+                Green=0.15,
+                Red=1.0,
+                )
+        array(
+            [['Green', 'Orange'],
+            ['Orange', 'Red']], 
+            dtype=object)
+    
+    Similarly, if the largest leq argument
+    is smaller than the largest value in the
+    array, then None will be returned in its place:
+
+    .. code-block::
+    
+        >>> stratification(
+                np.array(
+                    [[0.1, 0.2], 
+                    [0.7, 1.1]]),
+                Orange=0.8,
+                Green=0.15,
+                Red=1.0,
+                )
+        array(
+            [['Green', 'Orange'],
+            ['Orange', None]], 
+            dtype=object)
+
+    
+    Arguments
+    ---------
+    
+    - array: np.ndarray: 
+        Array to perform transformation over.
+    
+    - **leq: int:
+        The keyword arguments used to 
+        stratify the object. The keywords
+        are the labels in the output array.
+    
+    Returns
+    --------
+    
+    - out: np.ndarray: 
+        Array, stratified into the groups
+        given by the arguments. 
+    
+    
+    '''
+
+    # setting output array
+    array_out = np.empty(array.shape, dtype=object)
+
+    # finding the order to apply <= (LEQ)
+    leq_order = [k for k, _ in sorted(leq.items(), key=lambda item: item[1], reverse=True)]
+
+    # masking is used to avoid nan values
+    for key in leq_order:
+        mask = np.zeros(array.shape, dtype=bool)
+        np.less_equal(array, leq[key], out=mask, where=~pd.isna(array))
+        array_out[mask] = key
+
+    # copying values where the original has NA values.
+    array_out[pd.isna(array)] = array[pd.isna(array)]
+
+    return array_out

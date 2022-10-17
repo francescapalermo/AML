@@ -6,6 +6,6 @@ from .metric import *
 from .model import *
 from .model_selection import *
 from .parallel import *
-from .preprocessing import *
+from .array import *
 from .progress import *
 from .utils import *

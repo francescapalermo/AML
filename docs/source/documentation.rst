@@ -10,6 +10,20 @@ All of these functions can be loaded from the :code:`aml` package directly, for 
    >>> aml.TensorboardLoad('./')
 
 
+Array
+-----------------------
+
+Here is the documentation for the array functionality.
+
+
+.. automodule:: aml.array
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+
+
 
 Creation
 -----------------------
@@ -98,19 +112,6 @@ Here is the documentation for the parallel compute functionality.
 
 
 
-
-
-
-Pre-Processing
------------------------
-
-Here is the documentation for the pre-processing functionality.
-
-
-.. automodule:: aml.preprocessing
-   :members:
-   :undoc-members:
-   :show-inheritance:
 
 
 
