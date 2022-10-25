@@ -5,6 +5,7 @@ from sklearn.metrics._classification import (
     multilabel_confusion_matrix,
     _prf_divide
     )
+from sklearn.metrics import precision_recall_curve, auc
 
 
 
@@ -199,10 +200,10 @@ def sensitivity_specificity_ppv_npv(
     Arguments
     ---------
 
-    - y_true: numpy.ndarray:
+    - y_true: np.ndarray:
         The array of true values.
 
-    - y_pred: numpy.ndarray:
+    - y_pred: np.ndarray:
         The array of predicted values.
     
     - labels: typing.Union[np.ndarray, None], optional:
@@ -456,10 +457,10 @@ def sensitivity_score(
     Arguments
     ---------
 
-    - y_true: numpy.ndarray:
+    - y_true: np.ndarray:
         The array of true values.
 
-    - y_pred: numpy.ndarray:
+    - y_pred: np.ndarray:
         The array of predicted values.
     
     - labels: typing.Union[np.ndarray, None], optional:
@@ -575,10 +576,10 @@ def specificity_score(
     Arguments
     ---------
 
-    - y_true: numpy.ndarray:
+    - y_true: np.ndarray:
         The array of true values.
 
-    - y_pred: numpy.ndarray:
+    - y_pred: np.ndarray:
         The array of predicted values.
     
     - labels: typing.Union[np.ndarray, None], optional:
@@ -691,10 +692,10 @@ def ppv_score(
     Arguments
     ---------
 
-    - y_true: numpy.ndarray:
+    - y_true: np.ndarray:
         The array of true values.
 
-    - y_pred: numpy.ndarray:
+    - y_pred: np.ndarray:
         The array of predicted values.
     
     - labels: typing.Union[np.ndarray, None], optional:
@@ -807,10 +808,10 @@ def npv_score(
     Arguments
     ---------
 
-    - y_true: numpy.ndarray:
+    - y_true: np.ndarray:
         The array of true values.
 
-    - y_pred: numpy.ndarray:
+    - y_pred: np.ndarray:
         The array of predicted values.
     
     - labels: typing.Union[np.ndarray, None], optional:
@@ -889,3 +890,71 @@ def npv_score(
         zero_division=zero_division,
     )
     return s
+
+
+
+
+def auc_precision_recall_curve(
+    y_true:np.ndarray, 
+    y_proba:np.ndarray, 
+    pos_label=None, 
+    sample_weight=None,
+    ) -> float:
+    '''
+    A function that calculates the area under
+    the precision-recall curve
+    between two arrays. This is modelled 
+    on the Scikit-Learn :code:`recall_score`, 
+    :code:`precision_score`, :code:`accuracy_score`,
+    and :code:`f1_score`.
+
+    Examples
+    ---------
+
+    .. code-block::
+
+        >>> import numpy as np
+        >>> auc_precision_recall_curve(
+                y_true=np.array([0,1,0,1,0]),
+                y_pred=np.array([0,0,0,1,0]),
+                )
+        0.85
+
+
+    Arguments
+    ---------
+
+    - y_true: np.ndarray:
+        The array of true values.
+
+    - y_pred: np.ndarray:
+        The array of predicted values.
+
+    - pos_label: typing.Union[str, int], optional:
+        The class to report if :code:`average='binary'` and the data is binary.
+        If the data are multiclass or multilabel, this will be ignored;
+        setting :code:`labels=[pos_label]` and 
+        :code:`average != 'binary'` will report
+        scores for that label only.
+        Defaults to :code:`1`.
+
+    - sample_weight: typing.Union[np.ndarray, None], optional:
+        Sample weights.
+        Defualts to :code:`None`.
+    
+    Returns
+    ---------
+
+    - auc: float:
+        The area under the precision-recall curve.
+    
+    '''
+
+    y, x, _ = precision_recall_curve(
+        y_true, 
+        y_proba, 
+        pos_label=pos_label, 
+        sample_weight=sample_weight,
+        )
+    
+    return auc(x,y)

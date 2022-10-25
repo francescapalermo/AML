@@ -11,6 +11,7 @@ from .metric_functions import (
     specificity_score,
     ppv_score,
     npv_score,
+    auc_precision_recall_curve,
     )
 
 
@@ -25,4 +26,5 @@ __all__ = [
     'specificity_score',
     'ppv_score',
     'npv_score',
+    'auc_precision_recall_curve',
 ]
