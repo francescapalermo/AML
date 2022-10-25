@@ -916,7 +916,7 @@ def auc_precision_recall_curve(
         >>> import numpy as np
         >>> auc_precision_recall_curve(
                 y_true=np.array([0,1,0,1,0]),
-                y_pred=np.array([0,0,0,1,0]),
+                y_proba=np.array([0,0,0,1,0]),
                 )
         0.85
 
@@ -927,8 +927,8 @@ def auc_precision_recall_curve(
     - y_true: np.ndarray:
         The array of true values.
 
-    - y_pred: np.ndarray:
-        The array of predicted values.
+    - y_proba: np.ndarray:
+        The array of predicted score values.
 
     - pos_label: typing.Union[str, int], optional:
         The class to report if :code:`average='binary'` and the data is binary.
