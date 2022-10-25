@@ -166,8 +166,7 @@ def format_mean_std(
 
 
 
-
-def sensitivity_specificity(
+def sensitivity_specificity_ppv_npv(
     y_true:np.ndarray, 
     y_pred:np.ndarray, 
     labels:typing.Union[np.ndarray, None]=None,
@@ -178,9 +177,9 @@ def sensitivity_specificity(
     zero_division:typing.Union[int, str]='warn',
     ) -> typing.Tuple[float]:
     '''
-    A function that calculates the sensitivity and
-    specificity between two arrays. This is modelled 
-    on the Scikit-Learn :code:`recall_score`, 
+    A function that calculates the sensitivity, 
+    specificity, ppv, and npv between two arrays. 
+    This is modelled on the Scikit-Learn :code:`recall_score`, 
     :code:`precision_score`, :code:`accuracy_score`,
     and :code:`f1_score`.
 
@@ -190,11 +189,11 @@ def sensitivity_specificity(
     .. code-block::
 
         >>> import numpy as np
-        >>> sensitivity_specificity(
+        >>> sensitivity_specificity_ppv_npv(
                 y_true=np.array([0,1,0,1,0]),
                 y_pred=np.array([0,0,0,1,0]),
                 )
-        (0.5, 1.0)
+        (0.5, 1.0, 1.0, 0.75)
 
 
     Arguments
@@ -264,6 +263,8 @@ def sensitivity_specificity(
         Sets the value to return when there is a zero division:
            - sensitivity: when there are no positive labels
            - specificity: when there are no negative labels
+           - ppv: when there are no positive predictions
+           - npv: when there are no negative predictions
         If set to :code:`"warn"`, this acts as :code:`0`, 
         but warnings are also raised.
         Defaults to :code:`"warn"`.
@@ -276,12 +277,18 @@ def sensitivity_specificity(
 
     - specificity: float:
         The specificity score.
+
+    - ppv: float:
+        The positive predictive value score.
+
+    - npv: float:
+        The negative predictive value score.
     
     '''
     
     labels = _check_set_wise_labels(y_true, y_pred, average, labels, pos_label)
 
-    # Calculate tp_sum, pred_sum, true_sum ###
+
     samplewise = average == "samples"
     MCM = multilabel_confusion_matrix(
         y_true,
@@ -293,20 +300,22 @@ def sensitivity_specificity(
 
     tp_sum = MCM[:, 1, 1]
     tn_sum =  MCM[:, 0, 0]
-    pred_sum = tp_sum + MCM[:, 0, 1]
-    true_sum = tp_sum + MCM[:, 1, 0]
-    false_sum = tn_sum + MCM[:, 0, 1]
+    fn_sum = MCM[:, 1, 0]
+    pos_pred_sum = tp_sum + MCM[:, 0, 1]
+    pos_true_sum = tp_sum + MCM[:, 1, 0]
+    neg_true_sum = tn_sum + MCM[:, 0, 1]
+    neg_pred_sum = fn_sum + MCM[:, 1, 0]
 
     if average == "micro":
         tp_sum = np.array([tp_sum.sum()])
         tn_sum = np.array([tn_sum.sum()])
-        pred_sum = np.array([pred_sum.sum()])
-        true_sum = np.array([true_sum.sum()])
-        false_sum = np.array([false_sum.sum()])
+        pos_pred_sum = np.array([pos_pred_sum.sum()])
+        pos_true_sum = np.array([pos_true_sum.sum()])
+        neg_true_sum = np.array([neg_true_sum.sum()])
 
     sensitivity = _prf_divide(
         tp_sum, 
-        true_sum, 
+        pos_true_sum, 
         "sensitivity", 
         "true", 
         average, 
@@ -316,7 +325,7 @@ def sensitivity_specificity(
 
     specificity = _prf_divide(
         tn_sum, 
-        false_sum, 
+        neg_true_sum, 
         "specificity", 
         "true", 
         average, 
@@ -324,12 +333,36 @@ def sensitivity_specificity(
         zero_division=zero_division,
     )
 
+    ppv = _prf_divide(
+        tp_sum, 
+        pos_pred_sum, 
+        "ppv", 
+        "predicted", 
+        average, 
+        warn_for, 
+        zero_division=zero_division,
+    )
+
+    npv = _prf_divide(
+        tn_sum, 
+        neg_pred_sum, 
+        "npv", 
+        "predicted", 
+        average, 
+        warn_for, 
+        zero_division=zero_division,
+    )
+
     sensitivity_zero_division = False
     specificity_zero_division = False
+    ppv_zero_division = False
+    npv_zero_division = False
 
     if average == "weighted":
-        weights_sensitivity = true_sum
-        weights_specificity = false_sum
+        weights_sensitivity = pos_true_sum
+        weights_specificity = neg_true_sum
+        weights_ppv = pos_pred_sum
+        weights_npv = neg_pred_sum
 
         if weights_sensitivity.sum() == 0:
             zero_division_value = np.float64(1.0)
@@ -347,13 +380,33 @@ def sensitivity_specificity(
             specificity = zero_division_value
             specificity_zero_division = True
 
+        if weights_ppv.sum() == 0:
+            zero_division_value = np.float64(1.0)
+            if zero_division in ["warn", 0]:
+                zero_division_value = np.float64(0.0)
+            # specificity is zero_division if there are no negative labels
+            ppv = zero_division_value
+            ppv_zero_division = True
+
+        if weights_npv.sum() == 0:
+            zero_division_value = np.float64(1.0)
+            if zero_division in ["warn", 0]:
+                zero_division_value = np.float64(0.0)
+            # specificity is zero_division if there are no negative labels
+            npv = zero_division_value
+            npv_zero_division = True
+
 
     elif average == "samples":
         weights_sensitivity = sample_weight
         weights_specificity = sample_weight
+        weights_ppv = sample_weight
+        weights_npv = sample_weight
     else:
         weights_sensitivity = None
         weights_specificity = None
+        weights_ppv = None
+        weights_npv = None
 
     if average is not None:
         assert average != "binary" or len(sensitivity) == 1
@@ -361,8 +414,12 @@ def sensitivity_specificity(
             sensitivity = np.average(sensitivity, weights=weights_sensitivity)
         if not specificity_zero_division:
             specificity = np.average(specificity, weights=weights_specificity)
+        if not ppv_zero_division:
+            ppv = np.average(ppv, weights=weights_ppv)
+        if not npv_zero_division:
+            npv = np.average(npv, weights=weights_npv)
 
-    return sensitivity, specificity
+    return sensitivity, specificity, ppv, npv
 
 
 
@@ -456,7 +513,6 @@ def sensitivity_score(
 
     - zero_division: typing.Union[int, str], optional:
         Sets the value to return when there is a zero division:
-           - sensitivity: when there are no positive labels
            - specificity: when there are no negative labels
         If set to :code:`"warn"`, this acts as :code:`0`, 
         but warnings are also raised.
@@ -471,7 +527,7 @@ def sensitivity_score(
     '''
 
     warn_for = "sensitivity",
-    s, _ = sensitivity_specificity(
+    s, _, _, _ = sensitivity_specificity_ppv_npv(
         y_true=y_true, 
         y_pred=y_pred, 
         labels=labels,
@@ -576,7 +632,6 @@ def specificity_score(
 
     - zero_division: typing.Union[int, str], optional:
         Sets the value to return when there is a zero division:
-           - sensitivity: when there are no positive labels
            - specificity: when there are no negative labels
         If set to :code:`"warn"`, this acts as :code:`0`, 
         but warnings are also raised.
@@ -591,7 +646,239 @@ def specificity_score(
     '''
 
     warn_for = "specificity",
-    _, s = sensitivity_specificity(
+    _, s, _, _ = sensitivity_specificity_ppv_npv(
+        y_true=y_true, 
+        y_pred=y_pred, 
+        labels=labels,
+        pos_label=pos_label,
+        average=average,
+        sample_weight=sample_weight,
+        warn_for=warn_for,
+        zero_division=zero_division,
+    )
+    return s
+
+
+def ppv_score(
+    y_true:np.ndarray, 
+    y_pred:np.ndarray, 
+    labels:typing.Union[np.ndarray, None]=None,
+    pos_label:typing.Union[str, int]=1,
+    average:typing.Union[str, None]="binary",
+    sample_weight:typing.Union[np.ndarray, None]=None,
+    zero_division:typing.Union[int, str]='warn',
+    ):
+    '''
+    A function that calculates the positive
+    predictive value between two arrays. This is modelled 
+    on the Scikit-Learn :code:`recall_score`, 
+    :code:`precision_score`, :code:`accuracy_score`,
+    and :code:`f1_score`.
+
+    Examples
+    ---------
+
+    .. code-block::
+
+        >>> import numpy as np
+        >>> ppv_score(
+                y_true=np.array([0,1,0,1,0]),
+                y_pred=np.array([0,0,0,1,0]),
+                )
+        1.0
+
+
+    Arguments
+    ---------
+
+    - y_true: numpy.ndarray:
+        The array of true values.
+
+    - y_pred: numpy.ndarray:
+        The array of predicted values.
+    
+    - labels: typing.Union[np.ndarray, None], optional:
+        The set of labels to include when 
+        :code:`average != 'binary'`, and their order 
+        if average is :code:`None`. Labels present in 
+        the data can be excluded, for example to calculate a 
+        multiclass average ignoring a majority 
+        negative class, while labels not present 
+        in the data will result in 0 components in a 
+        macro average. For multilabel targets, labels are 
+        column indices. By default, all labels in 
+        :code:`y_true` and :code:`y_pred` are used in sorted order.
+        Defaults to :code:`None`.
+
+    - pos_label: typing.Union[str, int], optional:
+        The class to report if :code:`average='binary'` and the data is binary.
+        If the data are multiclass or multilabel, this will be ignored;
+        setting :code:`labels=[pos_label]` and 
+        :code:`average != 'binary'` will report
+        scores for that label only.
+        Defaults to :code:`1`.
+
+    - average: typing.Union[str, None], optional:
+        If :code:`None`, the scores for each class 
+        are returned. Otherwise, this determines the type 
+        of averaging performed on the data:
+        - :code:`'binary'`:
+            Only report results for the class specified by :code:`pos_label`.
+            This is applicable only if targets (`y_{true,pred}`) are binary.
+        - :code:`'micro'`:
+            Calculate metrics globally by counting the total true positives,
+            false negatives and false positives.
+        - :code:`'macro'`:
+            Calculate metrics for each label, and find their unweighted
+            mean.  This does not take label imbalance into account.
+        - :code:`'weighted'`:
+            Calculate metrics for each label, and find their average weighted
+            by support (the number of true instances for each label). This
+            alters 'macro' to account for label imbalance; it can result in an
+            F-score that is not between precision and recall.
+        - :code:`'samples'`:
+            Calculate metrics for each instance, and find their average (only
+            meaningful for multilabel classification where this differs from
+            :code:`accuracy_score`).
+        Defaults to :code:`"binary"`.
+
+    - sample_weight: typing.Union[np.ndarray, None], optional:
+        Sample weights.
+        Defualts to :code:`None`.
+
+    - zero_division: typing.Union[int, str], optional:
+        Sets the value to return when there is a zero division:
+           - ppv: when there are no positive predictions
+        If set to :code:`"warn"`, this acts as :code:`0`, 
+        but warnings are also raised.
+        Defaults to :code:`"warn"`.
+    
+    Returns
+    ---------
+
+    - ppv: float:
+        The positive predictive value score.
+    
+    '''
+
+    warn_for = "ppv",
+    _, _, s, _ = sensitivity_specificity_ppv_npv(
+        y_true=y_true, 
+        y_pred=y_pred, 
+        labels=labels,
+        pos_label=pos_label,
+        average=average,
+        sample_weight=sample_weight,
+        warn_for=warn_for,
+        zero_division=zero_division,
+    )
+    return s
+
+
+def npv_score(
+    y_true:np.ndarray, 
+    y_pred:np.ndarray, 
+    labels:typing.Union[np.ndarray, None]=None,
+    pos_label:typing.Union[str, int]=1,
+    average:typing.Union[str, None]="binary",
+    sample_weight:typing.Union[np.ndarray, None]=None,
+    zero_division:typing.Union[int, str]='warn',
+    ):
+    '''
+    A function that calculates the negative
+    predictive value between two arrays. This is modelled 
+    on the Scikit-Learn :code:`recall_score`, 
+    :code:`precision_score`, :code:`accuracy_score`,
+    and :code:`f1_score`.
+
+    Examples
+    ---------
+
+    .. code-block::
+
+        >>> import numpy as np
+        >>> npv_score(
+                y_true=np.array([0,1,0,1,0]),
+                y_pred=np.array([0,0,0,1,0]),
+                )
+        0.75
+
+
+    Arguments
+    ---------
+
+    - y_true: numpy.ndarray:
+        The array of true values.
+
+    - y_pred: numpy.ndarray:
+        The array of predicted values.
+    
+    - labels: typing.Union[np.ndarray, None], optional:
+        The set of labels to include when 
+        :code:`average != 'binary'`, and their order 
+        if average is :code:`None`. Labels present in 
+        the data can be excluded, for example to calculate a 
+        multiclass average ignoring a majority 
+        negative class, while labels not present 
+        in the data will result in 0 components in a 
+        macro average. For multilabel targets, labels are 
+        column indices. By default, all labels in 
+        :code:`y_true` and :code:`y_pred` are used in sorted order.
+        Defaults to :code:`None`.
+
+    - pos_label: typing.Union[str, int], optional:
+        The class to report if :code:`average='binary'` and the data is binary.
+        If the data are multiclass or multilabel, this will be ignored;
+        setting :code:`labels=[pos_label]` and 
+        :code:`average != 'binary'` will report
+        scores for that label only.
+        Defaults to :code:`1`.
+
+    - average: typing.Union[str, None], optional:
+        If :code:`None`, the scores for each class 
+        are returned. Otherwise, this determines the type 
+        of averaging performed on the data:
+        - :code:`'binary'`:
+            Only report results for the class specified by :code:`pos_label`.
+            This is applicable only if targets (`y_{true,pred}`) are binary.
+        - :code:`'micro'`:
+            Calculate metrics globally by counting the total true positives,
+            false negatives and false positives.
+        - :code:`'macro'`:
+            Calculate metrics for each label, and find their unweighted
+            mean.  This does not take label imbalance into account.
+        - :code:`'weighted'`:
+            Calculate metrics for each label, and find their average weighted
+            by support (the number of true instances for each label). This
+            alters 'macro' to account for label imbalance; it can result in an
+            F-score that is not between precision and recall.
+        - :code:`'samples'`:
+            Calculate metrics for each instance, and find their average (only
+            meaningful for multilabel classification where this differs from
+            :code:`accuracy_score`).
+        Defaults to :code:`"binary"`.
+
+    - sample_weight: typing.Union[np.ndarray, None], optional:
+        Sample weights.
+        Defualts to :code:`None`.
+
+    - zero_division: typing.Union[int, str], optional:
+        Sets the value to return when there is a zero division:
+           - npv: when there are no negative predictions
+        If set to :code:`"warn"`, this acts as :code:`0`, 
+        but warnings are also raised.
+        Defaults to :code:`"warn"`.
+    
+    Returns
+    ---------
+
+    - npv: float:
+        The positive predictive value score.
+    
+    '''
+
+    warn_for = "npv",
+    _, _, _, s = sensitivity_specificity_ppv_npv(
         y_true=y_true, 
         y_pred=y_pred, 
         labels=labels,

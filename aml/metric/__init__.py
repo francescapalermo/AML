@@ -6,6 +6,11 @@ from .metric_functions import (
     format_mean_iqr_missing, 
     format_mean_std,
     interquartile_range,
+    sensitivity_specificity_ppv_npv,
+    sensitivity_score,
+    specificity_score,
+    ppv_score,
+    npv_score,
     )
 
 
@@ -15,4 +20,9 @@ __all__ = [
     'format_mean_iqr_missing',
     'format_mean_std',
     'interquartile_range',
+    'sensitivity_specificity_ppv_npv',
+    'sensitivity_score',
+    'specificity_score',
+    'ppv_score',
+    'npv_score',
 ]
