@@ -301,11 +301,10 @@ def sensitivity_specificity_ppv_npv(
 
     tp_sum = MCM[:, 1, 1]
     tn_sum =  MCM[:, 0, 0]
-    fn_sum = MCM[:, 1, 0]
     pos_pred_sum = tp_sum + MCM[:, 0, 1]
     pos_true_sum = tp_sum + MCM[:, 1, 0]
     neg_true_sum = tn_sum + MCM[:, 0, 1]
-    neg_pred_sum = fn_sum + MCM[:, 1, 0]
+    neg_pred_sum = tn_sum + MCM[:, 1, 0]
 
     if average == "micro":
         tp_sum = np.array([tp_sum.sum()])
@@ -928,7 +927,10 @@ def auc_precision_recall_curve(
         The array of true values.
 
     - y_proba: np.ndarray:
-        The array of predicted score values.
+        The array of predicted score values. If :code:`y_pred` 
+        has shape :code:`(N,2)`, and :code:`y_true` has two unique
+        values, then the probability of a positive class will 
+        be assumed to be :code:`y_proba[:,1]`.
 
     - pos_label: typing.Union[str, int], optional:
         The class to report if :code:`average='binary'` and the data is binary.
@@ -949,6 +951,10 @@ def auc_precision_recall_curve(
         The area under the precision-recall curve.
     
     '''
+
+    if len(y_proba.shape) == 2:
+        if len(np.unique(y_true)) == 2:
+            y_proba = y_proba[:,1]
 
     y, x, _ = precision_recall_curve(
         y_true, 
