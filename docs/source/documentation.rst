@@ -44,6 +44,24 @@ Here is the documentation for the data functionality.
 
 
 
+
+Dataframe
+-----------------------
+
+Here is the documentation for the dataframe functionality.
+
+
+.. automodule:: aml.dataframe
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+
+
+
+
+
 Metrics
 -----------------------
 
