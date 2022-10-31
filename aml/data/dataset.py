@@ -81,24 +81,29 @@ class MemoryDataset(torch.utils.data.Dataset):
         self._data_dict = {}
         if now:
 
-            def add_to_dict(index):
-                self._data_dict[index] = dataset[index]
-                return None
-            
             pbar = tqdm.tqdm(
-                    total = len(dataset),
-                    desc='Loading into memory',
-                    disable=not verbose,
-                    **tqdm_style
-                    )
+                total = len(dataset),
+                desc='Loading into memory',
+                disable=not verbose,
+                **tqdm_style
+                )
 
-            ProgressParallel(
-                pbar, 
+            def add_to_dict(index):
+                for ni, i in enumerate(index):
+                    self._data_dict[i] = dataset[i]
+                    pbar.update(1)
+                    pbar.refresh()
+                return None
+
+            all_index = np.arange(len(dataset))
+            index_list = [all_index[i::n_jobs] for i in range(n_jobs)]
+
+            joblib.Parallel(
                 n_jobs=n_jobs,
                 backend='threading',
                 )(
                     joblib.delayed(add_to_dict)(index)
-                    for index in range(len(dataset))
+                    for index in index_list
                     )
             
             pbar.close()
