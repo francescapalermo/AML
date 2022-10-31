@@ -80,18 +80,18 @@ class WrapperDataset(torch.utils.data.Dataset):
         - functions_index: typing.Union[typing.List[int], int, None], optional:
             The index of the functions to be applied to. 
 
-            - If :code:`None`, then if the :code:`functions` is callable, it
-            will be applied to all outputs of the data points,
-            or if the :code:`functions` is a list, it will be applied to the corresponding
+            - If :code:`None`, then if the :code:`functions` is callable, it \
+            will be applied to all outputs of the data points, \
+            or if the :code:`functions` is a list, it will be applied to the corresponding \
             output of the data point.
 
-            - If :code:`list` then the corresponding index will have the 
-            :code:`functions` applied to them. If :code:`functions` is a list,
-            then it will be applied to the corresponding indicies given in :code:`functions_index` 
-            of the data point. If :code:`functions` is callable, it will be applied to all of the 
+            - If :code:`list` then the corresponding index will have the \
+            :code:`functions` applied to them. If :code:`functions` is a list, \
+            then it will be applied to the corresponding indicies given in :code:`functions_index` \
+            of the data point. If :code:`functions` is callable, it will be applied to all of the \
             indicies in :code:`functions_index`
         
-            - If :code:`int`, then the :code:`functions` must be callable, and 
+            - If :code:`int`, then the :code:`functions` must be callable, and \
             will be applied to the output of this index.
             
             Defaults to :code:`None`.
