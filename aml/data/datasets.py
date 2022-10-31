@@ -6,169 +6,12 @@ import torch
 from sklearn.preprocessing import MultiLabelBinarizer
 import os
 from torchvision.datasets.utils import download_and_extract_archive
-import tqdm
-import joblib
-from joblib.externals.loky import get_reusable_executor
 
 try:
     import wfdb
     wfdb_import_error = False
 except ImportError:
     wfdb_import_error = True
-
-from ..progress import tqdm_style
-from ..parallel import ProgressParallel
-
-
-class MemoryDataset(torch.utils.data.Dataset):
-    def __init__(
-        self,
-        dataset:torch.utils.data.Dataset,
-        now:bool=True,
-        verbose:bool=True,
-        n_jobs:int=1,
-        ):
-        '''
-        This dataset allows the user
-        to wrap another dataset and 
-        load all of the outputs into memory,
-        so that they are accessed from RAM 
-        instead of storage. All attributes of
-        the original dataset will still be available, except
-        for :code:`._dataset` and :code:`._data_dict` if they 
-        were defined.
-        It also allows the data to be saved in memory right
-        away or after the data is accessed for the first time.
-               
-        
-        Examples
-        ---------
-        
-        .. code-block::
-        
-            >>> dataset = MemoryDataset(dataset, now=True)
-        
-        
-        Arguments
-        ---------
-        
-        - dataset: torch.utils.data.Dataset: 
-            The dataset to wrap and add to memory.
-        
-        - now: bool, optional:
-            Whether to save the data to memory
-            right away, or the first time the 
-            data is accessed. If :code:`True`, then
-            this initialisation might take some time
-            as it will need to load all of the data.
-            Defaults to :code:`True`.
-        
-        - verbose: bool, optional:
-            Whether to print progress
-            as the data is being loaded into
-            memory. This is ignored if :code:`now=False`.
-            Defaults to :code:`True`.
-        
-        - n_jobs: int, optional:
-            The number of parallel operations when loading 
-            the data to memory.
-            Defaults to :code:`1`.
-        
-        
-        '''
-
-        self._dataset = dataset
-        self._data_dict = {}
-        if now:
-
-            pbar = tqdm.tqdm(
-                total = len(dataset),
-                desc='Loading into memory',
-                disable=not verbose,
-                **tqdm_style
-                )
-
-            def add_to_dict(index):
-                for ni, i in enumerate(index):
-                    self._data_dict[i] = dataset[i]
-                    pbar.update(1)
-                    pbar.refresh()
-                return None
-
-            all_index = np.arange(len(dataset))
-            index_list = [all_index[i::n_jobs] for i in range(n_jobs)]
-
-            joblib.Parallel(
-                n_jobs=n_jobs,
-                backend='threading',
-                )(
-                    joblib.delayed(add_to_dict)(index)
-                    for index in index_list
-                    )
-            
-            pbar.close()
-
-        return
-
-    def __getitem__(self, index):
-
-        if index in self._data_dict:
-            return self._data_dict[index]
-        else:
-            output = self._dataset[index]
-            self._data_dict[index] = output
-            return output
-    
-    def __len__(self):
-        return len(self._dataset)
-
-    # defined since __getattr__ causes pickling problems
-    def __getstate__(self):
-        return vars(self)
-
-    # defined since __getattr__ causes pickling problems
-    def __setstate__(self, state):
-        vars(self).update(state)
-
-    def __getattr__(self, name):
-        if hasattr(self._dataset, name):
-            return getattr(self._dataset, name)
-        else:
-            raise AttributeError
-
-
-
-class MyData(torch.utils.data.Dataset):
-    def __init__(self, *inputs: torch.tensor):
-        '''
-        Allows the user to turn any set of tensors 
-        into a dataset.
-        
-        Examples
-        ---------
-        
-        .. code-block:: 
-        
-            >>> data = MyData(X, y, other)
-            >>> len(data) == len(X)
-            True
-        
-        
-        Arguments
-        ---------
-
-        - inputs: torch.tensor:
-            Any tensors.
-        
-        '''
-        self.inputs = inputs
-    def __getitem__(self,index):
-        if len(self.inputs) == 1:
-            return self.inputs[0][index]
-        return [x[index] for x in self.inputs]
-    def __len__(self):
-        return len(self.inputs[0])
-
 
 
 
@@ -181,6 +24,7 @@ class PTB_XL(torch.utils.data.Dataset):
         sampling_rate:typing.Literal[100, 500]=100,
         source_name:typing.Literal['nurse', 'site', 'device']='nurse',
         return_sources:bool=True,
+        binary:bool=False,
         ):
         '''
         ECG Data, as described here: https://physionet.org/content/ptb-xl/1.0.2/.
@@ -233,6 +77,12 @@ class PTB_XL(torch.utils.data.Dataset):
             this dataset will return :code:`data, target, source`. 
             Defaults to :code:`True`.
         
+        - binary: bool, optional:
+            Whether to return classes based on whether the 
+            ecg is normal or not, and so a binary classification
+            problem.
+            Defaults to :code:`False`.
+        
         
         '''
 
@@ -257,6 +107,7 @@ class PTB_XL(torch.utils.data.Dataset):
         self.sampling_rate = sampling_rate
         self.source_name = source_name
         self.return_sources = return_sources
+        self.binary = binary
         self.meta_data = pd.read_csv(self.data_path+'ptbxl_database.csv')
         self.meta_data['scp_codes'] = (self.meta_data
             ['scp_codes']
@@ -266,7 +117,7 @@ class PTB_XL(torch.utils.data.Dataset):
         self.meta_data = self.meta_data[~self.meta_data[self.source_name].isna()]
 
         if self.train:
-            self.meta_data = self.meta_data.query("strat_fold != 10")
+            self.meta_data = self.meta_data.query("strat_fold != 10").iloc[:1000]
         else:
             self.meta_data = self.meta_data.query("strat_fold == 10")
         
@@ -347,7 +198,9 @@ class PTB_XL(torch.utils.data.Dataset):
             [['NORM', 'CD', 'HYP', 'MI', 'STTC']]
             .values
             .astype(np.int64)
-            ).float()
+            )
+        if self.binary:
+            y = y[0]
         source = data[self.source_name]
 
         if self.return_sources:
@@ -358,3 +211,5 @@ class PTB_XL(torch.utils.data.Dataset):
     def __len__(self):
         return len(self.meta_data)
     
+
+
