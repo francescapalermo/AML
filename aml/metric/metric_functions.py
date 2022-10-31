@@ -231,24 +231,30 @@ def sensitivity_specificity_ppv_npv(
         If :code:`None`, the scores for each class 
         are returned. Otherwise, this determines the type 
         of averaging performed on the data:
-        - :code:`'binary'`:
-            Only report results for the class specified by :code:`pos_label`.
-            This is applicable only if targets (`y_{true,pred}`) are binary.
-        - :code:`'micro'`:
-            Calculate metrics globally by counting the total true positives,
-            false negatives and false positives.
-        - :code:`'macro'`:
-            Calculate metrics for each label, and find their unweighted
-            mean.  This does not take label imbalance into account.
-        - :code:`'weighted'`:
-            Calculate metrics for each label, and find their average weighted
-            by support (the number of true instances for each label). This
-            alters 'macro' to account for label imbalance; it can result in an
-            F-score that is not between precision and recall.
-        - :code:`'samples'`:
-            Calculate metrics for each instance, and find their average (only
-            meaningful for multilabel classification where this differs from
-            :code:`accuracy_score`).
+
+        - :code:`'binary'`: \
+        Only report results for the class specified by :code:`pos_label`. \
+        This is applicable only if targets (`y_{true,pred}`) are binary.
+
+        - :code:`'micro'`: \
+        Calculate metrics globally by counting the total true positives, \
+        false negatives and false positives.
+
+        - :code:`'macro'`: \
+        Calculate metrics for each label, and find their unweighted \
+        mean.  This does not take label imbalance into account.
+
+        - :code:`'weighted'`: \
+        Calculate metrics for each label, and find their average weighted \
+        by support (the number of true instances for each label). This \
+        alters 'macro' to account for label imbalance; it can result in an \
+        F-score that is not between precision and recall.
+
+        - :code:`'samples'`: \
+        Calculate metrics for each instance, and find their average (only \
+        meaningful for multilabel classification where this differs from \
+        :code:`accuracy_score`).
+
         Defaults to :code:`None`.
 
     - warn_for: typing.Union[str, typing.Tuple[str]], optional:
@@ -262,10 +268,16 @@ def sensitivity_specificity_ppv_npv(
 
     - zero_division: typing.Union[int, str], optional:
         Sets the value to return when there is a zero division:
-           - sensitivity: when there are no positive labels
-           - specificity: when there are no negative labels
-           - ppv: when there are no positive predictions
-           - npv: when there are no negative predictions
+
+        - sensitivity: when there are no positive labels
+
+        - specificity: when there are no negative labels
+
+        - ppv: when there are no positive predictions
+
+        - npv: when there are no negative predictions
+
+
         If set to :code:`"warn"`, this acts as :code:`0`, 
         but warnings are also raised.
         Defaults to :code:`"warn"`.
@@ -487,25 +499,31 @@ def sensitivity_score(
         If :code:`None`, the scores for each class 
         are returned. Otherwise, this determines the type 
         of averaging performed on the data:
-        - :code:`'binary'`:
-            Only report results for the class specified by :code:`pos_label`.
-            This is applicable only if targets (`y_{true,pred}`) are binary.
-        - :code:`'micro'`:
-            Calculate metrics globally by counting the total true positives,
-            false negatives and false positives.
-        - :code:`'macro'`:
-            Calculate metrics for each label, and find their unweighted
-            mean.  This does not take label imbalance into account.
-        - :code:`'weighted'`:
-            Calculate metrics for each label, and find their average weighted
-            by support (the number of true instances for each label). This
-            alters 'macro' to account for label imbalance; it can result in an
-            F-score that is not between precision and recall.
-        - :code:`'samples'`:
-            Calculate metrics for each instance, and find their average (only
-            meaningful for multilabel classification where this differs from
-            :code:`accuracy_score`).
-        Defaults to :code:`"binary"`.
+
+        - :code:`'binary'`: \
+        Only report results for the class specified by :code:`pos_label`. \
+        This is applicable only if targets (`y_{true,pred}`) are binary.
+
+        - :code:`'micro'`: \
+        Calculate metrics globally by counting the total true positives, \
+        false negatives and false positives.
+
+        - :code:`'macro'`: \
+        Calculate metrics for each label, and find their unweighted \
+        mean.  This does not take label imbalance into account.
+
+        - :code:`'weighted'`: \
+        Calculate metrics for each label, and find their average weighted \
+        by support (the number of true instances for each label). This \
+        alters 'macro' to account for label imbalance; it can result in an \
+        F-score that is not between precision and recall.
+
+        - :code:`'samples'`: \
+        Calculate metrics for each instance, and find their average (only \
+        meaningful for multilabel classification where this differs from \
+        :code:`accuracy_score`).
+
+        Defaults to :code:`'binary'`.
 
     - sample_weight: typing.Union[np.ndarray, None], optional:
         Sample weights.
@@ -513,7 +531,9 @@ def sensitivity_score(
 
     - zero_division: typing.Union[int, str], optional:
         Sets the value to return when there is a zero division:
-           - specificity: when there are no negative labels
+
+        - specificity: when there are no negative labels
+
         If set to :code:`"warn"`, this acts as :code:`0`, 
         but warnings are also raised.
         Defaults to :code:`"warn"`.
@@ -606,25 +626,31 @@ def specificity_score(
         If :code:`None`, the scores for each class 
         are returned. Otherwise, this determines the type 
         of averaging performed on the data:
-        - :code:`'binary'`:
-            Only report results for the class specified by :code:`pos_label`.
-            This is applicable only if targets (`y_{true,pred}`) are binary.
-        - :code:`'micro'`:
-            Calculate metrics globally by counting the total true positives,
-            false negatives and false positives.
-        - :code:`'macro'`:
-            Calculate metrics for each label, and find their unweighted
-            mean.  This does not take label imbalance into account.
-        - :code:`'weighted'`:
-            Calculate metrics for each label, and find their average weighted
-            by support (the number of true instances for each label). This
-            alters 'macro' to account for label imbalance; it can result in an
-            F-score that is not between precision and recall.
-        - :code:`'samples'`:
-            Calculate metrics for each instance, and find their average (only
-            meaningful for multilabel classification where this differs from
-            :code:`accuracy_score`).
-        Defaults to :code:`"binary"`.
+
+        - :code:`'binary'`: \
+        Only report results for the class specified by :code:`pos_label`. \
+        This is applicable only if targets (`y_{true,pred}`) are binary.
+
+        - :code:`'micro'`: \
+        Calculate metrics globally by counting the total true positives, \
+        false negatives and false positives.
+
+        - :code:`'macro'`: \
+        Calculate metrics for each label, and find their unweighted \
+        mean.  This does not take label imbalance into account.
+
+        - :code:`'weighted'`: \
+        Calculate metrics for each label, and find their average weighted \
+        by support (the number of true instances for each label). This \
+        alters 'macro' to account for label imbalance; it can result in an \
+        F-score that is not between precision and recall.
+
+        - :code:`'samples'`: \
+        Calculate metrics for each instance, and find their average (only \
+        meaningful for multilabel classification where this differs from \
+        :code:`accuracy_score`).
+
+        Defaults to :code:`'binary'`.
 
     - sample_weight: typing.Union[np.ndarray, None], optional:
         Sample weights.
@@ -632,7 +658,9 @@ def specificity_score(
 
     - zero_division: typing.Union[int, str], optional:
         Sets the value to return when there is a zero division:
-           - specificity: when there are no negative labels
+        
+        - specificity: when there are no negative labels
+        
         If set to :code:`"warn"`, this acts as :code:`0`, 
         but warnings are also raised.
         Defaults to :code:`"warn"`.
@@ -722,25 +750,31 @@ def ppv_score(
         If :code:`None`, the scores for each class 
         are returned. Otherwise, this determines the type 
         of averaging performed on the data:
-        - :code:`'binary'`:
-            Only report results for the class specified by :code:`pos_label`.
-            This is applicable only if targets (`y_{true,pred}`) are binary.
-        - :code:`'micro'`:
-            Calculate metrics globally by counting the total true positives,
-            false negatives and false positives.
-        - :code:`'macro'`:
-            Calculate metrics for each label, and find their unweighted
-            mean.  This does not take label imbalance into account.
-        - :code:`'weighted'`:
-            Calculate metrics for each label, and find their average weighted
-            by support (the number of true instances for each label). This
-            alters 'macro' to account for label imbalance; it can result in an
-            F-score that is not between precision and recall.
-        - :code:`'samples'`:
-            Calculate metrics for each instance, and find their average (only
-            meaningful for multilabel classification where this differs from
-            :code:`accuracy_score`).
-        Defaults to :code:`"binary"`.
+
+        - :code:`'binary'`: \
+        Only report results for the class specified by :code:`pos_label`. \
+        This is applicable only if targets (`y_{true,pred}`) are binary.
+
+        - :code:`'micro'`: \
+        Calculate metrics globally by counting the total true positives, \
+        false negatives and false positives.
+
+        - :code:`'macro'`: \
+        Calculate metrics for each label, and find their unweighted \
+        mean.  This does not take label imbalance into account.
+
+        - :code:`'weighted'`: \
+        Calculate metrics for each label, and find their average weighted \
+        by support (the number of true instances for each label). This \
+        alters 'macro' to account for label imbalance; it can result in an \
+        F-score that is not between precision and recall.
+
+        - :code:`'samples'`: \
+        Calculate metrics for each instance, and find their average (only \
+        meaningful for multilabel classification where this differs from \
+        :code:`accuracy_score`).
+
+        Defaults to :code:`'binary'`.
 
     - sample_weight: typing.Union[np.ndarray, None], optional:
         Sample weights.
@@ -748,7 +782,9 @@ def ppv_score(
 
     - zero_division: typing.Union[int, str], optional:
         Sets the value to return when there is a zero division:
-           - ppv: when there are no positive predictions
+        
+        - ppv: when there are no positive predictions
+        
         If set to :code:`"warn"`, this acts as :code:`0`, 
         but warnings are also raised.
         Defaults to :code:`"warn"`.
@@ -838,25 +874,31 @@ def npv_score(
         If :code:`None`, the scores for each class 
         are returned. Otherwise, this determines the type 
         of averaging performed on the data:
-        - :code:`'binary'`:
-            Only report results for the class specified by :code:`pos_label`.
-            This is applicable only if targets (`y_{true,pred}`) are binary.
-        - :code:`'micro'`:
-            Calculate metrics globally by counting the total true positives,
-            false negatives and false positives.
-        - :code:`'macro'`:
-            Calculate metrics for each label, and find their unweighted
-            mean.  This does not take label imbalance into account.
-        - :code:`'weighted'`:
-            Calculate metrics for each label, and find their average weighted
-            by support (the number of true instances for each label). This
-            alters 'macro' to account for label imbalance; it can result in an
-            F-score that is not between precision and recall.
-        - :code:`'samples'`:
-            Calculate metrics for each instance, and find their average (only
-            meaningful for multilabel classification where this differs from
-            :code:`accuracy_score`).
-        Defaults to :code:`"binary"`.
+
+        - :code:`'binary'`: \
+        Only report results for the class specified by :code:`pos_label`. \
+        This is applicable only if targets (`y_{true,pred}`) are binary.
+
+        - :code:`'micro'`: \
+        Calculate metrics globally by counting the total true positives, \
+        false negatives and false positives.
+
+        - :code:`'macro'`: \
+        Calculate metrics for each label, and find their unweighted \
+        mean.  This does not take label imbalance into account.
+
+        - :code:`'weighted'`: \
+        Calculate metrics for each label, and find their average weighted \
+        by support (the number of true instances for each label). This \
+        alters 'macro' to account for label imbalance; it can result in an \
+        F-score that is not between precision and recall.
+
+        - :code:`'samples'`: \
+        Calculate metrics for each instance, and find their average (only \
+        meaningful for multilabel classification where this differs from \
+        :code:`accuracy_score`).
+
+        Defaults to :code:`'binary'`.
 
     - sample_weight: typing.Union[np.ndarray, None], optional:
         Sample weights.
@@ -864,7 +906,9 @@ def npv_score(
 
     - zero_division: typing.Union[int, str], optional:
         Sets the value to return when there is a zero division:
-           - npv: when there are no negative predictions
+        
+        - npv: when there are no negative predictions
+        
         If set to :code:`"warn"`, this acts as :code:`0`, 
         but warnings are also raised.
         Defaults to :code:`"warn"`.
