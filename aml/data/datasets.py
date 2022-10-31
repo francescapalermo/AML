@@ -117,7 +117,7 @@ class PTB_XL(torch.utils.data.Dataset):
         self.meta_data = self.meta_data[~self.meta_data[self.source_name].isna()]
 
         if self.train:
-            self.meta_data = self.meta_data.query("strat_fold != 10").iloc[:1000]
+            self.meta_data = self.meta_data.query("strat_fold != 10")
         else:
             self.meta_data = self.meta_data.query("strat_fold == 10")
         
