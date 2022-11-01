@@ -144,7 +144,8 @@ class ProgressParallel(Parallel):
         self.tqdm_bar.refresh()
         self.previously_completed += difference
         
-        if self.previously_completed == self.total:
-            self.tqdm_bar.close()
+        if self.bar_this_instance:
+            if self.previously_completed == self.total:
+                self.tqdm_bar.close()
 
         return

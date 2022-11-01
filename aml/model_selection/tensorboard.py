@@ -5,7 +5,7 @@ import joblib
 import tqdm
 import functools
 import pandas as pd
-
+from joblib.externals.loky import get_reusable_executor
 from ..utils import dirtree
 from ..parallel import ProgressParallel
 from ..progress import tqdm_style
@@ -179,6 +179,9 @@ class TensorboardLoad:
                 tqdm_bar=tqdm_progress, 
                 n_jobs=self.n_jobs,
                 )(parallel_comps)
+
+            # delete parallel processes
+            get_reusable_executor().shutdown(wait=True)
 
             if len(level_results) > 0:
                 level_results = pd.concat(level_results)
