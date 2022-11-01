@@ -25,6 +25,7 @@ class PTB_XL(torch.utils.data.Dataset):
         source_name:typing.Literal['nurse', 'site', 'device']='nurse',
         return_sources:bool=True,
         binary:bool=False,
+        subset=False,
         ):
         '''
         ECG Data, as described here: https://physionet.org/content/ptb-xl/1.0.2/.
@@ -83,6 +84,11 @@ class PTB_XL(torch.utils.data.Dataset):
             problem.
             Defaults to :code:`False`.
         
+        - subset: bool, optional:
+            If :code:`True`, only the first 1000 items
+            of the training and test set will be returned.
+            Defaults to :code:`False`.
+        
         
         '''
 
@@ -118,8 +124,12 @@ class PTB_XL(torch.utils.data.Dataset):
 
         if self.train:
             self.meta_data = self.meta_data.query("strat_fold != 10")
+            if subset:
+                self.meta_data = self.meta_data.iloc[:1000]
         else:
             self.meta_data = self.meta_data.query("strat_fold == 10")
+            if subset:
+                self.meta_data = self.meta_data.iloc[:1000]
         
         self.targets = self.meta_data[['NORM', 'CD', 'HYP', 'MI', 'STTC']].values
         self.sources = self.meta_data[self.source_name].values

@@ -2,7 +2,7 @@ import typing
 from joblib import Parallel
 import tqdm
 
-from ..progress import tqdm_style
+from ..progress import tqdm_style as aml_tqdm_style
 
 class ProgressParallel(Parallel):
     def __init__(
@@ -11,6 +11,7 @@ class ProgressParallel(Parallel):
         verbose:bool=True,
         desc:str='In Parallel',
         total:int=None,
+        tqdm_style:typing.Dict[str,typing.Any]=aml_tqdm_style,
         *args, 
         **kwargs,
         ):
@@ -87,33 +88,63 @@ class ProgressParallel(Parallel):
             the total might update multiple times as the 
             parallel process queues jobs.
             Defaults to :code:`None`.
+        
+        - tqdm_style: typing.Dict[str,typing.Any]: 
+            A dictionary passed to the tqdm object
+            which can be used to pass kwargs.
+            :code:`desc`, :code:`total`, and  :code:`disable`
+            (verbose) cannot be passed here. Please 
+            use the arguments above.
+            Defaults to :code:`aml_tqdm_style` (see :code:`aml.tqdm_style`).
 
         
         '''
+
+        super().__init__(verbose=False, *args, **kwargs)
+
         if tqdm_bar is None:
-            self.tqdm_bar = tqdm.tqdm(desc=desc, total=total, disable=not verbose, **tqdm_style)
+            self.tqdm_bar = tqdm.tqdm(
+                desc=desc, 
+                total=total, 
+                disable=not verbose, 
+                **tqdm_style,
+                )
             self.total=total
-            self.build_pbar_each_time=True
+            self.bar_this_instance=True
         else:
             self.tqdm_bar = tqdm_bar
-            self.build_pbar_each_time=False
+            self.bar_this_instance=False
         self.previously_completed = 0
-        super().__init__(*args, **kwargs)
+        self._verbose = verbose
     
     def __call__(self, *args, **kwargs):
         return Parallel.__call__(self, *args, **kwargs)
 
     def print_progress(self):
-        
-        if self.build_pbar_each_time:
+        if not self._verbose:
+            return
+        if self.bar_this_instance:
+            # Original job iterator becomes None once it has been fully
+            # consumed : at this point we know the total number of jobs and we are
+            # able to display an estimation of the remaining time based on already
+            # completed jobs. Otherwise, we simply display the number of completed
+            # tasks.
             if self.total is None:
-                self.tqdm_bar.total = self.n_dispatched_tasks
-            self.tqdm_bar.n = self.n_completed_tasks
-            self.tqdm_bar.refresh()
-            if self.n_dispatched_tasks == self.n_completed_tasks:
-                self.tqdm_bar.close()
-        else:
-            difference = self.n_completed_tasks - self.previously_completed
-            self.tqdm_bar.update(difference)
-            self.tqdm_bar.refresh()
-            self.previously_completed += difference
+                if self._original_iterator is None:
+                    # We are finished dispatching
+                    if self.n_jobs == 1:
+                        self.tqdm_bar.total = None
+                        self.total = None
+                    else:
+                        self.tqdm_bar.total = self.n_dispatched_tasks
+                        self.total = self.n_dispatched_tasks
+
+        difference = self.n_completed_tasks - self.previously_completed
+        self.tqdm_bar.update(difference)
+        self.tqdm_bar.refresh()
+        self.previously_completed += difference
+        
+        if self.previously_completed == self.total:
+            self.tqdm_bar.close()
+
+        return
