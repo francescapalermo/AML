@@ -110,6 +110,7 @@ def p_apply(
                 x=np.array([0,1,2]),
                 list__y=np.array([0,1,2]),
                 )
+        Parallel function: 3it [00:00, 2000.78it/s]
         [array([0, 1, 2]), array([1, 2, 3]), array([2, 3, 4])]
 
     In the next example, the function is 
@@ -124,6 +125,7 @@ def p_apply(
                 x=np.array([0,1,2]),
                 y=np.array([0,1,2]),
                 )
+        Parallel function: 1it [00:00, ?it/s]
         [array([0, 2, 4])]
     
     
