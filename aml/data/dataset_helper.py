@@ -317,3 +317,185 @@ class MyData(torch.utils.data.Dataset):
         return [x[index] for x in self.inputs]
     def __len__(self):
         return len(self.inputs[0])
+
+
+
+class ECGCorruptor(torch.utils.data.Dataset):
+    def __init__(
+        self, 
+        dataset:torch.utils.data.Dataset, 
+        corrupt_sources:typing.Union[list, int, None]=None,
+        noise_level:typing.Union[list, float, None]=None,
+        seed:typing.Union[int, None]=None,
+        axis:str='both',
+        ):
+        '''
+        ECG Data corruptor. You may pass a noise level, sources to corrupt,
+        and the seed for determining the random events. This
+        class allows you to corrupt either the :code:`'x'`, :code:`'y'`, 
+        or :code:`'both'`. This class is built specifically for use with
+        PTB_XL (found in :code:`aml.data.datasets`).
+        
+        
+        Examples
+        ---------
+        
+        .. code-block::
+        
+            >>> dataset = ECGCorruptor(
+                    dataset=dataset_train
+                    corrupt_sources=[0,1,2,3], 
+                    noise_level=0.5, 
+                    )
+
+        
+        
+        Arguments
+        ---------
+        
+        - dataset: torch.utils.data.Dataset:
+            The dataset to corrupt. When iterated over,
+            the dataset should return :code:`x`, :code:`y`, 
+            and :code:`source`.
+
+        - corrupt_sources: typing.Union[list, int, None], optional:
+            The sources to corrupt in the dataset. This can be a 
+            list of sources, an integer of the source, or :code:`None`
+            for no sources to be corrupted.
+            Defaults to :code:`None`.
+
+        - noise_level: typing.Union[list, int, None], optional:
+            This is the level of noise to apply to the dataset. 
+            It can be a list of noise levels, a single noise level to
+            use for all sources, or :code:`None` for no noise.
+            Defaults to :code:`None`.
+
+        - seed: typing.Union[int, None], optional:
+            This is the seed that is used to determine random events.
+            Defaults to :code:`None`.
+
+        - axis: str, optional:
+            This is the axis to apply the corruption to. This
+            should be either :code:`'x'`, :code:`'y'`, 
+            or :code:`'both'`.
+            
+            - :code:`'x'`: \
+            Adds a Gaussian distribution to the \
+            :code:`'x'` values with :code:`mean=0` and :code:`std=0.1`.
+            
+            - :code:`'y'`: \
+            Swaps the binary label using the function :code:`1-y_true`.
+            
+            - :code:`'both'`: \
+            Adds a Gaussian distribution to the \
+            :code:`'x'` values with :code:`mean=0` and :code:`std=0.1`
+            and swaps the binary label using the function :code:`1-y_true`.
+
+            Defaults to :code:`'both'`.
+        
+        
+        '''
+
+        assert axis in ['x', 'y', 'both'], \
+            "Please ensure that the axis is from ['x', 'y', 'both']"
+        
+        self._axis = axis
+        self._dataset = dataset
+
+        # setting the list of corrupt sources
+        if corrupt_sources is None:
+            self._corrupt_sources = []
+        elif type(corrupt_sources) == int:
+            self._corrupt_sources = [corrupt_sources]
+        elif hasattr(corrupt_sources, '__iter__'):
+            self._corrupt_sources = corrupt_sources
+        else:
+            raise TypeError(
+                "Please ensure that corrupt_sources is an integer, iterable or None."
+                )
+
+        # setting the noise level
+        if noise_level is None:
+            self._noise_level = [0]*len(self._corrupt_sources)
+        elif type(noise_level) == float:
+            self._noise_level = [noise_level]*len(self._corrupt_sources)
+        elif hasattr(noise_level, '__iter__'):
+            if hasattr(noise_level, '__len__'):
+                if hasattr(self._corrupt_sources, '__len__'):
+                    assert len(noise_level) == len(self._corrupt_sources), \
+                        "Please ensure that the noise level "\
+                        "is the same length as the corrupt sources."
+            self._noise_level = noise_level
+        else:
+            raise TypeError(
+                "Please ensure that the noise level is a float, iterable or None"
+                )
+        self._noise_level = {
+            cs: nl for cs, nl in zip(self._corrupt_sources, self._noise_level)
+            }
+
+        if seed is None:
+            rng = np.random.default_rng(None)
+            seed = rng.integers(low=1, high=1e9, size=1)[0]
+        self.rng = np.random.default_rng(seed)
+
+        self._corrupt_datapoints = {'x': {}, 'y':{}}
+
+        return
+
+    def _corrupt_x(self, index, x, y, s):
+        if index in self._corrupt_datapoints['x']:
+            x = self._corrupt_datapoints['x'][index]
+        else:
+            g_seed_mask, \
+                g_seed_values, \
+                class_seed = self.rng.integers(low=1, high=1e9, size=3)
+            self.rng = np.random.default_rng(class_seed)
+            g_values = torch.Generator().manual_seed(int(g_seed_values))
+            g_mask = torch.Generator().manual_seed(int(g_seed_mask))
+            mask = int(torch.rand(size=(), generator=g_mask) > 1-self._noise_level[s])
+            values = torch.normal(mean=0, std=0.1, generator=g_values, size=x.size())
+            x = x + mask*values
+            self._corrupt_datapoints['x'][index] = x
+        return x, y, s
+    
+    def _corrupt_y(self, index, x, y, s):
+        if index in self._corrupt_datapoints['y']:
+            y = self._corrupt_datapoints['y'][index]
+        else:
+            g_seed_mask, \
+                class_seed = self.rng.integers(low=1, high=1e9, size=2)
+            self.rng = np.random.default_rng(class_seed)
+            g_mask = torch.Generator().manual_seed(int(g_seed_mask))
+            if torch.rand(size=(), generator=g_mask) > 1-self._noise_level[s]:
+                y = torch.tensor(1, dtype=y.dtype)-y
+
+            self._corrupt_datapoints['y'][index] = y
+
+        return x, y, s
+
+    def __getitem__(self, index):
+        x, y, s = self._dataset[index]
+        if s in self._noise_level:
+            if self._axis == 'x' or self._axis == 'both':
+                x,y,s = self._corrupt_x(index, x, y, s)
+            if self._axis == 'y' or self._axis == 'both':
+                x,y,s = self._corrupt_y(index, x, y, s)
+        return x,y,s
+    
+    def __len__(self,):
+        return len(self._dataset)
+
+    # defined since __getattr__ causes pickling problems
+    def __getstate__(self):
+        return vars(self)
+
+    # defined since __getattr__ causes pickling problems
+    def __setstate__(self, state):
+        vars(self).update(state)
+
+    def __getattr__(self, name):
+        if hasattr(self._dataset, name):
+            return getattr(self._dataset, name)
+        else:
+            raise AttributeError

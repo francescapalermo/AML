@@ -1,4 +1,5 @@
 from .dataset_helper import (
+    ECGCorruptor,
     MemoryDataset, 
     MyData, 
     WrapperDataset,
@@ -9,6 +10,7 @@ from .datasets import (
     )
 
 __all__ =[
+    'ECGCorruptor',
     'MemoryDataset',
     'MyData',
     'WrapperDataset',
