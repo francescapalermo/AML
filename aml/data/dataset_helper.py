@@ -388,7 +388,7 @@ class ECGCorruptor(torch.utils.data.Dataset):
             
             - :code:`'both'`: \
             Adds a Gaussian distribution to the \
-            :code:`'x'` values with :code:`mean=0` and :code:`std=0.1`
+            :code:`'x'` values with :code:`mean=0` and :code:`std=0.1` \
             and swaps the binary label using the function :code:`1-y_true`.
 
             Defaults to :code:`'both'`.
