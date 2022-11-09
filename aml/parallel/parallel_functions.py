@@ -121,10 +121,10 @@ def p_apply(
     .. code-block::
 
         >>> p_apply(
-                lambda x,y: x+y,
-                x=np.array([0,1,2]),
-                y=np.array([0,1,2]),
-                )
+        ...     lambda x,y: x+y,
+        ...     x=np.array([0,1,2]),
+        ...     y=np.array([0,1,2]),
+        ...     )
         Parallel function: 1it [00:00, ?it/s]
         [array([0, 2, 4])]
     
