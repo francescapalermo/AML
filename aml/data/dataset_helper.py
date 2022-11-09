@@ -474,6 +474,10 @@ class ECGCorruptor(torch.utils.data.Dataset):
 
         return x, y, s
 
+    @property
+    def corrupt_sources(self):
+        return self._corrupt_sources
+
     def __getitem__(self, index):
         x, y, s = self._dataset[index]
         if s in self._noise_level:
