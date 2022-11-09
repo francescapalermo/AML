@@ -343,10 +343,10 @@ class ECGCorruptor(torch.utils.data.Dataset):
         .. code-block::
         
             >>> dataset = ECGCorruptor(
-                    dataset=dataset_train
-                    corrupt_sources=[0,1,2,3], 
-                    noise_level=0.5, 
-                    )
+            ...     dataset=dataset_train
+            ...     corrupt_sources=[0,1,2,3], 
+            ...     noise_level=0.5, 
+            ...     )
 
         
         
