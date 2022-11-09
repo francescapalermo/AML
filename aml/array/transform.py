@@ -99,12 +99,13 @@ def flatten(
     .. code-block::
 
         >>> flat = flatten(
-                [[[1, 2],
-                [3, 4]],
-                [[5, 6],
-                [7, 8]]],
-                start_dim=1, 
-                end_dim=-1)
+        ...     [[[1, 2],
+        ...     [3, 4]],
+        ...     [[5, 6],
+        ...     [7, 8]]],
+        ...     start_dim=1, 
+        ...     end_dim=-1,
+        ...     )
         [[1,2,3,4],
         [5,6,7,8]]
 
@@ -170,13 +171,13 @@ def stratification(
     .. code-block::
     
         >>> stratification(
-                np.array(
-                    [[0.1, 0.2], 
-                    [0.7, 0.9]]),
-                Orange=0.8,
-                Green=0.15,
-                Red=1.0,
-                )
+        ...     np.array(
+        ...         [[0.1, 0.2], 
+        ...         [0.7, 0.9]]),
+        ...     Orange=0.8,
+        ...     Green=0.15,
+        ...     Red=1.0,
+        ...     )
         array(
             [['Green', 'Orange'],
             ['Orange', 'Red']], 
@@ -189,13 +190,13 @@ def stratification(
     .. code-block::
     
         >>> stratification(
-                np.array(
-                    [[0.1, 0.2], 
-                    [0.7, 1.1]]),
-                Orange=0.8,
-                Green=0.15,
-                Red=1.0,
-                )
+        ...     np.array(
+        ...         [[0.1, 0.2], 
+        ...         [0.7, 1.1]]),
+        ...     Orange=0.8,
+        ...     Green=0.15,
+        ...     Red=1.0,
+        ...     )
         array(
             [['Green', 'Orange'],
             ['Orange', None]], 

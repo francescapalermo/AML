@@ -132,21 +132,19 @@ class MLPModel(BaseLightningModule):
         ---------
         .. code-block::
 
-            mlp_model = MLPModel(n_input=100, 
-                                n_output=2, 
-                                hidden_layer_sizes=(100,100,50),
-                                n_epochs = 2,
-                                verbose=True,
-                                batch_size=10,
-                                optimizer={'adam':{'lr':0.01}},
-                                criterion='mseloss',
-                                )
-
-            X = torch.tensor(np.random.random((10000,100))).float()
-            X_val = torch.tensor(np.random.random((10000,100))).float()
-
-            training_metrics = mlp_model.fit(X=X, X_val=X_val)
-            output = mlp_model.transform(X_test=X)
+            >>> mlp_model = MLPModel(n_input=100, 
+            ...     n_output=2, 
+            ...     hidden_layer_sizes=(100,100,50),
+            ...     n_epochs = 2,
+            ...     verbose=True,
+            ...     batch_size=10,
+            ...     optimizer={'adam':{'lr':0.01}},
+            ...     criterion='mseloss',
+            ...     )
+            >>> X = torch.tensor(np.random.random((10000,100))).float()
+            >>> X_val = torch.tensor(np.random.random((10000,100))).float()
+            >>> training_metrics = mlp_model.fit(X=X, X_val=X_val)
+            >>> output = mlp_model.transform(X_test=X)
 
 
 

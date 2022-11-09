@@ -83,9 +83,9 @@ def format_mean_iqr_missing(
 
         >>> import numpy as np
         >>> format_mean_iqr_missing(
-                values=np.array([1,2,3,4,5]),
-                string="{mean:.2f} ({iqr:.2f}) (({count_na:.0f}%))",
-                )
+        ...     values=np.array([1,2,3,4,5]),
+        ...     string="{mean:.2f} ({iqr:.2f}) (({count_na:.0f}%))",
+        ...     )
         '3.00 (2) ((0%))'
 
 
@@ -132,9 +132,9 @@ def format_mean_std(
 
         >>> import numpy as np
         >>> format_mean_std(
-                values=np.array([1,2,3,4,5]),
-                string="{mean:.2f} ({std:.2f})",
-                )
+        ...     values=np.array([1,2,3,4,5]),
+        ...     string="{mean:.2f} ({std:.2f})",
+        ...     )
         '3.00 (1.41)'
 
 
@@ -191,9 +191,9 @@ def sensitivity_specificity_ppv_npv(
 
         >>> import numpy as np
         >>> sensitivity_specificity_ppv_npv(
-                y_true=np.array([0,1,0,1,0]),
-                y_pred=np.array([0,0,0,1,0]),
-                )
+        ...     y_true=np.array([0,1,0,1,0]),
+        ...     y_pred=np.array([0,0,0,1,0]),
+        ...     )
         (0.5, 1.0, 1.0, 0.75)
 
 
@@ -459,9 +459,9 @@ def sensitivity_score(
 
         >>> import numpy as np
         >>> sensitivity_score(
-                y_true=np.array([0,1,0,1,0]),
-                y_pred=np.array([0,0,0,1,0]),
-                )
+        ...     y_true=np.array([0,1,0,1,0]),
+        ...     y_pred=np.array([0,0,0,1,0]),
+        ...     )
         0.5
 
 
@@ -586,9 +586,9 @@ def specificity_score(
 
         >>> import numpy as np
         >>> specificity_score(
-                y_true=np.array([0,1,0,1,0]),
-                y_pred=np.array([0,0,0,1,0]),
-                )
+        ...     y_true=np.array([0,1,0,1,0]),
+        ...     y_pred=np.array([0,0,0,1,0]),
+        ...     )
         1.0
 
 
@@ -710,9 +710,9 @@ def ppv_score(
 
         >>> import numpy as np
         >>> ppv_score(
-                y_true=np.array([0,1,0,1,0]),
-                y_pred=np.array([0,0,0,1,0]),
-                )
+        ...     y_true=np.array([0,1,0,1,0]),
+        ...     y_pred=np.array([0,0,0,1,0]),
+        ...     )
         1.0
 
 
@@ -834,9 +834,9 @@ def npv_score(
 
         >>> import numpy as np
         >>> npv_score(
-                y_true=np.array([0,1,0,1,0]),
-                y_pred=np.array([0,0,0,1,0]),
-                )
+        ...     y_true=np.array([0,1,0,1,0]),
+        ...     y_pred=np.array([0,0,0,1,0]),
+        ...     )
         0.75
 
 
@@ -958,9 +958,9 @@ def auc_precision_recall_curve(
 
         >>> import numpy as np
         >>> auc_precision_recall_curve(
-                y_true=np.array([0,1,0,1,0]),
-                y_proba=np.array([0,0,0,1,0]),
-                )
+        ...     y_true=np.array([0,1,0,1,0]),
+        ...     y_proba=np.array([0,0,0,1,0]),
+        ...     )
         0.85
 
 

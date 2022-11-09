@@ -214,9 +214,9 @@ class TensorboardLoad:
         
             >>> tbload = TensorboardLoad('./')
             >>> tbload.scalars(
-                        'Accuracy', 
-                        query_expression="value >= 0.5",
-                        )
+            ...     'Accuracy', 
+            ...     query_expression="value >= 0.5",
+            ...     )
         
         
         Arguments
@@ -274,8 +274,8 @@ class TensorboardLoad:
         
             >>> tbload = TensorboardLoad('./')
             >>> tbload.histograms(
-                        'Accuracy', 
-                        )
+            ...     'Accuracy', 
+            ...     )
         
         
         Arguments
@@ -333,8 +333,8 @@ class TensorboardLoad:
         
             >>> tbload = TensorboardLoad('./')
             >>> tbload.distributions(
-                        'Accuracy', 
-                        )
+            ...     'Accuracy', 
+            ...     )
         
         
         Arguments
@@ -392,8 +392,8 @@ class TensorboardLoad:
         
             >>> tbload = TensorboardLoad('./')
             >>> tbload.images(
-                        'Accuracy', 
-                        )
+            ...     'Accuracy', 
+            ...     )
         
         
         Arguments
@@ -451,8 +451,8 @@ class TensorboardLoad:
         
             >>> tbload = TensorboardLoad('./')
             >>> tbload.audio(
-                        'Accuracy', 
-                        )
+            ...     'Accuracy', 
+            ...     )
         
         
         Arguments
@@ -510,8 +510,8 @@ class TensorboardLoad:
         
             >>> tbload = TensorboardLoad('./')
             >>> tbload.tensors(
-                        'Accuracy', 
-                        )
+            ...     'Accuracy', 
+            ...     )
         
         
         Arguments

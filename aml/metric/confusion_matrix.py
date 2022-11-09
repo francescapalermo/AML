@@ -31,11 +31,11 @@ def make_confusion_matrix(
 
         >>> from sklearn.metrics import confusion_matrix
         >>> make_confusion_matrix(
-            confusion_matrix(
-                y_test, 
-                predictions_test
-                )
-            )
+        ...     confusion_matrix(
+        ...         y_test, 
+        ...         predictions_test
+        ...         )
+        ...     )
 
 
     Arguments

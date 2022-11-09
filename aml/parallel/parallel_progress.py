@@ -33,25 +33,25 @@ class ProgressParallel(Parallel):
         
             >>> pbar = tqdm.tqdm(total=5)
             >>> result = ProgressParallel(
-                    tqdm_bar=pbar,
-                    n_jobs=10,
-                    )(
-                        joblib.delayed(f_parallel)(i)
-                        for i in range(5)
-                    )
+            ...     tqdm_bar=pbar,
+            ...     n_jobs=10,
+            ...     )(
+            ...         joblib.delayed(f_parallel)(i)
+            ...         for i in range(5)
+            ...     )
         
         Alternatively, you do not need to pass a :code:`tqdm` bar:
 
         .. code-block:: 
         
             >>> result = ProgressParallel(
-                    n_jobs=10,
-                    total=20,
-                    desc='In Parallel',
-                    )(
-                        joblib.delayed(f_parallel)(i)
-                        for i in range(20)
-                    )
+            ...     n_jobs=10,
+            ...     total=20,
+            ...     desc='In Parallel',
+            ...     )(
+            ...         joblib.delayed(f_parallel)(i)
+            ...         for i in range(20)
+            ...     )
         
         
         Arguments

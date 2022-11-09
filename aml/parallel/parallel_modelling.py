@@ -30,16 +30,16 @@ class ParallelModelling:
 
             >>> n_runs = 20
             >>> pf = ParallelModelling(
-                    models=[
-                        ResNetLearning(
-                            seed=seed, 
-                            model_name=f'RN-seed_{seed}',
-                            **model_args
-                            )
-                        for seed in range(n_runs)
-                        ],
-                    n_jobs=2
-                    )
+            ...     models=[
+            ...         ResNetLearning(
+            ...             seed=seed, 
+            ...             model_name=f'RN-seed_{seed}',
+            ...             **model_args
+            ...             )
+            ...         for seed in range(n_runs)
+            ...         ],
+            ...     n_jobs=2
+            ...     )
             >>> pf.fit(train_loader=train_dl, val_loader=val_dl)
             >>> predictions = pf.predict(train_loader=train_dl, val_loader=val_dl)
 

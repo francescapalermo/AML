@@ -22,9 +22,9 @@ def _p_apply_construct_inputs(
     .. code-block::
     
         >>> list_kwargs, reused_kwargs = _p_apply_construct_inputs(
-                x=[1,2,3,4,5,6],
-                list__y=[[1,2,3], [1,2], [1,]],
-                )
+        ...     x=[1,2,3,4,5,6],
+        ...     list__y=[[1,2,3], [1,2], [1,]],
+        ...     )
         >>> list_kwargs
         [{'y': [1, 2, 3]}, {'y': [1, 2]}, {'y': [1]}]
         >>> reused_kwargs
@@ -106,10 +106,10 @@ def p_apply(
     .. code-block::
     
         >>> p_apply(
-                lambda x,y: x+y,
-                x=np.array([0,1,2]),
-                list__y=np.array([0,1,2]),
-                )
+        ...     lambda x,y: x+y,
+        ...     x=np.array([0,1,2]),
+        ...     list__y=np.array([0,1,2]),
+        ...     )
         Parallel function: 3it [00:00, 2000.78it/s]
         [array([0, 1, 2]), array([1, 2, 3]), array([2, 3, 4])]
 

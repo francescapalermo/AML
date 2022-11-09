@@ -14,9 +14,9 @@ def module_from_file(module_name:str, file_path:str):
     .. code-block::
 
         >>> validated_date = module_from_file(
-                "validated_date", 
-                "../data/manual_uti_labels.py"
-                )
+        ...     "validated_date", 
+        ...     "../data/manual_uti_labels.py"
+        ...     )
         >>> validated_date.validated_date
         <function validated_date.validated_date(return_df=False)>
 

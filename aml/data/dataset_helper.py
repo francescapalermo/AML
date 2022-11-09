@@ -32,10 +32,10 @@ class WrapperDataset(torch.utils.data.Dataset):
         .. code-block::
         
             >>> WrapperDataset(
-                dataset
-                functions_index=0,
-                functions=lambda x: x*2
-                )
+            ...     dataset
+            ...     functions_index=0,
+            ...     functions=lambda x: x*2
+            ...     )
 
         The following would multiply all of the returned
         values in the dataset by 2.
@@ -43,10 +43,10 @@ class WrapperDataset(torch.utils.data.Dataset):
         .. code-block::
         
             >>> WrapperDataset(
-                dataset
-                functions_index=None,
-                functions=lambda x: x*2
-                )
+            ...     dataset
+            ...     functions_index=None,
+            ...     functions=lambda x: x*2
+            ...     )
 
         The following would multiply all of the first returned
         values in the dataset by 2, and the second by 2.
@@ -54,10 +54,10 @@ class WrapperDataset(torch.utils.data.Dataset):
         .. code-block::
         
             >>> WrapperDataset(
-                dataset
-                functions_index=[0, 1],
-                functions=lambda x: x*2
-                )
+            ...     dataset
+            ...     functions_index=[0, 1],
+            ...     functions=lambda x: x*2
+            ...     )
 
         The following would multiply all of the first returned
         values in the dataset by 2, and the second by 3.
@@ -65,10 +65,10 @@ class WrapperDataset(torch.utils.data.Dataset):
         .. code-block::
         
             >>> WrapperDataset(
-                dataset
-                functions_index=[0, 1],
-                functions=[lambda x: x*2, lambda x: x*3]
-                )
+            ...     dataset
+            ...     functions_index=[0, 1],
+            ...     functions=[lambda x: x*2, lambda x: x*3]
+            ...     )
         
         
         Arguments
