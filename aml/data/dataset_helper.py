@@ -335,6 +335,8 @@ class ECGCorruptor(torch.utils.data.Dataset):
         class allows you to corrupt either the :code:`'x'`, :code:`'y'`, 
         or :code:`'both'`. This class is built specifically for use with
         PTB_XL (found in :code:`aml.data.datasets`).
+
+        This function will work as expected on all devices.
         
         
         Examples
@@ -451,10 +453,16 @@ class ECGCorruptor(torch.utils.data.Dataset):
                 g_seed_values, \
                 class_seed = self.rng.integers(low=1, high=1e9, size=3)
             self.rng = np.random.default_rng(class_seed)
-            g_values = torch.Generator().manual_seed(int(g_seed_values))
-            g_mask = torch.Generator().manual_seed(int(g_seed_mask))
-            mask = int(torch.rand(size=(), generator=g_mask) > 1-self._noise_level[s])
-            values = torch.normal(mean=0, std=0.1, generator=g_values, size=x.size())
+            g_values = torch.Generator(device=y.device).manual_seed(int(g_seed_values))
+            g_mask = torch.Generator(device=y.device).manual_seed(int(g_seed_mask))
+            mask = int(
+                torch.rand(
+                    size=(), generator=g_mask, device=x.device
+                    ) > 1-self._noise_level[s]
+                )
+            values = torch.normal(
+                mean=0, std=0.1, generator=g_values, size=x.size(), device=x.device
+                )
             x = x + mask*values
             self._corrupt_datapoints['x'][index] = x
         return x, y, s
@@ -468,7 +476,7 @@ class ECGCorruptor(torch.utils.data.Dataset):
             self.rng = np.random.default_rng(class_seed)
             g_mask = torch.Generator().manual_seed(int(g_seed_mask))
             if torch.rand(size=(), generator=g_mask) > 1-self._noise_level[s]:
-                y = torch.tensor(1, dtype=y.dtype)-y
+                y = torch.tensor(1, dtype=y.dtype, device=y.device)-y
 
             self._corrupt_datapoints['y'][index] = y
 
