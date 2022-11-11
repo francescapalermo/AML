@@ -107,6 +107,7 @@ class ProgressParallel(Parallel):
                 desc=desc, 
                 total=total, 
                 disable=not verbose, 
+                smoothing=0,
                 **tqdm_style,
                 )
             self.total=total

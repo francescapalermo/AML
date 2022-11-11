@@ -166,7 +166,8 @@ def p_apply(
         n_jobs=n_jobs,
         backend=backend,
         verbose=verbose,
-        desc=f'Parallel {func.__name__}'
+        desc=f'Parallel {func.__name__}',
+        smoothing=0,
         )(
             joblib.delayed(func)(
                 **lk,
