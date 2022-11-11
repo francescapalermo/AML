@@ -234,6 +234,7 @@ class MemoryDataset(torch.utils.data.Dataset):
                 total = len(dataset),
                 desc='Loading into memory',
                 disable=not verbose,
+                smoothing=0,
                 **tqdm_style
                 )
 
@@ -328,6 +329,7 @@ class ECGCorruptor(torch.utils.data.Dataset):
         noise_level:typing.Union[list, float, None]=None,
         seed:typing.Union[int, None]=None,
         axis:str='both',
+        x_noise_std:float=0.1,
         ):
         '''
         ECG Data corruptor. You may pass a noise level, sources to corrupt,
@@ -394,6 +396,11 @@ class ECGCorruptor(torch.utils.data.Dataset):
             and swaps the binary label using the function :code:`1-y_true`.
 
             Defaults to :code:`'both'`.
+
+        - x_noise_std: float, optional:
+            This is the standard deviation of the noise that 
+            is added to :code:`x` when it is corrupted.
+            Defaults to :code:`0.1`.
         
         
         '''
@@ -403,6 +410,7 @@ class ECGCorruptor(torch.utils.data.Dataset):
         
         self._axis = axis
         self._dataset = dataset
+        self._x_noise_std = x_noise_std
 
         # setting the list of corrupt sources
         if corrupt_sources is None:
@@ -461,7 +469,11 @@ class ECGCorruptor(torch.utils.data.Dataset):
                     ) > 1-self._noise_level[s]
                 )
             values = torch.normal(
-                mean=0, std=0.1, generator=g_values, size=x.size(), device=x.device
+                mean=0, 
+                std=self._x_noise_std, 
+                generator=g_values, 
+                size=x.size(), 
+                device=x.device,
                 )
             x = x + mask*values
             self._corrupt_datapoints['x'][index] = x
