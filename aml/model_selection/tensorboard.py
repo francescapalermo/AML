@@ -32,7 +32,9 @@ class TensorboardLoad:
         - level: typing.Union[int, None], optional:
             The maximum number of levels to dive into
             when loading the files. If :code:`None` then
-            all levels are loaded. 
+            all levels are loaded. Note that :code:`level=-1`
+            will behave as if :code:`level=None`, and will return
+            all of the files, and not just the deepest level.
             Defaults to :code:`None`.
         
         - verbose: bool, optional:
@@ -192,6 +194,63 @@ class TensorboardLoad:
         tqdm_progress.close()
         
         return results
+    
+    @staticmethod
+    def _load_file_tags(file,):
+
+        acc = EventAccumulator(file)
+        acc.Reload()
+
+        run_tags = acc.Tags()
+
+        return run_tags
+
+    @property
+    def tags(self,):
+        '''
+        This returns the available tags that can be used 
+        to filter the results when loading files.
+        '''
+
+        # loading the event accumulators
+        n_files = sum(map(len, self.level_dict.values()))
+        tqdm_progress = tqdm.tqdm(
+            total=n_files, 
+            desc='Loading Files', 
+            disable=not self.verbose,
+            **tqdm_style,
+            )
+
+        for level, files in self.level_dict.items():
+
+            parallel_comps = [
+                joblib.delayed(self._load_file_tags)( 
+                    file=file,
+                    )
+                for file in files
+                ]
+
+            tag_dict_list = ProgressParallel(
+                tqdm_bar=tqdm_progress, 
+                n_jobs=self.n_jobs,
+                )(parallel_comps)
+
+            # delete parallel processes
+            get_reusable_executor().shutdown(wait=True)
+
+        result = {}
+        for each_dict in tag_dict_list:
+            for key, values in each_dict.items():
+                if key not in result:
+                    result[key] = set([])
+                if hasattr(values, '__iter__'):
+                    for v in values:
+                        result[key].add(v)
+                else:
+                    result[key].add(v)
+        result = {key: list(values) for key, values in result.items()}
+
+        return result
 
     def scalars(
         self, 

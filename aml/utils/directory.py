@@ -37,6 +37,9 @@ def dirtree(
         of the directory of the path, etc. 
         :code:`None` searches recursively until there are no 
         more directories in the leaves.
+        Note that :code:`level=-1` will not return the 
+        tree from the last level, but instead act as if
+        :code:`level=None`.
         Defaults to :code:`None`.
     
     - files_only: bool, optional:
@@ -56,6 +59,7 @@ def dirtree(
         The dictionary containing the file structure.
     
     '''
+    
     def recursive_build(path, level):
         if level is None:
             level = -1
@@ -81,4 +85,5 @@ def dirtree(
         else:
             d=None
         return d
-    return {path: recursive_build(path, level)}
+    out = {path: recursive_build(path, level)}
+    return out
