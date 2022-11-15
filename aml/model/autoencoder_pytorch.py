@@ -3,8 +3,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
 import typing
-import seaborn as sns
-sns.set('talk')
 from copy import deepcopy
 from .base_model import BaseModel
 

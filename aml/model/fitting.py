@@ -1,11 +1,7 @@
-from tabnanny import verbose
 from typing_extensions import OrderedDict
 import numpy as np
 import torch
-import sys
 import time
-import seaborn as sns
-sns.set('talk')
 import matplotlib.pyplot as plt
 from torch.utils.tensorboard import SummaryWriter
 import typing
