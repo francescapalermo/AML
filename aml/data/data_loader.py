@@ -26,10 +26,14 @@ class NumpyLoader(torch.utils.data.DataLoader):
 
         It takes all of the same arguments as 
         :code:`torch.utils.data.DataLoader` and
-        has the same default arguments.
+        has the same default arguments:
+        https://pytorch.org/docs/stable/data.html#torch.utils.data.DataLoader
 
         The :code:`collate_fn` function is changed
         to allow for numpy arrays.
+
+        The code was inspired by:
+        https://jax.readthedocs.io/en/latest/notebooks/Neural_Network_and_Data_Loading.html
         
         '''
         super(self.__class__, self).__init__(
