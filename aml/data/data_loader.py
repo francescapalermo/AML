@@ -3,15 +3,16 @@ import torch
 
 
 def numpy_collate(batch):
-  if isinstance(batch[0], np.ndarray):
-    return np.stack(batch)
-  if isinstance(batch[0], torch.Tensor):
-    return np.stack([x.cpu().numpy() for x in batch])
-  elif isinstance(batch[0], (tuple,list)):
-    transposed = zip(*batch)
-    return [numpy_collate(samples) for samples in transposed]
-  else:
-    return np.array(batch)
+    if isinstance(batch[0], np.ndarray):
+        return np.stack(batch)
+    if isinstance(batch[0], torch.Tensor):
+        return torch.stack(batch).cpu().numpy()
+        #return np.stack([x.cpu().numpy() for x in batch])
+    elif isinstance(batch[0], (tuple,list)):
+        transposed = zip(*batch)
+        return [numpy_collate(samples) for samples in transposed]
+    else:
+        return np.array(batch)
 
 class NumpyLoader(torch.utils.data.DataLoader):
     def __init__(
