@@ -2,6 +2,10 @@ from .batch_sampler import (
     GroupBatchSampler,
     )
 
+from .data_loader import (
+    NumpyLoader
+    )
+
 from .dataset_helper import (
     ECGCorruptor,
     MemoryDataset, 
@@ -15,6 +19,7 @@ from .datasets import (
 
 __all__ =[
     'GroupBatchSampler',
+    'NumpyLoader',
     'ECGCorruptor',
     'MemoryDataset',
     'MyData',
