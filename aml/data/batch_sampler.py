@@ -135,15 +135,17 @@ class GroupSequentialBatchSampler(torch.utils.data.Sampler):
         shuffle_points:bool=True,
         ):
         '''
-        A pytorch batch sampler that returns a batches containing
-        all of the data for an entire class, in a shuffled order.
+        A pytorch batch sampler that returns batches containing
+        all of the data for an entire group, in a shuffled order.
+        There will only be as many batches as number of unique
+        groups, since each batch contains all data from that group.
 
         Examples
         ---------
 
         The following will batch the training dataset
-        into batches that contains single group, given 
-        by the :code:`group` argument
+        into batches that contains all data from a 
+        single group, given by the :code:`group` argument.
 
         .. code-block::
 
