@@ -1,5 +1,7 @@
 from .batch_sampler import (
     GroupBatchSampler,
+    GroupSequentialBatchSampler,
+    split_sampler
     )
 
 from .data_loader import (
@@ -19,6 +21,8 @@ from .datasets import (
 
 __all__ =[
     'GroupBatchSampler',
+    'GroupSequentialBatchSampler',
+    'split_sampler',
     'NumpyLoader',
     'ECGCorruptor',
     'MemoryDataset',
