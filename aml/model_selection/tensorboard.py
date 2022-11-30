@@ -1,4 +1,3 @@
-from tensorboard.backend.event_processing.event_multiplexer import EventMultiplexer
 from tensorboard.backend.event_processing.event_accumulator import EventAccumulator
 import typing
 import joblib
