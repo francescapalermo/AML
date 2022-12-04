@@ -126,7 +126,7 @@ class GroupBatchSampler(torch.utils.data.Sampler):
         return len(self.out)
 
 
-class GroupSequentialBatchSampler(torch.utils.data.Sampler):
+class GroupAllBatchSampler(torch.utils.data.Sampler):
     def __init__(
         self, 
         group:typing.Union[np.ndarray, typing.List[typing.Any]], 
@@ -151,7 +151,7 @@ class GroupSequentialBatchSampler(torch.utils.data.Sampler):
 
             >>> dl = torch.utils.data.DataLoader(
             ...     train_dataset, 
-            ...     batch_sampler=GroupSequentialBatchSampler(
+            ...     batch_sampler=GroupAllBatchSampler(
             ...         group=train_group,
             ...         seed=seed,
             ...         )
@@ -220,7 +220,7 @@ class _SplitSampler(torch.utils.data.Sampler):
         ):
         self.split_start = 0 if split_start is None else split_start
         self.split_end = 1 if split_end is None else split_end
-        self.sampler = iter(sampler)
+        self.sampler = sampler
 
     def __iter__(self):
         for idx in self.sampler:
@@ -282,9 +282,9 @@ def split_sampler(
         ([6], [7], [8])
 
     And an example with this in use with 
-    :code:`GroupSequentialBatchSampler`::
+    :code:`GroupAllBatchSampler`::
 
-        >>> sampler = GroupSequentialBatchSampler(
+        >>> sampler = GroupAllBatchSampler(
         ...     group=np.array([1,1,1,2,2,2,3,3,3,4,4,4,5,5,5]),
         ...     seed=42,
         ...     shuffle_groups=True,
@@ -337,4 +337,48 @@ def split_sampler(
             samplers.append(_SplitSampler(sampler, split_start=l0, split_end=l1))
     
     return samplers
+
+
+
+class _SequentialSamplerSampler(torch.utils.data.Sampler):
+    def __init__(self, *samplers:torch.utils.data.Sampler):
+        '''
+        This sampler allows you to combine several samplers
+        sequentially, so that each one can be run after the other.
+
+        Arguments
+        ---------
+
+        - samplers: torch.utils.data.Sampler:
+            The samplers to combine.
+        
+        '''
+        self.samplers = samplers
+    
+    def __iter__(self):
+        for sampler in self.samplers:
+            for idx in sampler:
+                yield idx
+    
+    def __len__(self):
+        length = 0
+        for sampler in self.samplers:
+            length += len(sampler)
+        return length
+
+
+def sequential_samplers_sampler(*samplers):
+    '''
+    This sampler allows you to combine several samplers
+    sequentially, so that each one can be run after the other.
+
+    Arguments
+    ---------
+
+    - samplers: torch.utils.data.Sampler:
+        The samplers to combine.
+    
+    '''
+
+    return _SequentialSamplerSampler(*samplers)
 
