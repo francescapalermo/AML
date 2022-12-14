@@ -13,12 +13,12 @@ def module_from_file(module_name:str, file_path:str):
 
     .. code-block::
 
-        >>> validated_date = module_from_file(
-        ...     "validated_date", 
-        ...     "../data/manual_uti_labels.py"
+        >>> model_trainer = module_from_file(
+        ...     'model_trainer', 
+        ...     './some_code/model_trainer.py'
         ...     )
-        >>> validated_date.validated_date
-        <function validated_date.validated_date(return_df=False)>
+        >>> train_function = model_trainer.train
+        <function model_trainer.train(...)>
 
     
     Arguments
