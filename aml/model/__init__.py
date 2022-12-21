@@ -1,6 +1,7 @@
 from .autoencoder_lightning import AEModel
 from .mlp_lightning import MLPModel
 from .base_model import BaseLightningModule
+from .kdtree import KDAttributeTree
 
 import warnings
 import logging 
@@ -15,4 +16,5 @@ __all__=[
         'AEModel',
         'MLPModel',
         'BaseLightningModule',
+        'KDAttributeTree',
         ]
