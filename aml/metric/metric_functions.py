@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 import typing
 from sklearn.metrics._classification import (
     _check_set_wise_labels,
@@ -33,7 +34,7 @@ def countna(array:np.ndarray, normalise:bool=True,) -> float:
         of missing values in an array.
 
     '''
-    count_na = np.count_nonzero(np.isnan(array))
+    count_na = np.count_nonzero(pd.isna(array))
     if normalise:
         count_na *= 1/array.shape[0]
     return count_na
