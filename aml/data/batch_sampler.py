@@ -367,7 +367,7 @@ class _SequentialSamplerSampler(torch.utils.data.Sampler):
         return length
 
 
-def sequential_samplers_sampler(*samplers):
+def sequential_samplers_sampler(*samplers)->torch.utils.data.Sampler:
     '''
     This sampler allows you to combine several samplers
     sequentially, so that each one can be run after the other.
@@ -378,6 +378,14 @@ def sequential_samplers_sampler(*samplers):
     - samplers: torch.utils.data.Sampler:
         The samplers to combine.
     
+
+    Returns
+    ---------
+    
+    - sampler: torch.utils.data.Sampler:
+        A single sampler that will use each 
+        of the given samplers in sequence.
+
     '''
 
     return _SequentialSamplerSampler(*samplers)
