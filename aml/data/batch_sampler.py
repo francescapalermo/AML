@@ -13,7 +13,8 @@ class GroupBatchSampler(torch.utils.data.Sampler):
         ):
         '''
         A pytorch batch sampler that returns a batch of samples with 
-        that same group.
+        that same group. This means each batch will be drawn from 
+        only a single group.
 
         Examples
         ---------

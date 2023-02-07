@@ -13,6 +13,7 @@ from .dataset_helper import (
     ECGCorruptor,
     MemoryDataset, 
     MyData, 
+    HelperDataset,
     WrapperDataset,
     )
 
@@ -29,6 +30,7 @@ __all__ =[
     'ECGCorruptor',
     'MemoryDataset',
     'MyData',
+    'HelperDataset',
     'WrapperDataset',
     'PTB_XL',
 ]

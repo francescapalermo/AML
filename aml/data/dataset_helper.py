@@ -7,7 +7,49 @@ from ..progress import tqdm_style
 from ..parallel import ProgressParallel
 
 
-class WrapperDataset(torch.utils.data.Dataset):
+
+class HelperDataset(torch.utils.data.Dataset):
+    def __init__(self, dataset:torch.utils.data.Dataset):
+        '''
+        This dataset helps you to build wrappers for 
+        other datasets by ensuring that any method or attribute
+        of the original dataset is available as a method
+        or attribute of the new dataset.
+
+        The original dataset is available as the attribute
+        :code:`._dataset`.
+
+        Arguments
+        ---------
+
+        - dataset: torch.utils.data.Dataset:
+            The dataset that will be wrapped.
+        
+        '''
+        
+        self._dataset = dataset
+        return
+    
+    # defined since __getattr__ causes pickling problems
+    def __getstate__(self):
+        return vars(self)
+
+    # defined since __getattr__ causes pickling problems
+    def __setstate__(self, state):
+        vars(self).update(state)
+
+    def __getattr__(self, name):
+        if hasattr(self._dataset, name):
+            return getattr(self._dataset, name)
+        else:
+            raise AttributeError
+
+
+
+
+
+
+class WrapperDataset(HelperDataset):
     def __init__(
         self,
         dataset:torch.utils.data.Dataset,
@@ -93,6 +135,11 @@ class WrapperDataset(torch.utils.data.Dataset):
         
             - If :code:`int`, then the :code:`functions` must be callable, and \
             will be applied to the output of this index.
+
+            - If :code:`'all'`, then the :code:`functions` must be callable, and \
+            will be applied to the output of the dataset. This allows you \
+            to build a function that can act over all of the outputs of dataset. \
+            The returned value will be the data that is returned by the dataset.
             
             Defaults to :code:`None`.
         
@@ -106,7 +153,9 @@ class WrapperDataset(torch.utils.data.Dataset):
         
         '''
 
-        self._dataset = dataset
+        super(WrapperDataset, self).__init__(dataset=dataset)
+
+        self.apply_all = False
         if functions_index is None:
             if type(functions) == list:
                 self.functions = {fi: f for fi, f in enumerate(functions)}
@@ -133,6 +182,16 @@ class WrapperDataset(torch.utils.data.Dataset):
             else:
                 raise TypeError("If type(functions_index)==int, please ensure "\
                     "the functions is a callable object.")
+        
+        elif type(functions_index) == str:
+            if functions_index == 'all':
+                if callable(functions):
+                    self.functions = functions
+                    self.apply_all = True
+                else:
+                    raise TypeError("Please ensure that functions is callable if functions_index == 'all'.")
+            else:
+                raise TypeError(f"{functions_index} is an invalid option for functions_index.")
 
         else:
             raise TypeError("Please ensure that functions_index is a list, int or None.")
@@ -146,30 +205,19 @@ class WrapperDataset(torch.utils.data.Dataset):
                 for nout, out in enumerate(self._dataset[index])
                 ]
         elif callable(self.functions):
-            return [self.functions(out) for out in self._dataset[index]]
+            if self.apply_all:
+                return self.functions(*self._dataset[index])
+            else:
+                return [self.functions(out) for out in self._dataset[index]]
         else:
             raise TypeError("The functions could not be applied.")
     
     def __len__(self):
         return len(self._dataset)
 
-    # defined since __getattr__ causes pickling problems
-    def __getstate__(self):
-        return vars(self)
-
-    # defined since __getattr__ causes pickling problems
-    def __setstate__(self, state):
-        vars(self).update(state)
-
-    def __getattr__(self, name):
-        if hasattr(self._dataset, name):
-            return getattr(self._dataset, name)
-        else:
-            raise AttributeError
 
 
-
-class MemoryDataset(torch.utils.data.Dataset):
+class MemoryDataset(HelperDataset):
     def __init__(
         self,
         dataset:torch.utils.data.Dataset,
@@ -226,12 +274,13 @@ class MemoryDataset(torch.utils.data.Dataset):
         
         '''
 
-        self._dataset = dataset
+        super(MemoryDataset, self).__init__()
+
         self._data_dict = {}
         if now:
 
             pbar = tqdm.tqdm(
-                total = len(dataset),
+                total = len(self._dataset),
                 desc='Loading into memory',
                 disable=not verbose,
                 smoothing=0,
@@ -240,12 +289,12 @@ class MemoryDataset(torch.utils.data.Dataset):
 
             def add_to_dict(index):
                 for ni, i in enumerate(index):
-                    self._data_dict[i] = dataset[i]
+                    self._data_dict[i] = self._dataset[i]
                     pbar.update(1)
                     pbar.refresh()
                 return None
 
-            all_index = np.arange(len(dataset))
+            all_index = np.arange(len(self._dataset))
             index_list = [all_index[i::n_jobs] for i in range(n_jobs)]
 
             joblib.Parallel(
@@ -321,7 +370,7 @@ class MyData(torch.utils.data.Dataset):
 
 
 
-class ECGCorruptor(torch.utils.data.Dataset):
+class ECGCorruptor(HelperDataset):
     def __init__(
         self, 
         dataset:torch.utils.data.Dataset, 
@@ -408,8 +457,9 @@ class ECGCorruptor(torch.utils.data.Dataset):
         assert axis in ['x', 'y', 'both'], \
             "Please ensure that the axis is from ['x', 'y', 'both']"
         
+        super(ECGCorruptor, self).__init__()
+
         self._axis = axis
-        self._dataset = dataset
         self._x_noise_std = x_noise_std
 
         # setting the list of corrupt sources
@@ -509,17 +559,3 @@ class ECGCorruptor(torch.utils.data.Dataset):
     
     def __len__(self,):
         return len(self._dataset)
-
-    # defined since __getattr__ causes pickling problems
-    def __getstate__(self):
-        return vars(self)
-
-    # defined since __getattr__ causes pickling problems
-    def __setstate__(self, state):
-        vars(self).update(state)
-
-    def __getattr__(self, name):
-        if hasattr(self._dataset, name):
-            return getattr(self._dataset, name)
-        else:
-            raise AttributeError

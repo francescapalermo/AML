@@ -29,6 +29,8 @@ class PTB_XL(torch.utils.data.Dataset):
         ):
         '''
         ECG Data, as described here: https://physionet.org/content/ptb-xl/1.0.2/.
+        A positive class when :code:`binary=True`, indicates that
+        the ECG Data is abnormal.
         
         
         
@@ -120,6 +122,9 @@ class PTB_XL(torch.utils.data.Dataset):
             .apply(lambda x: ast.literal_eval(x))
             )
         self.aggregate_diagnostic() # create diagnostic columns
+        self.feature_names = [
+            'I', 'II', 'III', 'aVL', 'aVR', 'aVF', 'V1', 'V2', 'V3', 'V4', 'V5', 'V6'
+            ]
         self.meta_data = self.meta_data[~self.meta_data[self.source_name].isna()]
 
         if self.train:
@@ -130,8 +135,13 @@ class PTB_XL(torch.utils.data.Dataset):
             self.meta_data = self.meta_data.query("strat_fold == 10")
             if subset:
                 self.meta_data = self.meta_data.iloc[:1000]
-        
-        self.targets = self.meta_data[['NORM', 'CD', 'HYP', 'MI', 'STTC']].values
+                
+        if binary:
+            self.targets = self.meta_data[['NORM', 'CD', 'HYP', 'MI', 'STTC']].values
+            self.targets = 1-self.targets[:,0]
+        else:
+            self.targets = self.meta_data[['NORM', 'CD', 'HYP', 'MI', 'STTC']].values
+
         self.sources = self.meta_data[self.source_name].values
 
         return
@@ -210,7 +220,7 @@ class PTB_XL(torch.utils.data.Dataset):
             .astype(np.int64)
             )
         if self.binary:
-            y = y[0]
+            y = 1-y[0]
         source = data[self.source_name]
 
         if self.return_sources:
