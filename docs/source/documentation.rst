@@ -145,6 +145,32 @@ Here is the documentation for the progress functionality.
 
 
 
+
+Random
+-----------------------
+
+Here is the documentation for the random functionality.
+
+
+.. automodule:: aml.random
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 Utils
 -----------------------
 

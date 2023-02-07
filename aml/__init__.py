@@ -8,4 +8,5 @@ from .model_selection import *
 from .parallel import *
 from .array import *
 from .progress import *
+from .random import *
 from .utils import *
