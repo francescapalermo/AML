@@ -194,7 +194,11 @@ def p_map(
     This is more easily seen through example.
 
     NOTE: This is a more refined version of :code:`p_apply`,
-    and is recommended to be used instead.
+    and is recommended to be used instead. The difference
+    being that this function only takes a function as an
+    input, and wraps it. This means you may use
+    some of the same arguments in this function as
+    is in the function you are wrapping.
 
 
     Examples
