@@ -262,7 +262,7 @@ def p_map(
 
     """
 
-    def parallel_func(*args, **kwargs):
+    def parallel_func(**kwargs):
 
         list_kwargs, reused_kwargs = _p_apply_construct_inputs(**kwargs)
 
