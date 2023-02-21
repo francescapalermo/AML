@@ -49,7 +49,6 @@ class Tqdm(_tqdm):
         return n
 
 
-@partial(import_error, package_name="pytorch_lightning", exists=PL_EXISTS)
 class PLTQDMProgressBar(TQDMProgressBar):
     def __init__(self, refresh_rate: int = 1, process_position: int = 0):
         super().__init__()
@@ -111,6 +110,7 @@ class PLTQDMProgressBar(TQDMProgressBar):
         )
         return bar
 
+    @partial(import_error, package_name="pytorch_lightning", exists=PL_EXISTS)
     def on_train_epoch_start(self, trainer: "pl.Trainer", *_: typing.Any) -> None:
         super().on_train_epoch_start(trainer, *_)
         self.main_progress_bar.set_description(f"Epoch {trainer.current_epoch+1}")
