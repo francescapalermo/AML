@@ -1,9 +1,5 @@
 import typing
 from tqdm import tqdm as _tqdm
-from pytorch_lightning.callbacks.progress.tqdm_progress import (
-    TQDMProgressBar,
-    convert_inf,
-)
 import sys
 from functools import partial
 
@@ -13,7 +9,9 @@ from ..import_errors import import_error
 
 try:
     import pytorch_lightning as pl
-
+    from pytorch_lightning.callbacks.progress.tqdm_progress import (
+        TQDMProgressBar,
+    )
     PL_EXISTS = True
 except ImportError:
     PL_EXISTS = False
