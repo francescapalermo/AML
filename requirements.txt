@@ -1,11 +1,8 @@
 numpy>=1.22
 pandas>=1.4
-matplotlib>=3.5
-seaborn>=0.11.2
 scikit-learn>=1.0
 tqdm>=4.64
 tensorboard>=2.9
-pytorch-lightning>=1.6
 torch>=1.10
 torchvision>=0.11.0
 imbalanced-learn>=0.9.1

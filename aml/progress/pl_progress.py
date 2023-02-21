@@ -1,17 +1,28 @@
 import typing
-import pytorch_lightning as pl
 from tqdm import tqdm as _tqdm
-from pytorch_lightning.callbacks.progress.tqdm_progress import TQDMProgressBar, convert_inf
+from pytorch_lightning.callbacks.progress.tqdm_progress import (
+    TQDMProgressBar,
+    convert_inf,
+)
 import sys
+from functools import partial
+
 from .progress import tqdm_style
+from ..import_errors import import_error
 
 
+try:
+    import pytorch_lightning as pl
+
+    PL_EXISTS = True
+except ImportError:
+    PL_EXISTS = False
 
 
 # pytorch lightning progress bars
 
 _PAD_SIZE = 5
-# from 
+# from
 # https://github.com/PyTorchLightning/pytorch-lightning/blob/master/pytorch_lightning/callbacks/progress/tqdm_progress.py
 class Tqdm(_tqdm):
     def __init__(self, *args, **kwargs) -> None:
@@ -38,6 +49,7 @@ class Tqdm(_tqdm):
         return n
 
 
+@partial(import_error, package_name="pytorch_lightning", exists=PL_EXISTS)
 class PLTQDMProgressBar(TQDMProgressBar):
     def __init__(self, refresh_rate: int = 1, process_position: int = 0):
         super().__init__()
@@ -92,7 +104,7 @@ class PLTQDMProgressBar(TQDMProgressBar):
             desc=self.validation_description,
             position=(2 * self.process_position + has_main_bar),
             disable=True,
-            leave= not has_main_bar,
+            leave=not has_main_bar,
             file=sys.stdout,
             smoothing=0,
             **tqdm_style,

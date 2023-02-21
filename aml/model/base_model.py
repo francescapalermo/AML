@@ -3,18 +3,26 @@ import torch.nn as nn
 import typing
 import numpy as np
 from torch.utils.tensorboard import SummaryWriter
-import pytorch_lightning as pl
 import copy
 import gc
- 
+from functools import partial
+
+
 from .utils import get_optimizer_from_name, get_criterion_from_name
 from .optimizer import CombineOptimizers
 from .fitting import BasicModelFitter
 from .testing import BasicModelTesting
 from ..progress import PLTQDMProgressBar as MyProgressBar
 from ..data import MyData
+from ..import_errors import import_error
 
 
+try:
+    import pytorch_lightning as pl
+
+    PL_EXISTS = True
+except ImportError:
+    PL_EXISTS = False
 
 
 
@@ -822,8 +830,7 @@ class BaseModel(TrainingHelper, nn.Module):
 
 
 
-
-
+@partial(import_error, package_name='pytorch_lightning', exists=PL_EXISTS)
 class BaseLightningModule(TrainingHelper, pl.LightningModule):
     def __init__(self,
                     optimizer:typing.Union[typing.Dict[

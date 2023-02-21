@@ -1,10 +1,26 @@
 import typing
 import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
 import sklearn.metrics as skmetrics
+from functools import partial
+from ..import_errors import import_error
+
+try:
+    import seaborn as sns
+
+    SEABORN_EXISTS = True
+except ImportError:
+    SEABORN_EXISTS = False
+
+try:
+    import matplotlib.pyplot as plt
+
+    MATPLOTLIB_EXISTS = True
+except ImportError:
+    MATPLOTLIB_EXISTS = False
 
 
+@partial(import_error, package_name="matplotlib", exists=MATPLOTLIB_EXISTS)
+@partial(import_error, package_name="seaborn", exists=SEABORN_EXISTS)
 def make_confusion_matrix(
     cfm: np.ndarray,
     group_names: typing.Union[None, typing.List[str]] = None,
