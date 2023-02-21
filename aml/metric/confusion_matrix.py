@@ -34,7 +34,7 @@ def make_confusion_matrix(
     figsize: typing.Union[tuple, list] = None,
     cmap: str = "Blues",
     title: typing.Union[str, None] = None,
-) -> typing.Tuple[plt.figure, plt.axes]:
+):
     """
     This function was edited from :code:`https://github.com/DTrimarchi10/confusion_matrix/blob/master/cfm_matrix.py`.
 
