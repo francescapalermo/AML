@@ -12,8 +12,10 @@ try:
     from pytorch_lightning.callbacks.progress.tqdm_progress import (
         TQDMProgressBar,
     )
+
     PL_EXISTS = True
 except ImportError:
+    TQDMProgressBar = object
     PL_EXISTS = False
 
 
