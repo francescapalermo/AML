@@ -54,6 +54,7 @@ class PLTQDMProgressBar(TQDMProgressBar):
         super().__init__()
         self._refresh_rate = self._resolve_refresh_rate(refresh_rate)
         self._process_position = process_position
+        import_error(object, "pytorch_lightning", PL_EXISTS)
 
     def init_sanity_tqdm(self) -> Tqdm:
         """Override this to customize the tqdm bar for the validation sanity run."""
@@ -110,7 +111,6 @@ class PLTQDMProgressBar(TQDMProgressBar):
         )
         return bar
 
-    @partial(import_error, package_name="pytorch_lightning", exists=PL_EXISTS)
     def on_train_epoch_start(self, trainer: "pl.Trainer", *_: typing.Any) -> None:
         super().on_train_epoch_start(trainer, *_)
         self.main_progress_bar.set_description(f"Epoch {trainer.current_epoch+1}")
