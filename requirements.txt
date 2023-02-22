@@ -6,3 +6,4 @@ tensorboard>=2.9
 torch>=1.10
 torchvision>=0.11.0
 imbalanced-learn>=0.9.1
+pytorch_lightning>=1.6

@@ -1,7 +1,6 @@
 package_versions = {
     "seaborn": "seaborn>=0.11.2",
     "matplotlib": "matplotlib>=3.5",
-    "pytorch_lightning": "pytorch_lightning>=1.6",
 }
 
 

@@ -2,21 +2,13 @@ import typing
 from tqdm import tqdm as _tqdm
 import sys
 from functools import partial
+import pytorch_lightning as pl
+from pytorch_lightning.callbacks.progress.tqdm_progress import (
+    TQDMProgressBar,
+)
 
 from .progress import tqdm_style
 from ..import_errors import import_error
-
-
-try:
-    import pytorch_lightning as pl
-    from pytorch_lightning.callbacks.progress.tqdm_progress import (
-        TQDMProgressBar,
-    )
-
-    PL_EXISTS = True
-except ImportError:
-    TQDMProgressBar = object
-    PL_EXISTS = False
 
 
 # pytorch lightning progress bars
@@ -54,7 +46,6 @@ class PLTQDMProgressBar(TQDMProgressBar):
         super().__init__()
         self._refresh_rate = self._resolve_refresh_rate(refresh_rate)
         self._process_position = process_position
-        import_error(object, "pytorch_lightning", PL_EXISTS)
 
     def init_sanity_tqdm(self) -> Tqdm:
         """Override this to customize the tqdm bar for the validation sanity run."""

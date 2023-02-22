@@ -6,7 +6,8 @@ from torch.utils.tensorboard import SummaryWriter
 import copy
 import gc
 from functools import partial
-
+import pytorch_lightning as pl
+from pytorch_lightning import LightningModule
 
 from .utils import get_optimizer_from_name, get_criterion_from_name
 from .optimizer import CombineOptimizers
@@ -15,15 +16,6 @@ from .testing import BasicModelTesting
 from ..progress import PLTQDMProgressBar as MyProgressBar
 from ..data import MyData
 from ..import_errors import import_error
-
-
-try:
-    import pytorch_lightning as pl
-    from pytorch_lightning import LightningModule
-    PL_EXISTS = True
-except ImportError:
-    LightningModule = object
-    PL_EXISTS = False
 
 
 # functions used in pytorch only training and pytorch lightning training
@@ -888,7 +880,6 @@ class BaseLightningModule(TrainingHelper, LightningModule):
             Defaults to :code:`20`.
 
         """
-        import_error(object, "pytorch_lightning", PL_EXISTS)
         super(BaseLightningModule, self).__init__()
         self.passed_optimizer = optimizer
         self.passed_criterion = criterion
