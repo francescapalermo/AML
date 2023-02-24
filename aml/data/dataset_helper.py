@@ -274,7 +274,7 @@ class MemoryDataset(HelperDataset):
         
         '''
 
-        super(MemoryDataset, self).__init__()
+        super(MemoryDataset, self).__init__(dataset=dataset)
 
         self._data_dict = {}
         if now:
