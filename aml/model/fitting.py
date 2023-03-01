@@ -2,13 +2,20 @@ from typing_extensions import OrderedDict
 import numpy as np
 import torch
 import time
-import matplotlib.pyplot as plt
 from torch.utils.tensorboard import SummaryWriter
 import typing
 import tqdm
 from collections import OrderedDict
 
+try:
+    import matplotlib.pyplot as plt
+
+    MATPLOTLIB_EXISTS = True
+except ImportError:
+    MATPLOTLIB_EXISTS = False
+
 from ..progress import tqdm_style
+from ..import_errors import import_error
 
 
 def loss_plot(loss, val_loss=None, n_epochs=None):
@@ -48,6 +55,7 @@ def loss_plot(loss, val_loss=None, n_epochs=None):
 
 
     """
+    import_error(package_name="matplotlib", exists=MATPLOTLIB_EXISTS)
 
     # set the plotting area
     fig, ax = plt.subplots(1, 1, figsize=(15, 5))
