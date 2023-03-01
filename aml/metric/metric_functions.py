@@ -4,14 +4,16 @@ import typing
 from sklearn.metrics._classification import (
     _check_set_wise_labels,
     multilabel_confusion_matrix,
-    _prf_divide
-    )
+    _prf_divide,
+)
 from sklearn.metrics import precision_recall_curve, auc
 
 
-
-def countna(array:np.ndarray, normalise:bool=True,) -> float:
-    '''
+def countna(
+    array: np.ndarray,
+    normalise: bool = True,
+) -> float:
+    """
     Function to calculate the number of NAs in
     an array.
 
@@ -21,11 +23,11 @@ def countna(array:np.ndarray, normalise:bool=True,) -> float:
     - array: numpy.ndarray:
         The array to calculate the number of missing
         values on.
-    
+
     - normalise: bool, optional:
         Whether to return the values as a percentage.
         Defaults to :code:`True`.
-    
+
     Returns
     ---------
 
@@ -33,15 +35,17 @@ def countna(array:np.ndarray, normalise:bool=True,) -> float:
         A :code:`float` equal to the number or proportion
         of missing values in an array.
 
-    '''
+    """
     count_na = np.count_nonzero(pd.isna(array))
     if normalise:
-        count_na *= 1/array.shape[0]
+        count_na *= 1 / array.shape[0]
     return count_na
 
 
-def interquartile_range(values:np.ndarray, lower:float=25, upper:float=75) -> float:
-    '''
+def interquartile_range(
+    values: np.ndarray, lower: float = 25, upper: float = 75
+) -> float:
+    """
     Function to calculate the interquartile
     range of an array.
 
@@ -50,11 +54,11 @@ def interquartile_range(values:np.ndarray, lower:float=25, upper:float=75) -> fl
 
     - array: numpy.ndarray:
         The array to calculate the IQR of.
-    
+
     - lower: float, optional:
         The percentile of the lower quartile.
         Defaults to :code:`25`.
-    
+
     - upper: float, optional:
         The percentile of the upper quartile.
         Defaults to :code:`75`.
@@ -65,16 +69,16 @@ def interquartile_range(values:np.ndarray, lower:float=25, upper:float=75) -> fl
     - iqr: float:
         A :code:`float` equal to the interquartile range.
 
-    '''
+    """
     return np.subtract(*np.nanpercentile(values, [upper, lower]))
 
 
 def format_mean_iqr_missing(
-    values:np.ndarray, 
-    string:str="{mean:.2f} ({iqr:.2f}) (({count_na:.0f}%))",
-    ) -> str:
-    '''
-    A function useful for formatting a table with information 
+    values: np.ndarray,
+    string: str = "{mean:.2f} ({iqr:.2f}) (({count_na:.0f}%))",
+) -> str:
+    """
+    A function useful for formatting a table with information
     on the mean, IQR and missing rate of an attribute.
 
     Examples
@@ -95,35 +99,34 @@ def format_mean_iqr_missing(
 
     - values: numpy.ndarray:
         The array to calculate the values on.
-    
+
     - string: str, optional:
         The string that dictates the output.
         This should include somewhere :code:`{mean}`,
         :code:`{iqr}`, and :code:`{count_na}`.
         Defaults to :code:`"{mean:.2f} ({iqr:.2f}) (({count_na:.0f}%))"`.
-    
+
     Returns
     ---------
 
     - stats: str:
-        A string of the desired format with the 
+        A string of the desired format with the
         statistics included.
 
-    
-    '''
+
+    """
     mean = np.mean(values)
     iqr = interquartile_range(values)
-    count_na = countna(values)*100
+    count_na = countna(values) * 100
     return string.format(mean=mean, iqr=iqr, count_na=count_na)
 
 
-
 def format_mean_std(
-    values:np.ndarray, 
-    string:str="{mean:.2f} ({std:.2f})",
-    ) -> str:
-    '''
-    A function useful for formatting a table with information 
+    values: np.ndarray,
+    string: str = "{mean:.2f} ({std:.2f})",
+) -> str:
+    """
+    A function useful for formatting a table with information
     on the mean and standard deviation an attribute.
 
     Examples
@@ -144,41 +147,38 @@ def format_mean_std(
 
     - values: numpy.ndarray:
         The array to calculate the values on.
-    
+
     - string: str, optional:
         The string that dictates the output.
         This should include somewhere :code:`{mean}` and
         :code:`{std}`.
         Defaults to :code:`"{mean:.2f} ({std:.2f})"`.
-    
+
     Returns
     ---------
 
     - stats: str:
-        A string of the desired format with the 
+        A string of the desired format with the
         statistics included.
 
-    
-    '''
+
+    """
     mean = np.mean(values)
     std = np.std(values)
     return string.format(mean=mean, std=std)
 
 
-
-
-
 def sensitivity_specificity_ppv_npv(
-    y_true:np.ndarray, 
-    y_pred:np.ndarray, 
-    labels:typing.Union[np.ndarray, None]=None,
-    pos_label:typing.Union[str, int]=1,
-    average:typing.Union[str, None]=None,
-    warn_for:typing.Union[str, typing.Tuple[str]]=("sensitivity", "specificity"),
-    sample_weight:typing.Union[np.ndarray, None]=None,
-    zero_division:typing.Union[int, str]='warn',
-    ) -> typing.Tuple[float]:
-    '''
+    y_true: np.ndarray,
+    y_pred: np.ndarray,
+    labels: typing.Union[np.ndarray, None] = None,
+    pos_label: typing.Union[str, int] = 1,
+    average: typing.Union[str, None] = None,
+    warn_for: typing.Union[str, typing.Tuple[str]] = ("sensitivity", "specificity"),
+    sample_weight: typing.Union[np.ndarray, None] = None,
+    zero_division: typing.Union[int, str] = "warn",
+) -> typing.Tuple[float]:
+    """
     A function that calculates the sensitivity, 
     specificity, ppv, and npv between two arrays. 
     This is modelled on the Scikit-Learn :code:`recall_score`, 
@@ -298,10 +298,9 @@ def sensitivity_specificity_ppv_npv(
     - npv: float:
         The negative predictive value score.
     
-    '''
-    
-    labels = _check_set_wise_labels(y_true, y_pred, average, labels, pos_label)
+    """
 
+    labels = _check_set_wise_labels(y_true, y_pred, average, labels, pos_label)
 
     samplewise = average == "samples"
     MCM = multilabel_confusion_matrix(
@@ -313,7 +312,7 @@ def sensitivity_specificity_ppv_npv(
     )
 
     tp_sum = MCM[:, 1, 1]
-    tn_sum =  MCM[:, 0, 0]
+    tn_sum = MCM[:, 0, 0]
     pos_pred_sum = tp_sum + MCM[:, 0, 1]
     pos_true_sum = tp_sum + MCM[:, 1, 0]
     neg_true_sum = tn_sum + MCM[:, 0, 1]
@@ -327,42 +326,42 @@ def sensitivity_specificity_ppv_npv(
         neg_true_sum = np.array([neg_true_sum.sum()])
 
     sensitivity = _prf_divide(
-        tp_sum, 
-        pos_true_sum, 
-        "sensitivity", 
-        "true", 
-        average, 
-        warn_for, 
+        tp_sum,
+        pos_true_sum,
+        "sensitivity",
+        "true",
+        average,
+        warn_for,
         zero_division=zero_division,
     )
 
     specificity = _prf_divide(
-        tn_sum, 
-        neg_true_sum, 
-        "specificity", 
-        "true", 
-        average, 
-        warn_for, 
+        tn_sum,
+        neg_true_sum,
+        "specificity",
+        "true",
+        average,
+        warn_for,
         zero_division=zero_division,
     )
 
     ppv = _prf_divide(
-        tp_sum, 
-        pos_pred_sum, 
-        "ppv", 
-        "predicted", 
-        average, 
-        warn_for, 
+        tp_sum,
+        pos_pred_sum,
+        "ppv",
+        "predicted",
+        average,
+        warn_for,
         zero_division=zero_division,
     )
 
     npv = _prf_divide(
-        tn_sum, 
-        neg_pred_sum, 
-        "npv", 
-        "predicted", 
-        average, 
-        warn_for, 
+        tn_sum,
+        neg_pred_sum,
+        "npv",
+        "predicted",
+        average,
+        warn_for,
         zero_division=zero_division,
     )
 
@@ -409,7 +408,6 @@ def sensitivity_specificity_ppv_npv(
             npv = zero_division_value
             npv_zero_division = True
 
-
     elif average == "samples":
         weights_sensitivity = sample_weight
         weights_specificity = sample_weight
@@ -435,18 +433,16 @@ def sensitivity_specificity_ppv_npv(
     return sensitivity, specificity, ppv, npv
 
 
-
-
 def sensitivity_score(
-    y_true:np.ndarray, 
-    y_pred:np.ndarray, 
-    labels:typing.Union[np.ndarray, None]=None,
-    pos_label:typing.Union[str, int]=1,
-    average:typing.Union[str, None]="binary",
-    sample_weight:typing.Union[np.ndarray, None]=None,
-    zero_division:typing.Union[int, str]='warn',
-    ) -> float:
-    '''
+    y_true: np.ndarray,
+    y_pred: np.ndarray,
+    labels: typing.Union[np.ndarray, None] = None,
+    pos_label: typing.Union[str, int] = 1,
+    average: typing.Union[str, None] = "binary",
+    sample_weight: typing.Union[np.ndarray, None] = None,
+    zero_division: typing.Union[int, str] = "warn",
+) -> float:
+    """
     A function that calculates the sensitivity
     between two arrays. This is modelled 
     on the Scikit-Learn :code:`recall_score`, 
@@ -545,12 +541,12 @@ def sensitivity_score(
     - sensitivity: float:
         The sensitivity score.
     
-    '''
+    """
 
-    warn_for = "sensitivity",
+    warn_for = ("sensitivity",)
     s, _, _, _ = sensitivity_specificity_ppv_npv(
-        y_true=y_true, 
-        y_pred=y_pred, 
+        y_true=y_true,
+        y_pred=y_pred,
         labels=labels,
         pos_label=pos_label,
         average=average,
@@ -561,19 +557,16 @@ def sensitivity_score(
     return s
 
 
-
-
-
 def specificity_score(
-    y_true:np.ndarray, 
-    y_pred:np.ndarray, 
-    labels:typing.Union[np.ndarray, None]=None,
-    pos_label:typing.Union[str, int]=1,
-    average:typing.Union[str, None]="binary",
-    sample_weight:typing.Union[np.ndarray, None]=None,
-    zero_division:typing.Union[int, str]='warn',
-    ):
-    '''
+    y_true: np.ndarray,
+    y_pred: np.ndarray,
+    labels: typing.Union[np.ndarray, None] = None,
+    pos_label: typing.Union[str, int] = 1,
+    average: typing.Union[str, None] = "binary",
+    sample_weight: typing.Union[np.ndarray, None] = None,
+    zero_division: typing.Union[int, str] = "warn",
+):
+    """
     A function that calculates the sensitivity
     between two arrays. This is modelled 
     on the Scikit-Learn :code:`recall_score`, 
@@ -672,12 +665,12 @@ def specificity_score(
     - sensitivity: float:
         The sensitivity score.
     
-    '''
+    """
 
-    warn_for = "specificity",
+    warn_for = ("specificity",)
     _, s, _, _ = sensitivity_specificity_ppv_npv(
-        y_true=y_true, 
-        y_pred=y_pred, 
+        y_true=y_true,
+        y_pred=y_pred,
         labels=labels,
         pos_label=pos_label,
         average=average,
@@ -689,15 +682,15 @@ def specificity_score(
 
 
 def ppv_score(
-    y_true:np.ndarray, 
-    y_pred:np.ndarray, 
-    labels:typing.Union[np.ndarray, None]=None,
-    pos_label:typing.Union[str, int]=1,
-    average:typing.Union[str, None]="binary",
-    sample_weight:typing.Union[np.ndarray, None]=None,
-    zero_division:typing.Union[int, str]='warn',
-    ):
-    '''
+    y_true: np.ndarray,
+    y_pred: np.ndarray,
+    labels: typing.Union[np.ndarray, None] = None,
+    pos_label: typing.Union[str, int] = 1,
+    average: typing.Union[str, None] = "binary",
+    sample_weight: typing.Union[np.ndarray, None] = None,
+    zero_division: typing.Union[int, str] = "warn",
+):
+    """
     A function that calculates the positive
     predictive value between two arrays. This is modelled 
     on the Scikit-Learn :code:`recall_score`, 
@@ -796,12 +789,12 @@ def ppv_score(
     - ppv: float:
         The positive predictive value score.
     
-    '''
+    """
 
-    warn_for = "ppv",
+    warn_for = ("ppv",)
     _, _, s, _ = sensitivity_specificity_ppv_npv(
-        y_true=y_true, 
-        y_pred=y_pred, 
+        y_true=y_true,
+        y_pred=y_pred,
         labels=labels,
         pos_label=pos_label,
         average=average,
@@ -813,15 +806,15 @@ def ppv_score(
 
 
 def npv_score(
-    y_true:np.ndarray, 
-    y_pred:np.ndarray, 
-    labels:typing.Union[np.ndarray, None]=None,
-    pos_label:typing.Union[str, int]=1,
-    average:typing.Union[str, None]="binary",
-    sample_weight:typing.Union[np.ndarray, None]=None,
-    zero_division:typing.Union[int, str]='warn',
-    ):
-    '''
+    y_true: np.ndarray,
+    y_pred: np.ndarray,
+    labels: typing.Union[np.ndarray, None] = None,
+    pos_label: typing.Union[str, int] = 1,
+    average: typing.Union[str, None] = "binary",
+    sample_weight: typing.Union[np.ndarray, None] = None,
+    zero_division: typing.Union[int, str] = "warn",
+):
+    """
     A function that calculates the negative
     predictive value between two arrays. This is modelled 
     on the Scikit-Learn :code:`recall_score`, 
@@ -920,12 +913,12 @@ def npv_score(
     - npv: float:
         The positive predictive value score.
     
-    '''
+    """
 
-    warn_for = "npv",
+    warn_for = ("npv",)
     _, _, _, s = sensitivity_specificity_ppv_npv(
-        y_true=y_true, 
-        y_pred=y_pred, 
+        y_true=y_true,
+        y_pred=y_pred,
         labels=labels,
         pos_label=pos_label,
         average=average,
@@ -936,19 +929,17 @@ def npv_score(
     return s
 
 
-
-
 def auc_precision_recall_curve(
-    y_true:np.ndarray, 
-    y_proba:np.ndarray, 
-    pos_label=None, 
+    y_true: np.ndarray,
+    y_proba: np.ndarray,
+    pos_label=None,
     sample_weight=None,
-    ) -> float:
-    '''
+) -> float:
+    """
     A function that calculates the area under
     the precision-recall curve
-    between two arrays. This is modelled 
-    on the Scikit-Learn :code:`recall_score`, 
+    between two arrays. This is modelled
+    on the Scikit-Learn :code:`recall_score`,
     :code:`precision_score`, :code:`accuracy_score`,
     and :code:`f1_score`.
 
@@ -972,15 +963,15 @@ def auc_precision_recall_curve(
         The array of true values.
 
     - y_proba: np.ndarray:
-        The array of predicted score values. If :code:`y_pred` 
+        The array of predicted score values. If :code:`y_pred`
         has shape :code:`(N,2)`, and :code:`y_true` has two unique
-        values, then the probability of a positive class will 
+        values, then the probability of a positive class will
         be assumed to be :code:`y_proba[:,1]`.
 
     - pos_label: typing.Union[str, int], optional:
         The class to report if :code:`average='binary'` and the data is binary.
         If the data are multiclass or multilabel, this will be ignored;
-        setting :code:`labels=[pos_label]` and 
+        setting :code:`labels=[pos_label]` and
         :code:`average != 'binary'` will report
         scores for that label only.
         Defaults to :code:`1`.
@@ -988,24 +979,24 @@ def auc_precision_recall_curve(
     - sample_weight: typing.Union[np.ndarray, None], optional:
         Sample weights.
         Defualts to :code:`None`.
-    
+
     Returns
     ---------
 
     - auc: float:
         The area under the precision-recall curve.
-    
-    '''
+
+    """
 
     if len(y_proba.shape) == 2:
         if len(np.unique(y_true)) == 2:
-            y_proba = y_proba[:,1]
+            y_proba = y_proba[:, 1]
 
     y, x, _ = precision_recall_curve(
-        y_true, 
-        y_proba, 
-        pos_label=pos_label, 
+        y_true,
+        y_proba,
+        pos_label=pos_label,
         sample_weight=sample_weight,
-        )
-    
-    return auc(x,y)
+    )
+
+    return auc(x, y)

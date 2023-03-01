@@ -19,8 +19,6 @@ except ImportError:
     MATPLOTLIB_EXISTS = False
 
 
-@partial(import_error, package_name="matplotlib", exists=MATPLOTLIB_EXISTS)
-@partial(import_error, package_name="seaborn", exists=SEABORN_EXISTS)
 def make_confusion_matrix(
     cfm: np.ndarray,
     group_names: typing.Union[None, typing.List[str]] = None,
@@ -120,6 +118,9 @@ def make_confusion_matrix(
 
 
     """
+
+    import_error(package_name="seaborn", exists=SEABORN_EXISTS)
+    import_error(package_name="matplotlib", exists=MATPLOTLIB_EXISTS)
 
     # CODE TO GENERATE TEXT INSIDE EACH SQUARE
     blanks = ["" for i in range(cfm.size)]

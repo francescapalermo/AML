@@ -5,17 +5,14 @@ import numpy as np
 from torch.utils.tensorboard import SummaryWriter
 import copy
 import gc
-from functools import partial
 import pytorch_lightning as pl
 from pytorch_lightning import LightningModule
-
 from .utils import get_optimizer_from_name, get_criterion_from_name
 from .optimizer import CombineOptimizers
 from .fitting import BasicModelFitter
 from .testing import BasicModelTesting
 from ..progress import PLTQDMProgressBar as MyProgressBar
 from ..data import MyData
-from ..import_errors import import_error
 
 
 # functions used in pytorch only training and pytorch lightning training

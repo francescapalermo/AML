@@ -1,14 +1,12 @@
 import typing
 from tqdm import tqdm as _tqdm
 import sys
-from functools import partial
 import pytorch_lightning as pl
 from pytorch_lightning.callbacks.progress.tqdm_progress import (
     TQDMProgressBar,
 )
 
 from .progress import tqdm_style
-from ..import_errors import import_error
 
 
 # pytorch lightning progress bars
