@@ -3,21 +3,21 @@ import torch
 
 class CombineOptimizers(object):
     def __init__(self, *optimizers):
-        '''
+        """
         Allows the user to add multiple optimizers and update parameters with
-        a single `.step()` call.
+        a single :code:`.step()` call.
         This code has been edited from:
         https://discuss.pytorch.org/t/two-optimizers-for-one-model/11085/7
-        
-        
+
+
         Arguments
         ---------
 
-        - `optimizers`: `torch.optim`:
-            The optimizers to combine into one class. You 
+        - optimizers: torch.optim:
+            The optimizers to combine into one class. You
             may pass as many as you like.
 
-        '''
+        """
 
         self.optimizers = optimizers
 
@@ -28,5 +28,3 @@ class CombineOptimizers(object):
     def step(self, *args, **kwargs):
         for op in self.optimizers:
             op.step(*args, **kwargs)
-
-

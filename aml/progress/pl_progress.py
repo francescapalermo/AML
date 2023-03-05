@@ -1,23 +1,18 @@
 import typing
-import pytorch_lightning as pl
-
-#import importlib
-#if importlib.util.find_spec("ipywidgets") is not None:
-#    from tqdm.auto import tqdm as _tqdm
-#else:
-#    from tqdm import tqdm as _tqdm
 from tqdm import tqdm as _tqdm
-from pytorch_lightning.callbacks.progress.tqdm_progress import TQDMProgressBar, convert_inf
 import sys
-from ..utils.progress import tqdm_style
+import pytorch_lightning as pl
+from pytorch_lightning.callbacks.progress.tqdm_progress import (
+    TQDMProgressBar,
+)
 
-
+from .progress import tqdm_style
 
 
 # pytorch lightning progress bars
 
 _PAD_SIZE = 5
-# from 
+# from
 # https://github.com/PyTorchLightning/pytorch-lightning/blob/master/pytorch_lightning/callbacks/progress/tqdm_progress.py
 class Tqdm(_tqdm):
     def __init__(self, *args, **kwargs) -> None:
@@ -44,7 +39,7 @@ class Tqdm(_tqdm):
         return n
 
 
-class MyProgressBar(TQDMProgressBar):
+class PLTQDMProgressBar(TQDMProgressBar):
     def __init__(self, refresh_rate: int = 1, process_position: int = 0):
         super().__init__()
         self._refresh_rate = self._resolve_refresh_rate(refresh_rate)
@@ -97,8 +92,8 @@ class MyProgressBar(TQDMProgressBar):
         bar = Tqdm(
             desc=self.validation_description,
             position=(2 * self.process_position + has_main_bar),
-            disable=True, #self.is_disabled,
-            leave= not has_main_bar,
+            disable=True,
+            leave=not has_main_bar,
             file=sys.stdout,
             smoothing=0,
             **tqdm_style,

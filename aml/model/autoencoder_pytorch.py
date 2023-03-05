@@ -3,29 +3,20 @@ import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
 import typing
-import seaborn as sns
-sns.set('talk')
 from copy import deepcopy
 from .base_model import BaseModel
 
 
-
-
-
-
-
-
-
 class CodeLayer(BaseModel):
-    def __init__(self, n_input, n_output, n_layers = 2, dropout=0.2):
-        '''
+    def __init__(self, n_input, n_output, n_layers=2, dropout=0.2):
+        """
         This class can be set up as either an encoder or a decoder section of an autoencoder
-        semi-supervised model. Simply supply the arguments to either reduce or increase the 
+        semi-supervised model. Simply supply the arguments to either reduce or increase the
         size of the final dimension of the input.
 
         Arguments
         ---------
-            
+
             n_input: int
                 This is the size of the last dimensions of the input and is the axis along which
                 the input will be decoded.
@@ -36,137 +27,130 @@ class CodeLayer(BaseModel):
             n_layers: int
                 The number of layers to get from input to output dimensions.
 
-        '''
+        """
 
         super(CodeLayer, self).__init__()
-        
-        in_out_list = np.linspace(n_input, n_output, n_layers + 1, dtype = int)
+
+        in_out_list = np.linspace(n_input, n_output, n_layers + 1, dtype=int)
 
         in_list = in_out_list[:-1][:-1]
         out_list = in_out_list[:-1][1:]
 
-        self.layers = nn.ModuleList([nn.Sequential(
-                                            nn.Linear(in_value, out_value), 
-                                            nn.Dropout(dropout),
-                                            #nn.BatchNorm1d(out_value), 
-                                            nn.ReLU())
-                                     for in_value, out_value in zip(in_list, out_list)])
-        
+        self.layers = nn.ModuleList(
+            [
+                nn.Sequential(
+                    nn.Linear(in_value, out_value),
+                    nn.Dropout(dropout),
+                    # nn.BatchNorm1d(out_value),
+                    nn.ReLU(),
+                )
+                for in_value, out_value in zip(in_list, out_list)
+            ]
+        )
+
         self.last_layer = nn.Linear(in_out_list[-2], in_out_list[-1])
 
         return
-    
+
     def forward(self, X):
-        '''
+        """
         Returns
         ---------
-            
+
             out: tensor
                 This is the decoded version of the input.
-        '''
-        
+        """
+
         out = X
         for layer in self.layers:
             out = layer(out)
         out = self.last_layer(out)
 
         return out
-    
-
-
-
-
-
-
-
 
 
 class AEModel(BaseModel):
-    def __init__(self,
-                    n_input:int,
-                    n_embedding:int, 
-                    n_layers:int=2, 
-                    dropout:float=0.2,
-                    optimizer:dict={'adam':{'lr':0.01}},
-                    criterion:typing.Union[str,nn.Module]='mseloss',
-                    n_epochs=10,
-                    **kwargs,
-                    ):
-        '''
+    def __init__(
+        self,
+        n_input: int,
+        n_embedding: int,
+        n_layers: int = 2,
+        dropout: float = 0.2,
+        optimizer: dict = {"adam": {"lr": 0.01}},
+        criterion: typing.Union[str, nn.Module] = "mseloss",
+        n_epochs=10,
+        **kwargs,
+    ):
+        """
         An auto-encoder model, built to be run similar to sklearn models.
 
         Examples
         ---------
-        ```
-        ae_model = AEModel(n_input=100, 
-                            n_embedding=5, 
-                            n_layers=2,
-                            n_epochs = 2,
-                            verbose=True,
-                            batch_size=10,
-                            optimizer={'adam':{'lr':0.01}},
-                            criterion='mseloss',
-                            )
+        .. code-block::
 
-        X = torch.tensor(np.random.random((10000,100))).float()
-        X_val = torch.tensor(np.random.random((10000,100))).float()
+            >>> ae_model = AEModel(n_input=100,
+            ...     n_embedding=5,
+            ...     n_layers=2,
+            ...     n_epochs = 2,
+            ...     verbose=True,
+            ...     batch_size=10,
+            ...     optimizer={'adam':{'lr':0.01}},
+            ...     criterion='mseloss',
+            ...     )
+            >>> X = torch.tensor(np.random.random((10000,100))).float()
+            >>> X_val = torch.tensor(np.random.random((10000,100))).float()
+            >>> training_metrics = ae_model.fit(X=X, X_val=X_val)
+            >>> output = ae_model.transform(X_test=X)
 
-        training_metrics = ae_model.fit(X=X, X_val=X_val)
-        output = ae_model.transform(X_test=X)
-
-
-        ```
 
 
         Arguments
         ---------
 
-        - `n_input`: `int`:
+        - n_input: int:
             The size of the input feature dimension.
 
-        - `n_embedding`: `int`:
+        - n_embedding: int:
             The number of features that the embedding will have.
 
-        - `n_layers`: `int`, optional:
+        - n_layers: int, optional:
             The number of layers in the encoder model. The decoder
             model will have the same number of layers.
-            Defaults to `2`.
+            Defaults to :code:`2`.
 
-        - `dropout`: `float`, optional:
+        - dropout: float, optional:
             The dropout value in each of the layers.
-            Defaults to `0.2`
-        
-        - `optimizer`: `dict`, optional:
+            Defaults to :code:`0.2`
+
+        - optimizer: dict, optional:
             A dictionary containing the optimizer name as keys and
-            a dictionary as values containing the arguments as keys. 
-            For example: `{'adam':{'lr':0.01}}`.
-            Defaults to `{'adam':{'lr':0.01}}`.
-        
-        - `criterion`: `str` or `torch.nn.Module`, optional:
+            a dictionary as values containing the arguments as keys.
+            For example: :code:`{'adam':{'lr':0.01}}`.
+            Defaults to :code:`{'adam':{'lr':0.01}}`.
+
+        - criterion: str or torch.nn.Module, optional:
             The criterion to use, which can be a string or a function.
-            Defaults to `mseloss`.
-        
-        - `n_epochs`: `int`, optional:
+            Defaults to :code:`mseloss`.
+
+        - n_epochs: int, optional:
             The number of epochs to run the training for.
-            Defaults to `10`.
+            Defaults to :code:`10`.
 
-        - `kwargs`: optional:
-            These keyword arguments will be passed to 
-            `dcarte_transform.model.base_model.BaseModel`.
+        - kwargs: optional:
+            These keyword arguments will be passed to
+            :code:`dcarte_transform.model.base_model.BaseModel`.
 
 
-        '''
+        """
 
-        if 'model_name' in kwargs:
-            if kwargs['model_name'] is None:
-                self.model_name = f'AE-{n_input}-{n_embedding}-{n_layers}-{dropout}'
+        if "model_name" in kwargs:
+            if kwargs["model_name"] is None:
+                self.model_name = f"AE-{n_input}-{n_embedding}-{n_layers}-{dropout}"
 
-        super(AEModel, self).__init__(optimizer=optimizer,
-                                        criterion=criterion,
-                                        n_epochs=n_epochs,
-                                        **kwargs)
-        
-        
+        super(AEModel, self).__init__(
+            optimizer=optimizer, criterion=criterion, n_epochs=n_epochs, **kwargs
+        )
+
         self.n_input = n_input
         self.n_embedding = n_embedding
         self.n_layers = n_layers
@@ -174,24 +158,33 @@ class AEModel(BaseModel):
 
         return
 
-
     def _build_model(self):
-        self.e = CodeLayer(n_input=self.n_input, n_output=self.n_embedding, n_layers=self.n_layers, dropout=self.dropout)
-        self.d = CodeLayer(n_input=self.n_embedding, n_output=self.n_input, n_layers=self.n_layers, dropout=self.dropout)
+        self.e = CodeLayer(
+            n_input=self.n_input,
+            n_output=self.n_embedding,
+            n_layers=self.n_layers,
+            dropout=self.dropout,
+        )
+        self.d = CodeLayer(
+            n_input=self.n_embedding,
+            n_output=self.n_input,
+            n_layers=self.n_layers,
+            dropout=self.dropout,
+        )
         self.encoding = False
         return
 
-    def forward(self,X):
+    def forward(self, X):
         out = self.e(X)
-        if self.encoding: return out
+        if self.encoding:
+            return out
         out = self.d(out)
         return out
-
 
     def encode(self):
         self.train(mode=False)
         self.encoding = True
-    
+
     def decode(self):
         self.encoding = False
 
@@ -201,110 +194,110 @@ class AEModel(BaseModel):
     def eval(self):
         self.train(mode=False)
 
-    def fit(self,
-            X:np.array=None, 
-            y:np.array=None, 
-            train_loader:torch.utils.data.DataLoader=None,
-            X_val:typing.Union[np.array, None]=None,
-            y_val:np.array=None, 
-            val_loader:torch.utils.data.DataLoader=None,
-            **kwargs,
-            ):
-        '''
-        This is used to fit the model. Please either use 
-        the `train_loader` or `X` and `y`.
+    def fit(
+        self,
+        X: np.array = None,
+        y: np.array = None,
+        train_loader: torch.utils.data.DataLoader = None,
+        X_val: typing.Union[np.array, None] = None,
+        y_val: np.array = None,
+        val_loader: torch.utils.data.DataLoader = None,
+        **kwargs,
+    ):
+        """
+        This is used to fit the model. Please either use
+        the :code:`train_loader` or :code:`X` and :code:`y`.
         This corresponds to using either a torch DataLoader
-        or a numpy array as the training data. If using 
-        the `train_loader`, ensure each iteration returns
-        `[X, X]`.
+        or a numpy array as the training data. If using
+        the :code:`train_loader`, ensure each iteration returns
+        :code:`[X, X]`.
 
         Arguments
         ---------
 
-        - `X`: `numpy.array` or `None`, optional:
+        - X: numpy.array or None, optional:
             The input array to fit the model on.
-            Defaults to `None`.
+            Defaults to :code:`None`.
 
-        - `y`: `numpy.array` or `None`, optional:
+        - y: numpy.array or None, optional:
             The target array to fit the model on. Ignored.
-            Defaults to `None`.
+            Defaults to :code:`None`.
 
-        - `train_loader`: `torch.utils.data.DataLoader` or `None`, optional:
+        - train_loader: torch.utils.data.DataLoader or None, optional:
             The training data, which contains the input and the targets.
-            Defaults to `None`.
+            Defaults to :code:`None`.
 
-        - `X_val`: `numpy.array` or `None`, optional:
-            The validation input to calculate validation 
+        - X_val: numpy.array or None, optional:
+            The validation input to calculate validation
             loss on when training the model.
-            Defaults to `None`
+            Defaults to :code:`None`
 
-        - `y_val`: `numpy.array` or `None`, optional:
-            The validation target to calculate validation 
+        - y_val: numpy.array or None, optional:
+            The validation target to calculate validation
             loss on when training the model. Ignored.
-            Defaults to `None`
+            Defaults to :code:`None`
 
-        - `val_loader`: `torch.utils.data.DataLoader` or `None`, optional:
+        - val_loader: torch.utils.data.DataLoader or None, optional:
             The validation data, which contains the input and the targets.
-            Defaults to `None`.
+            Defaults to :code:`None`.
 
-        '''
-        
+        """
+
         self._build_model()
 
         if train_loader is None:
             y = deepcopy(X)
         else:
             y = None
-        
+
         if val_loader is None:
             y_val = deepcopy(X_val)
         else:
             y_val = None
 
-        return super(AEModel, self).fit(train_loader=train_loader,
-                                            X=X, 
-                                            y=y,
-                                            val_loader=val_loader,
-                                            X_val=X_val,
-                                            y_val=y_val,
-                                            **kwargs,
-                                            )
+        return super(AEModel, self).fit(
+            train_loader=train_loader,
+            X=X,
+            y=y,
+            val_loader=val_loader,
+            X_val=X_val,
+            y_val=y_val,
+            **kwargs,
+        )
 
     @torch.no_grad()
-    def transform(self,
-                    X:np.array=None, 
-                    test_loader:torch.utils.data.DataLoader=None,
-                  ):
-        '''
+    def transform(
+        self,
+        X: np.array = None,
+        test_loader: torch.utils.data.DataLoader = None,
+    ):
+        """
         Method for transforming data based on the fit AE.
-        
+
         Arguments
         ---------
-        
-        - `X`: `numpy.array` or `None`, optional:
+
+        - X: numpy.array or None, optional:
             The input array to test the model on.
-            Defaults to `None`.
-        
-        - `test_loader`: `torch.utils.data.DataLoader` or `None`, optional: 
+            Defaults to :code:`None`.
+
+        - test_loader: torch.utils.data.DataLoader or None, optional:
             A data loader containing the test data.
-            Defaults to `None`.
-        
-        
+            Defaults to :code:`None`.
+
+
         Returns
         --------
-        
-        - `output`: `torch.tensor` : 
+
+        - output: torch.tensor:
             The resutls from the predictions
-        
-        
-        '''
-        
+
+
+        """
 
         self.encode()
 
         return super(AEModel, self).predict(
-                    X=X, 
-                    test_loader=test_loader,
-                    )
-
-
+            X=X,
+            test_loader=test_loader,
+        )

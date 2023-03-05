@@ -1,16 +1,22 @@
 from .autoencoder_lightning import AEModel
 from .mlp_lightning import MLPModel
+from .base_model import BaseLightningModule
+from .kdtree import KDAttributeTree
 
 import warnings
-import logging 
+import logging
 
 ## pytorch lightning warnings
 warnings.filterwarnings("ignore", ".*does not have many workers.*")
-warnings.filterwarnings("ignore", '.*You defined a `validation_step` but have no `val_dataloader`.*')
+warnings.filterwarnings(
+    "ignore", ".*You defined a `validation_step` but have no `val_dataloader`.*"
+)
 logging.getLogger("pytorch_lightning").setLevel(logging.WARNING)
 
 
-__all__=[
-        'AEModel',
-        'MLPModel',
-        ]
+__all__ = [
+    "AEModel",
+    "MLPModel",
+    "BaseLightningModule",
+    "KDAttributeTree",
+]

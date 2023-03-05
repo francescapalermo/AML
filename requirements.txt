@@ -1,0 +1,9 @@
+numpy>=1.22
+pandas>=1.4
+scikit-learn>=1.0
+tqdm>=4.64
+tensorboard>=2.9
+torch>=1.10
+torchvision>=0.11.0
+imbalanced-learn>=0.9.1
+pytorch_lightning>=1.6
